@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.manager;
+package edu.kit.informatik.pcc.service.server;
 
 import edu.kit.informatik.pcc.service.data.Account;
 
