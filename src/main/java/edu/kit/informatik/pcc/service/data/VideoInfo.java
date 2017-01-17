@@ -4,8 +4,9 @@ public class VideoInfo {
 	private int videoId;
 	private String videoName;
 	//␣constructors¬
-	public void VideoInfo(int videoId, String videoName) {
-		return;
+	public VideoInfo(int videoId, String videoName) {
+		this.videoId = videoId;
+		this.videoName = videoName;
 	}
 	//␣methods¬
 	public String getAsJson(String json) {
