@@ -5,8 +5,8 @@ public class Account {
 	private String passwordHash;
 	private int id;
 	//␣constructors¬
-	public void Account(String json) {
-        return;
+	public Account(String json) {
+	    // convert json String to class attributes
 	}
 	//␣methods¬
 	public String hashPassword(String password) {
