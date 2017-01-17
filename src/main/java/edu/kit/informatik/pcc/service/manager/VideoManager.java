@@ -6,6 +6,7 @@ import edu.kit.informatik.pcc.service.data.VideoInfo;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import javax.ws.rs.container.AsyncResponse;
 
 public class VideoManager {
 	// attributes
@@ -18,8 +19,8 @@ public class VideoManager {
 	public ArrayList<VideoInfo> getVideoInfoList() {
 		return null;
 	}
-	public String upload(InputStream video, InputStream metadata, String encryptedSymmetricKey, AsncResponse response) {
-		return "";
+	public String upload(InputStream video, InputStream metadata, String encryptedSymmetricKey, AsyncResponse response) {
+		return "test";
 	}
 	public File download(int videoId) {
 		return null;
