@@ -1,7 +1,18 @@
 package edu.kit.informatik.pcc.service.data;
 
-/**
- * Created by Josh Romanowski on 17.01.2017.
- */
 public class Metadata {
+	//␣attributes¬
+	private String metaName;
+	private String date;
+	private String triggerType;
+	private float[] gForce;
+	//␣constructors¬
+	public void Metadata(String metaName, String date, String triggerType, float[] gForce) {
+        return;
+	}
+	//␣methods¬
+	public String getAsJson() {
+        return "";
+	}
+	//␣getter/setter
 }
