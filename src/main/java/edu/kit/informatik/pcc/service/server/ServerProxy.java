@@ -2,6 +2,7 @@ package edu.kit.informatik.pcc.service.server;
 
 import com.sun.org.apache.regexp.internal.RE;
 import edu.kit.informatik.pcc.service.data.Account;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
@@ -20,40 +21,68 @@ public class ServerProxy {
     @Path("videoUpload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_HTML)
-	public String videoUpload (InputStream video, InputStream metadata, String encryptedSymmetricKey, String accountData, AsyncResponse response) {
+	public String videoUpload (@FormDataParam("") InputStream video, @FormDataParam("") InputStream metadata, @FormDataParam("") String encryptedSymmetricKey, @FormDataParam("") String accountData, @FormDataParam("") AsyncResponse response) {
 		return null;
 	}
 
 	@POST
     @Path("videoDownload")
+	public Response videoDownload (@FormParam("") int videoId, @FormParam("") String accountData) {
+		return null;
+	}
+
+    @POST
+    @Path("videoIndo")
+	public String videoInfo (@FormParam("") int videoId, @FormParam("") String accountData) {
+		return null;
+	}
+
+    @POST
+    @Path("videoDelete")
+	public String videoDelete (@FormParam("") int videoId, @FormParam("") String accountData) {
+		return null;
+	}
+
+    @POST
+    @Path("getVideosByAccount")
+	public String getVideosByAccount (@FormParam("") String accountData) {
+		return null;
+	}
+
+    @POST
+    @Path("authenticate")
+	public String authenticateAccount (@FormParam("") String accountData) {
+		return null;
+	}
+
+    @POST
+    @Path("createAccount")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response videoDownload (int videoId, String accountData) {
+	public String createAccount (@FormParam("") String accountData, @FormParam("") int uuid) {
 		return null;
 	}
-	public String videoInfo (int videoId, String accountData) {
+
+    @POST
+    @Path("changeAccount")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	public String changeAccount (@FormParam("") String accountDataNew, @FormParam("") String accountData) {
 		return null;
 	}
-	public String videoDelete (int videoId, String accountData) {
+
+    @POST
+    @Path("deleteAccount")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	public String deleteAccount (@FormParam("") String accountData) {
 		return null;
 	}
-	public String getVideosByAccount (String accountData) {
+
+    @POST
+    @Path("verfiyAccount")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	public String verifyAccount (@FormParam("") String accountData, @FormParam("") int uuid) {
 		return null;
 	}
-	public String authenticateAccount (String accountData) {
-		return null;
-	}
-	public String createAccount (String accountData, int uuid) {
-		return null;
-	}
-	public String changeAccount (String accountDataNew, String accountData) {
-		return null;
-	}
-	public String deleteAccount (String accountData) {
-		return null;
-	}
-	public String verifyAccount (String accountData, int uuid) {
-		return null;
-	}
+
 	private String setUpForRequest(String accountData) {
 		return null;
 	}

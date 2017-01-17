@@ -18,7 +18,7 @@ public class Main{
 	}
 	private static boolean startServer() {
 		ResourceConfig config = new ResourceConfig();
-		config.packages("newGroup");
+		config.packages("edu.kit.informatik.pcc.service.server");
 		ServletHolder servlet = new ServletHolder(new ServletContainer(config));
 
 		server = new Server(2222);
