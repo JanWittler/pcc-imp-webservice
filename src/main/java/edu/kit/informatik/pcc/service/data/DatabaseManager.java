@@ -1,9 +1,7 @@
 package edu.kit.informatik.pcc.service.data;
 
-import javax.sound.sampled.Port;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class DatabaseManager {
 	// attributes
@@ -14,7 +12,7 @@ public class DatabaseManager {
 	Connection c = null;
 	// constructors
 	public void DatabaseManager(Account account) {
-	
+        //TODO: write method
 	}
 	// methods
 	public void connectDatabase() {
@@ -31,9 +29,11 @@ public class DatabaseManager {
       	}
 	}
 	public boolean saveProcessecVideoAndMeta(String videoName, String metaName) {
+        //TODO: write method
 		return true;
 	}
 	public VideoInfo getVideoInfo(int videoId) {
+        //TODO: write method
 		return null;
 	}
 	public ArrayList<VideoInfo> getVideoInfoList() {
@@ -45,7 +45,8 @@ public class DatabaseManager {
 	    try {
 			Statement stmt = null;
 			stmt = this.c.createStatement();
-			ResultSet rs = stmt.executeQuery( "select \"video_name\",vids.\"id\" from \"Video\" as vids  join \"User\" as usr ON vids.user_id=usr.id where usr.id='" + account.getId() + "'" );
+
+			ResultSet rs = stmt.executeQuery( "select \"video_name\",vid.\"id\" from \"Video\" as vid  join \"User\" as usr ON vid.user_id=usr.id where usr.id='" + account.getId() + "'" );
 			// insert result in ArrayList
 			while ( rs.next() ) {
 				String video_name = rs.getString("video_name");
@@ -61,37 +62,93 @@ public class DatabaseManager {
 		} catch (SQLException sqlException) {
 			System.out.println(sqlException);
 		}
-		return null;
+		return videoInfoList;
 	}
 	public boolean deleteVideoAndMeta(int videoId) {
+	    //TODO: write method
 		return false;
 	}
 	public Metadata getMetaData(int videoId){
-		return null;
+	    // create String, where meta file is stored
+	    String filePath = LocationConfig.metaDataDirectory + "/" + getMetaNameByVideoId(videoId);
+	    // read Meta file to get infos
+        // TODO read Meta file to get infos
+	    // Metadata meta = new Metadata();
+        // return meta;
+        return null;
 	}
 	public boolean setMail(String newMail) {
-		return false;
+	    // connect to database
+        connectDatabase();
+        // send sql command and catch possible exeptions
+        try {
+            Statement stmt = null;
+            stmt = this.c.createStatement();
+            stmt = c.createStatement();
+            // sql command
+            String sql = "UPDATE \"User\" set mail='" + newMail + "' where id=" + account.getId() + ";";
+            stmt.executeUpdate(sql);
+            this.c.commit();
+            stmt.close();
+            this.c.close();
+        } catch (NullPointerException nPE) {
+            System.out.println(nPE);
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException);
+        }
+        // TODO: check, if mail is updated correctly
+        return true;
 	}
 	public boolean setPassword(String newPasswordHash) {
+        //TODO: write method
 		return false;
 	}
 	public boolean authenticate() {
+        //TODO: write method
 		return false;
 	}
 	public boolean deleteAccount() {
+        //TODO: write method
 		return false;
 	}
 	public int getAccountId() {
+        //TODO: write method
 		return 1;
 	}
 	public boolean register(String uuid) {
+        //TODO: write method
 		return false;
 	}
 	public String verifyAccount(String uuid) {
+        //TODO: write method
 		return "";
 	}
 	public boolean isVerified() {
+        //TODO: write method
 		return false;
 	}
 	// getter/setter
+    private String getMetaNameByVideoId(int videoId) {
+	    //connect to database
+	    connectDatabase();
+        String meta = "";
+	    try {
+			Statement stmt = null;
+			stmt = this.c.createStatement();
+
+			ResultSet rs = stmt.executeQuery("select \"meta_name \" from \"Video \" as vid where vid.id=" + videoId + ";");
+			// insert result in ArrayList
+            if (rs.getFetchSize() <= 1) {
+                meta = rs.getString("meta_name");
+            }
+			rs.close();
+			stmt.close();
+			this.c.close();
+		} catch (NullPointerException nPE) {
+			System.out.println(nPE);
+		} catch (SQLException sqlException) {
+			System.out.println(sqlException);
+		}
+		return meta;
+    }
 }

@@ -7,11 +7,13 @@ public class Metadata {
 	private String triggerType;
 	private float[] gForce;
 	//␣constructors¬
-	public void Metadata(String metaName, String date, String triggerType, float[] gForce) {
+	public Metadata(String metaName, String date, String triggerType, float[] gForce) {
+		//TODO: write constructor
         return;
 	}
 	//␣methods¬
 	public String getAsJson() {
+		//TODO: write method
         return "";
 	}
 	//␣getter/setter

@@ -1,10 +1,10 @@
 package edu.kit.informatik.pcc.service.data;
 public class LocationConfig {
 	//␣attributes¬
-	public String anonymVideoDirectory;
-	public String metaDataDirectory;
-	public String tempDirectory;
-	public String projectDirectory;
+	public static String anonymVideoDirectory = "";
+	public static String metaDataDirectory = "";
+	public static String tempDirectory = "";
+	public static String projectDirectory = "";
 	//␣constructors¬
 	//␣methods¬
 	//␣getter/setter

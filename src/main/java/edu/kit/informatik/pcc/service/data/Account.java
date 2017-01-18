@@ -1,16 +1,29 @@
 package edu.kit.informatik.pcc.service.data;
 public class Account {
-	//␣attributes¬
+	// attributes
 	private String email;
 	private String passwordHash;
 	private int id;
-	//␣constructors¬
+	// constructors
 	public Account(String json) {
 	    // convert json String to class attributes
+		//TODO: write constructor
 	}
-	//␣methods¬
+	// methods
 	public String hashPassword(String password) {
+	    // TODO create Method
         return "";
 	}
-	//␣getter/setter
+	// getter/setter
+	public int getId() {
+		return id;
+	}
+	public String getPasswordHash() {
+		//TODO: write method
+		return passwordHash;
+	}
+	public String getEmail() {
+		//TODO: write method
+		return email;
+	}
 }
