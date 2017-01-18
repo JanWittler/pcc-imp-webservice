@@ -124,8 +124,34 @@ public class DatabaseManager {
 		return "";
 	}
 	public boolean isVerified() {
-        //TODO: write method
-		return false;
+	    // connect to Database
+	    connectDatabase();
+	    int verified = 2;
+        try {
+            Statement stmt = null;
+            stmt = this.c.createStatement();
+
+            ResultSet rs = stmt.executeQuery("select \"verified\" from \"User\" where id=" + account.getId() + ";");
+            // insert result in ArrayList
+            if (rs.getFetchSize() <= 1) {
+                verified = Integer.parseInt(rs.getString("meta_name"));
+            }
+            rs.close();
+            stmt.close();
+            this.c.close();
+        } catch (NullPointerException nPE) {
+            System.out.println(nPE);
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException);
+        }
+        if(verified == 0) {
+            return false;
+        } else if (verified == 1) {
+            return true;
+        } else {
+            //TODO: create Error Message
+            return false;
+        }
 	}
 	// getter/setter
     private String getMetaNameByVideoId(int videoId) {
