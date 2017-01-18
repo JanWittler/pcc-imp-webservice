@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.videoprocessing;
+package edu.kit.informatik.pcc.service.videoprocessing.chain;
 
 import org.junit.BeforeClass;
 import org.junit.Test;

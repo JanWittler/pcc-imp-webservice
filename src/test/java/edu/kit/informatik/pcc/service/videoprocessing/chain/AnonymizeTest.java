@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.videoprocessing;
+package edu.kit.informatik.pcc.service.videoprocessing.chain;
 
 import edu.kit.informatik.pcc.service.server.Main;
 import edu.kit.informatik.pcc.service.videoprocessing.chain.Anonymizer;
@@ -22,7 +22,6 @@ public class AnonymizeTest {
     @Before
     public void setUp() {
         anonymizer = new Anonymizer();
-        Main.LOGGER = Logger.getGlobal();
         input = new File(System.getProperty("user.dir") + "\\src\\test\\resources\\input.mp4");
         output = new File(System.getProperty("user.dir") + "\\target\\output.avi");
     }
