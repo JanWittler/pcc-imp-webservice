@@ -1,6 +1,8 @@
 package edu.kit.informatik.pcc.service.server;
 
-import java.util.logging.Logger;
+import java.io.IOException;
+import java.util.logging.*;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -51,8 +53,23 @@ public class Main{
 		startServer();
 	}
 	private static boolean setupLogger() {
+		LOGGER = Logger.getGlobal();
+		try {
+			Handler fileHandler = new FileHandler("log.txt");
+			fileHandler.setFormatter(new SimpleFormatter());
+			fileHandler.setLevel(Level.WARNING);
 
-		return false;
+			Handler consoleHandler = new ConsoleHandler();
+			consoleHandler.setFormatter(new SimpleFormatter());
+			consoleHandler.setLevel(Level.INFO);
+
+			LOGGER.addHandler(fileHandler);
+		} catch (SecurityException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
 	}
 	private static boolean setupDirectories() {
 
