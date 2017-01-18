@@ -22,6 +22,7 @@ public class AESDecryptor implements IFileDecryptor{
 
         FileInputStream encfis = null;
         FileOutputStream decfos = null;
+
         try {
             encfis = new FileInputStream(input);
             decfos = new FileOutputStream(output);
