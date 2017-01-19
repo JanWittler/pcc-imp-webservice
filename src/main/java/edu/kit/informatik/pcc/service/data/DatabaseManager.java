@@ -36,7 +36,7 @@ public class DatabaseManager {
             stmt = this.c.createStatement();
             // sql command
 			//TODO: change id in sql command
-			String sql = "insert into \"Video\" (id,user_id,video_name,meta_name) values (3," + account.getId() + ",'" + videoName + "','" + metaName + "');";
+			String sql = "insert into \"video\" (id,user_id,video_name,meta_name) values (3," + account.getId() + ",'" + videoName + "','" + metaName + "');";
             stmt.executeUpdate(sql);
             this.c.commit();
             stmt.close();
@@ -63,7 +63,7 @@ public class DatabaseManager {
 			Statement stmt = null;
 			stmt = this.c.createStatement();
 
-			ResultSet rs = stmt.executeQuery( "select \"video_name\",vid.\"id\" from \"Video\" as vid  join \"User\" as usr ON vid.user_id=usr.id where usr.id='" + account.getId() + "'" );
+			ResultSet rs = stmt.executeQuery( "select \"video_name\",vid.\"id\" from \"video\" as vid  join \"user\" as usr ON vid.user_id=usr.id where usr.id='" + account.getId() + "'" );
 			// insert result in ArrayList
 			while ( rs.next() ) {
 				String video_name = rs.getString("video_name");
@@ -103,7 +103,7 @@ public class DatabaseManager {
             stmt = this.c.createStatement();
             stmt = c.createStatement();
             // sql command
-            String sql = "UPDATE \"User\" set mail='" + newMail + "' where id=" + account.getId() + ";";
+            String sql = "UPDATE \"user\" set mail='" + newMail + "' where id=" + account.getId() + ";";
             stmt.executeUpdate(sql);
             this.c.commit();
             stmt.close();
@@ -125,7 +125,7 @@ public class DatabaseManager {
             stmt = this.c.createStatement();
             stmt = c.createStatement();
             // sql command
-            String sql = "UPDATE \"User\" set password='" + newPasswordHash + "' where id=" + account.getId() + ";";
+            String sql = "UPDATE \"user\" set password='" + newPasswordHash + "' where id=" + account.getId() + ";";
             stmt.executeUpdate(sql);
             this.c.commit();
             stmt.close();
@@ -148,7 +148,7 @@ public class DatabaseManager {
 			Statement stmt = null;
 			stmt = this.c.createStatement();
 
-			ResultSet rs = stmt.executeQuery( "select \"mail\",\"password\" from \"User\" where id='" + account.getId() + "'" );
+			ResultSet rs = stmt.executeQuery( "select \"mail\",\"password\" from \"user\" where id='" + account.getId() + "'" );
 			// insert result in ArrayList
 			while ( rs.next() ) {
 				mail = rs.getString("mail");
@@ -184,7 +184,7 @@ public class DatabaseManager {
             stmt = c.createStatement();
             // sql command
             //TODO: change id
-			String sql = "insert into \"User\" (id,mail,password,uuid,verified) values (1,'" + account.getEmail() + "','" + account.getPasswordHash() + "'," + uuid + ",false);";
+			String sql = "insert into \"user\" (id,mail,password,uuid,verified) values (1,'" + account.getEmail() + "','" + account.getPasswordHash() + "'," + uuid + ",false);";
             stmt.executeUpdate(sql);
             this.c.commit();
             stmt.close();
@@ -207,7 +207,7 @@ public class DatabaseManager {
 			Statement stmt = null;
 			stmt = this.c.createStatement();
 
-			ResultSet rs = stmt.executeQuery( "select \"uuid\" from \"User\" as usr  where usr.id='" + account.getId() + "'" );
+			ResultSet rs = stmt.executeQuery( "select \"uuid\" from \"user\" as usr  where usr.id='" + account.getId() + "'" );
 			// insert result in ArrayList
 			uuidDatabase= rs.getString("uuid");
 			rs.close();
@@ -223,7 +223,7 @@ public class DatabaseManager {
                 Statement stmt = null;
                 stmt = this.c.createStatement();
 
-                stmt.executeQuery("update \"User\" set verified=TRUE where id=" + account.getId() + ";");
+                stmt.executeQuery("update \"user\" set verified=TRUE where id=" + account.getId() + ";");
                 stmt.close();
                 this.c.close();
             } catch (NullPointerException nPE) {
@@ -251,7 +251,7 @@ public class DatabaseManager {
             Statement stmt = null;
             stmt = this.c.createStatement();
 
-            ResultSet rs = stmt.executeQuery("select \"verified\" from \"User\" where id=" + account.getId() + ";");
+            ResultSet rs = stmt.executeQuery("select \"verified\" from \"user\" where id=" + account.getId() + ";");
             // insert result in ArrayList
             if (rs.getFetchSize() <= 1) {
                 verified = Integer.parseInt(rs.getString("meta_name"));
@@ -282,7 +282,7 @@ public class DatabaseManager {
 			Statement stmt = null;
 			stmt = this.c.createStatement();
 
-			ResultSet rs = stmt.executeQuery("select \"meta_name \" from \"Video \" as vid where vid.id=" + videoId + ";");
+			ResultSet rs = stmt.executeQuery("select \"meta_name \" from \"video \" as vid where vid.id=" + videoId + ";");
 			// insert result in ArrayList
             if (rs.getFetchSize() <= 1) {
                 meta = rs.getString("meta_name");
