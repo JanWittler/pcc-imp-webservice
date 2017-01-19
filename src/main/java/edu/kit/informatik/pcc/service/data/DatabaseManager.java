@@ -9,10 +9,11 @@ public class DatabaseManager {
 	private static String PORT = "5432";
 	private static String HOST = "localhost";
 	private static String DB_NAME = "PrivacyCrashCam";
-	Connection c = null;
+	private Connection c = null;
 	// constructors
 	public void DatabaseManager(Account account) {
-        //TODO: write method
+	    // create access to account
+	    this.account = account;
 	}
 	// methods
 	public void connectDatabase() {
@@ -24,12 +25,28 @@ public class DatabaseManager {
       	} catch (Exception e) {
 			e.printStackTrace();
         	System.err.println(e.getClass().getName()+": "+e.getMessage());
-
 	        System.exit(0);
       	}
 	}
 	public boolean saveProcessecVideoAndMeta(String videoName, String metaName) {
-        //TODO: write method
+        connectDatabase();
+		// send sql command and catch possible exeptions
+        try {
+            Statement stmt = null;
+            stmt = this.c.createStatement();
+            // sql command
+			//TODO: change id in sql command
+			String sql = "insert into \"Video\" (id,user_id,video_name,meta_name) values (3," + account.getId() + ",'" + videoName + "','" + metaName + "');";
+            stmt.executeUpdate(sql);
+            this.c.commit();
+            stmt.close();
+            this.c.close();
+        } catch (NullPointerException nPE) {
+            System.out.println(nPE);
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException);
+        }
+		//TODO: check, if insert was successful??? or do I have to test this in TestCases?
 		return true;
 	}
 	public VideoInfo getVideoInfo(int videoId) {
@@ -101,6 +118,7 @@ public class DatabaseManager {
 	}
 	public boolean setPassword(String newPasswordHash) {
         //TODO: write method
+
 		return false;
 	}
 	public boolean authenticate() {
@@ -112,16 +130,77 @@ public class DatabaseManager {
 		return false;
 	}
 	public int getAccountId() {
-        //TODO: write method
+        //TODO: write method how do I get the account id? from the database? compared with what???
 		return 1;
 	}
 	public boolean register(String uuid) {
-        //TODO: write method
+		connectDatabase();
+		//TODO: check, if mail is already existing. If not, create Account
+		// send sql command and catch possible exeptions
+        try {
+            Statement stmt = null;
+            stmt = this.c.createStatement();
+            stmt = c.createStatement();
+            // sql command
+            //TODO: change id
+			String sql = "insert into \"User\" (id,mail,password,uuid,verified) values (1,'" + account.getEmail() + "','" + account.getPasswordHash() + "'," + uuid + ",false);";
+            stmt.executeUpdate(sql);
+            this.c.commit();
+            stmt.close();
+            this.c.close();
+        } catch (NullPointerException nPE) {
+            System.out.println(nPE);
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException);
+        }
+		//TODO: check, if insert was successful??? or do I have to test this in TestCases?
 		return false;
 	}
 	public String verifyAccount(String uuid) {
-        //TODO: write method
-		return "";
+	    String ret = "";
+        //connect to Database
+		connectDatabase();
+		// get uuid from account
+        String uuidDatabase = "";
+		try {
+			Statement stmt = null;
+			stmt = this.c.createStatement();
+
+			ResultSet rs = stmt.executeQuery( "select \"uuid\" from \"User\" as usr  where usr.id='" + account.getId() + "'" );
+			// insert result in ArrayList
+			uuidDatabase= rs.getString("uuid");
+			rs.close();
+			stmt.close();
+		} catch (NullPointerException nPE) {
+			System.out.println(nPE);
+		} catch (SQLException sqlException) {
+			System.out.println(sqlException);
+		}
+		if (uuidDatabase.equals(uuid)) {
+			//TODO: set verified --> true
+            try {
+                Statement stmt = null;
+                stmt = this.c.createStatement();
+
+                stmt.executeQuery("update \"User\" set verified=TRUE where id=" + account.getId() + ";");
+                stmt.close();
+                this.c.close();
+            } catch (NullPointerException nPE) {
+                System.out.println(nPE);
+            } catch (SQLException sqlException) {
+                System.out.println(sqlException);
+            }
+            return ret;
+		} else {
+            //TODO: return error message, because uuid not correct
+            // close c, because when if=true, c is needed
+            try {
+                this.c.close();
+            } catch (SQLException sqlE) {
+                System.out.println(sqlE);
+            }
+            return ret;
+        }
 	}
 	public boolean isVerified() {
 	    // connect to Database
