@@ -3,13 +3,13 @@ package edu.kit.informatik.pcc.service.data;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class DatabaseManager {
+public class DatabaseManager { //TODO: LOGGER
 	// attributes
 	private Account account;
 	private static String PORT = "5432";
 	private static String HOST = "localhost";
 	private static String DB_NAME = "PrivacyCrashCam";
-	private Connection c = null;
+	private Connection c = null; //TODO: LOGGER
 	// constructors
 	public void DatabaseManager(Account account) {
 	    // create access to account
@@ -82,7 +82,23 @@ public class DatabaseManager {
 		return videoInfoList;
 	}
 	public boolean deleteVideoAndMeta(int videoId) {
-	    //TODO: write method
+	    connectDatabase();
+	    try {
+            Statement stmt = null;
+            stmt = this.c.createStatement();
+            stmt = c.createStatement();
+            // sql command
+            String sql = "DELETE from \"video\" where id=" + videoId + ";";
+            stmt.executeUpdate(sql);
+            this.c.commit();
+            stmt.close();
+            this.c.close();
+        } catch (NullPointerException nPE) {
+            System.out.println(nPE);
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException);
+        }
+        //TODO: check, if video is deleted
 		return false;
 	}
 	public Metadata getMetaData(int videoId){
@@ -167,7 +183,7 @@ public class DatabaseManager {
 
 	}
 	public boolean deleteAccount() {
-        //TODO: write method
+        //TODO: do I have to delete the videos first? or does the AccountManager handles this?
 		return false;
 	}
 	public int getAccountId() {
@@ -294,7 +310,7 @@ public class DatabaseManager {
 			System.out.println(nPE);
 		} catch (SQLException sqlException) {
 			System.out.println(sqlException);
-		}
+        }
 		return meta;
     }
 }
