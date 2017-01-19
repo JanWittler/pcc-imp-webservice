@@ -117,13 +117,54 @@ public class DatabaseManager {
         return true;
 	}
 	public boolean setPassword(String newPasswordHash) {
-        //TODO: write method
-
+        // connect to database
+        connectDatabase();
+        // send sql command and catch possible exeptions
+        try {
+            Statement stmt = null;
+            stmt = this.c.createStatement();
+            stmt = c.createStatement();
+            // sql command
+            String sql = "UPDATE \"User\" set password='" + newPasswordHash + "' where id=" + account.getId() + ";";
+            stmt.executeUpdate(sql);
+            this.c.commit();
+            stmt.close();
+            this.c.close();
+        } catch (NullPointerException nPE) {
+            System.out.println(nPE);
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException);
+        }
+        // TODO: check, if password is updated correctly
 		return false;
 	}
 	public boolean authenticate() {
-        //TODO: write method
-		return false;
+	    String mail = "";
+	    String passwordHash = "";
+	    // connect to database
+	    connectDatabase();
+	    // execute sql command and insert result in ArrayList
+	    try {
+			Statement stmt = null;
+			stmt = this.c.createStatement();
+
+			ResultSet rs = stmt.executeQuery( "select \"mail\",\"password\" from \"User\" where id='" + account.getId() + "'" );
+			// insert result in ArrayList
+			while ( rs.next() ) {
+				mail = rs.getString("mail");
+				passwordHash = rs.getString("password");
+			}
+			rs.close();
+			stmt.close();
+			this.c.close();
+		} catch (NullPointerException nPE) {
+			System.out.println(nPE);
+		} catch (SQLException sqlException) {
+			System.out.println(sqlException);
+		}
+		//return boolean, if password and mail are equal to database data
+		return mail.equals(account.getEmail()) && passwordHash.equals(account.getPasswordHash());
+
 	}
 	public boolean deleteAccount() {
         //TODO: write method
