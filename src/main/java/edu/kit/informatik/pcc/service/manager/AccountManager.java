@@ -1,14 +1,22 @@
 package edu.kit.informatik.pcc.service.manager;
 
 import edu.kit.informatik.pcc.service.data.Account;
+import edu.kit.informatik.pcc.service.data.DatabaseManager;
 
+/**
+ * @author Fabian Wenzel
+ */
 public class AccountManager {
 	// attributes
 	private Account account;
-	// constructors
-	public void AccountManager(Account account) {
-		return;
+	private DatabaseManager dbms;
+
+	// constructor
+	public AccountManager(Account account) {
+		dbms = new DatabaseManager();
+		this.account = account;
 	}
+
 	// methods
 	public String setMail(String newMail) {
 		//TODO: write method
@@ -26,7 +34,7 @@ public class AccountManager {
 		//TODO: write method
 		return "";
 	}
-	public String deleteAccount(VideoManager vm) {
+	public String deleteAccount() {
 	    //TODO: write method
 		return "";
 	}
