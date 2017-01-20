@@ -1,6 +1,6 @@
 package edu.kit.informatik.pcc.service.server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
@@ -86,12 +86,13 @@ public class ServerProxy {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
 			ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
-			ArrayList<String> videosInJson = new ArrayList<>();
-			ObjectMapper mapper = new ObjectMapper();
+			ArrayList<String> videosAsJson = new ArrayList<>();
 			for (VideoInfo videoInfo : videoInfoList) {
 				String json = videoInfo.getAsJson();
+				videosAsJson.add(json);
 			}
-			return "";
+			String json = new Gson().toJson(videosAsJson);
+			return json;
 		}
 		return "WRONG ACCOUNT";
 	}
