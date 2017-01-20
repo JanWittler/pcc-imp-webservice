@@ -9,7 +9,7 @@ public class VideoInfo {
 		this.videoName = videoName;
 	}
 	// methods
-	public String getAsJson(String json) {
+	public String getAsJson() {
 		//TODO: write method
 		return "";
 	}

@@ -1,6 +1,6 @@
 package edu.kit.informatik.pcc.service.server;
 
-import com.sun.org.apache.regexp.internal.RE;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
@@ -22,7 +22,6 @@ import java.util.ArrayList;
 @Path("webservice")
 public class ServerProxy {
 	// attributes
-	private Account account;
 	private VideoManager videoManager;
 	private AccountManager accountManager;
 
@@ -33,8 +32,7 @@ public class ServerProxy {
 	public String videoUpload (@FormDataParam("video") InputStream video, @FormDataParam("metadata") InputStream metadata, @FormDataParam("key") String encryptedSymmetricKey, @FormDataParam("data") String accountData, @FormDataParam("videoName") String videoName, @Suspended AsyncResponse response) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
-			String uploadResult = videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
-			return uploadResult;
+			return videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
 		}
     	return "WRONG ACCOUNT";
 	}
@@ -48,11 +46,16 @@ public class ServerProxy {
 		if (accountStatus.equals("SUCCESS")) {
 			File video = videoManager.download(videoId);
 			if (video == null) {
-				return response.status(200).entity("VideoNotFound").build();
+				try {
+					return response.status(200).entity("VideoNotFound").build();
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+				}
+			} else {
+				response = Response.ok(video);
+				response.header("Content-Disposition", "attachment; filename=\""+video.getName()+".mp4\"");
+				return response.build();
 			}
-			response = Response.ok((Object) video);
-			response.header("Content-Disposition", "attachment; filename=\""+video.getName()+".mp4\"");
-			return response.build();
 		}
 		return response.status(200).entity("WRONG ACCOUNT").build();
 	}
@@ -62,8 +65,7 @@ public class ServerProxy {
 	public String videoInfo (@FormParam("id") int videoId, @FormParam("data") String accountData) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
-			String videoInfo = videoManager.getMetaData(videoId);
-			return videoInfo;
+			return videoManager.getMetaData(videoId);
 		}
     	return "WRONG ACCOUNT";
 	}
@@ -73,8 +75,7 @@ public class ServerProxy {
 	public String videoDelete (@FormParam("id") int videoId, @FormParam("data") String accountData) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
-			String status = videoManager.videoDelete(videoId);
-			return status;
+			return videoManager.videoDelete(videoId);
 		}
 		return "WRONG ACCOUNT";
 	}
@@ -85,7 +86,11 @@ public class ServerProxy {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
 			ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
-			//make json
+			ArrayList<String> videosInJson = new ArrayList<>();
+			ObjectMapper mapper = new ObjectMapper();
+			for (VideoInfo videoInfo : videoInfoList) {
+				String json = videoInfo.getAsJson();
+			}
 			return "";
 		}
 		return "WRONG ACCOUNT";
@@ -94,8 +99,7 @@ public class ServerProxy {
     @POST
     @Path("authenticate")
 	public String authenticateAccount (@FormParam("data") String accountData) {
-		String accountStatus = setUpForRequest(accountData);
-		return accountStatus;
+		return setUpForRequest(accountData);
 	}
 
     @POST
@@ -104,8 +108,7 @@ public class ServerProxy {
 	public String createAccount (@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("NO ACCOUNTID")) {
-			String status = accountManager.registerAccount(uuid);
-			return status;
+			return accountManager.registerAccount(uuid);
 		}
     	return "ACCOUNT EXISTS";
 	}
@@ -134,14 +137,15 @@ public class ServerProxy {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
 			ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
-			for (VideoInfo videoInfo: videoInfoList){
-				String status = videoManager.videoDelete(videoInfo.getVideoId());
-				if (status.equals("FAILURE")){
-					//exception handling
+			if (videoInfoList != null) {
+				for (VideoInfo videoInfo: videoInfoList){
+					String status = videoManager.videoDelete(videoInfo.getVideoId());
+					if (status.equals("FAILURE")){
+						//exception handling
+					}
 				}
 			}
-			String result = accountManager.deleteAccount();
-			return result;
+			return accountManager.deleteAccount();
 		}
 		return "WRONG ACCOUNT";
 	}
@@ -152,8 +156,7 @@ public class ServerProxy {
 	public String verifyAccount (@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
-			String status = accountManager.verifyAccount(uuid);
-			return status;
+			return accountManager.verifyAccount(uuid);
 		}
 		return "WRONG ACCOUNT";
 	}
