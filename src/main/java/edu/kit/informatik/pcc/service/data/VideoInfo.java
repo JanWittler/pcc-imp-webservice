@@ -18,4 +18,8 @@ public class VideoInfo {
 		//TODO: write method
 		return videoName;
 	}
+
+	public int getVideoId() {
+		return videoId;
+	}
 }

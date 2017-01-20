@@ -1,4 +1,8 @@
 package edu.kit.informatik.pcc.service.data;
+
+/**
+ * @author Fabian Wenzel
+ */
 public class Account {
 	// attributes
 	private String email;
@@ -19,11 +23,12 @@ public class Account {
 		return id;
 	}
 	public String getPasswordHash() {
-		//TODO: write method
 		return passwordHash;
 	}
 	public String getEmail() {
-		//TODO: write method
 		return email;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 }

@@ -9,21 +9,25 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import javax.ws.rs.container.AsyncResponse;
 
+/**
+ * @author Fabian Wenzel
+ */
 public class VideoManager {
 	// attributes
 	private Account account;
 	private DatabaseManager dbms;
-	// constructors
-	public void VideoManager(Account account) {
+
+	// constructor
+	public VideoManager(Account account) {
 	    dbms = new DatabaseManager();
-	    return;
+	    this.account = account;
 	}
 	// methods
 	public ArrayList<VideoInfo> getVideoInfoList() {
 		dbms.getVideoInfoList();
 		return null;
 	}
-	public String upload(InputStream video, InputStream metadata, String encryptedSymmetricKey, AsyncResponse response) {
+	public String upload(InputStream video, InputStream metadata, String encryptedSymmetricKey, String videoName, AsyncResponse response) {
 		//TODO: write method
 		return "test";
 	}
