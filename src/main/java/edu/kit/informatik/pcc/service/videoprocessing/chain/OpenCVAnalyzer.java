@@ -40,6 +40,7 @@ public class OpenCVAnalyzer implements IAnalyzer {
 
     // methods
 
+    @Override
     public MatOfRect analyze(Mat frame) {
         MatOfRect detections = new MatOfRect();
         classifier.detectMultiScale(frame, detections);

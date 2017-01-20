@@ -15,6 +15,7 @@ public class OpenCVFilter implements IFilter {
 
     //methods
 
+    @Override
     public Mat applyFilter(Mat frame, MatOfRect detections) {
         for (Rect rect : detections.toArray()) {
             Imgproc.blur(frame.submat(rect), frame.submat(rect), new Size(55, 55));

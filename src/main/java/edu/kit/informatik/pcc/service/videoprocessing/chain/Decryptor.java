@@ -40,6 +40,7 @@ public class Decryptor implements IStage {
 
     // methods
 
+    @Override
     public boolean execute(EditingContext context) {
         return decrypt(context.getEncVid(), context.getEncKey(),
                 context.getEncMetadata(), context.getDecVid(), context.getDecMetadata());

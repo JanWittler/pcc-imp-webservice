@@ -19,6 +19,7 @@ public class AESDecryptor implements IFileDecryptor {
 
     // methods
 
+    @Override
     public boolean decrypt(File input, SecretKey key, File output) {
         if (input == null || key == null || output == null) {
             Logger.getGlobal().warning("Empty input/key/output");

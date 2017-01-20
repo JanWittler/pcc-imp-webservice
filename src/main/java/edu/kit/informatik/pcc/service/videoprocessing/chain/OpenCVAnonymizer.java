@@ -53,6 +53,7 @@ public class OpenCVAnonymizer extends AAnonymizer {
 
     // methods
 
+    @Override
     public boolean anonymize(File input, File output) {
         if (input == null || output == null) {
             Logger.getGlobal().warning("Invalid input/oputput");

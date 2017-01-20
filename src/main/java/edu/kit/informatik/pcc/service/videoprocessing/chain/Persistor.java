@@ -25,6 +25,7 @@ public class Persistor implements IStage {
      */
     private DatabaseManager databaseManager;
 
+    @Override
     public boolean execute(EditingContext context) {
         databaseManager = new DatabaseManager();
         return persist(context.getAnonymizedVid(), context.getDecMetadata()

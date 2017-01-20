@@ -52,6 +52,7 @@ public class RSADecryptor implements IKeyDecryptor {
         }
     }
 
+    @Override
     public SecretKey decrypt(File input) {
         if (input == null) {
             Logger.getGlobal().warning("Asymmetric key missing");
