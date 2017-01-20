@@ -4,6 +4,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+/**
+ * @author David Laubenstein
+ * Created by David Laubenstein at 17.01.2017
+ */
 public class DatabaseManager {
 	// attributes
 	private Account account;

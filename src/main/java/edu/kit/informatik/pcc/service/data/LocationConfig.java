@@ -3,7 +3,8 @@ package edu.kit.informatik.pcc.service.data;
 /**
  * Config class that holds all directories used.
  *
- * @author Josh Romanowski
+ * @author Josh Romanowski and David Laubenstein
+ * Created by David Laubenstein on 01/18/2017
  */
 public class LocationConfig {
 
