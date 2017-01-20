@@ -240,7 +240,7 @@ public class DatabaseManager {
 		try {
 			Statement stmt = this.c.createStatement();
 			// sql command
-            String sql = "delete from \"user\" where \"user\".\"id\"=" + account.getId();
+            String sql = "delete from \"user\" where \"user\".\"mail\"='" + account.getEmail() + "'";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			this.c.close();
@@ -259,8 +259,7 @@ public class DatabaseManager {
 	    connectDatabase();
 		try {
 			Statement stmt = this.c.createStatement();
-			ResultSet rs = stmt.executeQuery( "select \"id\" from \"user\" where \"user\".\"mail\"=" + account
-					.getEmail());
+			ResultSet rs = stmt.executeQuery( "select \"id\" from \"user\" where \"user\".\"mail\"='" + account.getEmail() + "'");
 			// insert result in ArrayList
 			while ( rs.next() ) {
 			   accountId = Integer.parseInt(rs.getString("id"));
@@ -285,7 +284,7 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
             // sql command
-			String sql = "insert into \"user\" (mail,password,uuid,verified) values ('" + account.getEmail() + "','" + account.getPasswordHash() + "'," + uuid + ",false);";
+			String sql = "insert into \"user\" (mail,password,uuid,verified) values ('" + account.getEmail() + "','" + account.getPasswordHash() + "'," + uuid + ", false);";
             stmt.executeUpdate(sql);
             stmt.close();
             this.c.close();
@@ -312,8 +311,10 @@ public class DatabaseManager {
 
 			ResultSet rs = stmt.executeQuery( "select \"uuid\" from \"user\" as usr  where usr.id='" + account.getId() + "'" );
 			// insert result in ArrayList
-			uuidDatabase= rs.getString("uuid");
-			rs.close();
+            if (rs.getFetchSize() <= 1) {
+                uuidDatabase= rs.getString("uuid");
+            }
+            rs.close();
 			stmt.close();
 		} catch (NullPointerException | SQLException e) {
 		    Logger.getGlobal().severe("verifyAccount " + e);
@@ -348,29 +349,21 @@ public class DatabaseManager {
 	public boolean isVerified() {
 	    // connect to Database
 	    connectDatabase();
-	    int verified = 2;
+	    boolean verified = false;
         try {
             Statement stmt = this.c.createStatement();
 
             ResultSet rs = stmt.executeQuery("select \"verified\" from \"user\" where id=" + account.getId() + ";");
             // insert result in ArrayList
-            if (rs.getFetchSize() <= 1) {
-                verified = Integer.parseInt(rs.getString("meta_name"));
-            }
+            //TODO: get boolean of database -> impossible?? NO!
+            //verified = rs.getBoolean("verified");
             rs.close();
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
             Logger.getGlobal().severe("isVerified: " + e);
         }
-        if(verified == 0) {
-            return false;
-        } else if (verified == 1) {
-            return true;
-        } else {
-            Logger.getGlobal().severe("Hard problem in isVerified!!!");
-            return false;
-        }
+        return verified;
 	}
 
 	// getter/setter
