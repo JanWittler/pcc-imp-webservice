@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 /**
  * @author David Laubenstein
- * Created by David Laubenstein at 17.01.2017
+ * Created by David Laubenstein at 1/18/17
  */
 public class DatabaseManager {
 	// attributes
@@ -16,11 +16,20 @@ public class DatabaseManager {
 	private static final String DB_NAME = "PrivacyCrashCam";
 	private Connection c = null;
 	// constructors
+
+	/**
+	 * constructor, which includes the account object.
+	 * @param account to have access to the actual account.
+	 */
 	public DatabaseManager(Account account) {
 	    // create access to account
 	    this.account = account;
 	}
 	// methods
+
+	/**
+	 * creates the connection to the database.
+	 */
 	private void connectDatabase() {
 		c = null;
 		try {
@@ -34,6 +43,12 @@ public class DatabaseManager {
       	}
 	}
 
+	/**
+	 * save uploaded video to database with metadata, related to an account
+	 * @param videoName name of the video file, which should be saved
+	 * @param metaName name of the meta data file, which should be saved
+	 * @return boolean for success of failure
+	 */
 	public boolean saveProcessedVideoAndMeta(String videoName, String metaName) {
         connectDatabase();
 		// send sql command and catch possible exeptions
@@ -51,6 +66,11 @@ public class DatabaseManager {
 		return true;
 	}
 
+	/**
+	 * get the saved information for a video
+	 * @param videoId the id of the video
+	 * @return a VideoInfo object, where all information are in.
+	 */
 	public VideoInfo getVideoInfo(int videoId) {
         VideoInfo vI = null;
 		// execute sql command and insert result in ArrayList
@@ -335,8 +355,7 @@ public class DatabaseManager {
 	    connectDatabase();
 	    int verified = 2;
         try {
-            Statement stmt = null;
-            stmt = this.c.createStatement();
+            Statement stmt = this.c.createStatement();
 
             ResultSet rs = stmt.executeQuery("select \"verified\" from \"user\" where id=" + account.getId() + ";");
             // insert result in ArrayList
