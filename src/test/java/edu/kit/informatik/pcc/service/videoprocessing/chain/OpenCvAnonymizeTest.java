@@ -1,29 +1,29 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain;
 
-import edu.kit.informatik.pcc.service.server.Main;
-import edu.kit.informatik.pcc.service.videoprocessing.chain.Anonymizer;
+import edu.kit.informatik.pcc.service.data.LocationConfig;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.logging.Logger;
 
 /**
+ * Test for the OpenCv anonymizer.
+ *
+ * @author Josh Romanowski
  * Created by Josh Romanowski on 18.01.2017.
  */
-public class AnonymizeTest {
+public class OpenCvAnonymizeTest {
 
-    private Anonymizer anonymizer;
+    private AAnonymizer anonymizer;
     private File input;
     private File output;
 
     @Before
     public void setUp() {
-        anonymizer = new Anonymizer();
-        input = new File(System.getProperty("user.dir") + "\\src\\test\\resources\\input.mp4");
-        output = new File(System.getProperty("user.dir") + "\\target\\output.avi");
+        anonymizer = new OpenCVAnonymizer();
+        input = new File(LocationConfig.TEST_RESOURCES_DIR + "\\input.mp4");
+        output = new File(LocationConfig.OUTPUT_DIR + "\\output.avi");
     }
 
     @Test
