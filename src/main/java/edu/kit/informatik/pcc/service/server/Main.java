@@ -26,6 +26,7 @@ public class Main{
     }
 
     private static boolean startServer() {
+
         if (!setupLogger() || !setupDirectories()) {
             System.out.println("Setup failed");
             return false;
@@ -40,6 +41,11 @@ public class Main{
         server = new Server(PORT);
         ServletContextHandler context = new ServletContextHandler(server, "/*");
         context.addServlet(servlet, "/*");
+
+        if (server.isStarted()) {
+            Logger.getGlobal().info("Server already started");
+            return true;
+        }
 
         try {
             server.start();
@@ -56,6 +62,12 @@ public class Main{
     }
 
     public static void stopServer() {
+
+        if (server.isStopped()) {
+            Logger.getGlobal().info("Server is already stopped");
+            return;
+        }
+
         Logger.getGlobal().info("Stopping Server");
 
         // shutdown video processing
