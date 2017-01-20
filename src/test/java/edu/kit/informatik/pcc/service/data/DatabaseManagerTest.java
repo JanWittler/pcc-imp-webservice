@@ -3,7 +3,7 @@ package edu.kit.informatik.pcc.service.data;
 import org.junit.*;
 
 /**
- * Created by david on 1/18/17.
+ * Created by David Laubenstein on 1/18/17.
  */
 public class DatabaseManagerTest {
     @BeforeClass
