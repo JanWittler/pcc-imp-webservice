@@ -1,7 +1,10 @@
 package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.service.data.Account;
+import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
+import edu.kit.informatik.pcc.service.data.VideoInfo;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,18 +16,23 @@ import javax.ws.rs.container.TimeoutHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
- * Created by Josh Romanowski on 18.01.2017.
+ * @author Josh Romanowski
  */
-public class VideoProcessingManagerTest {
+public class VideoProcessingChainTest {
 
-    private VideoProcessingManager manager;
+    private VideoProcessingChain chain;
+    private DatabaseManager databaseManager;
+
     private String responseString;
 
     private File vidFile;
@@ -42,11 +50,8 @@ public class VideoProcessingManagerTest {
     private Account account;
     private AsyncResponse response;
 
-    // setup
-
     @Before
     public void setUp() {
-        manager = VideoProcessingManager.getInstance();
         response = setupResponse();
 
         vidFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encVid.mp4");
@@ -55,54 +60,70 @@ public class VideoProcessingManagerTest {
 
         videoName = "testVideo";
         account = Mockito.mock(Account.class);
+
+        Mockito.when(account.getId()).thenReturn(-1);
+
+        databaseManager = new DatabaseManager(account);
+
+        setupStreams();
     }
 
-    // tests
+    @After
+    public void cleanUp() {
+        List<VideoInfo> videos = databaseManager.getVideoInfoList();
+        for (VideoInfo video : videos) {
+            databaseManager.deleteVideoAndMeta(video.getVideoId());
+        }
+
+        File testedVid = new File(LocationConfig.ANONYM_VID_DIR + "\\-1_testVideo.avi");
+        File testedMeta = new File(LocationConfig.META_DIR + "\\-1_testVideo_meta.txt");
+
+        if (testedVid.exists())
+            testedVid.delete();
+        if (testedMeta.exists())
+            testedMeta.delete();
+    }
 
     @Test
-    public void addInvalidTaskTest() throws InterruptedException {
+    public void emptyChainTest() {
+        testChainType(VideoProcessingChain.Chain.EMPTY, 1);
+    }
+
+    @Test
+    public void simpleChainTest() {
+        testChainType(VideoProcessingChain.Chain.SIMPLE, 5);
+    }
+
+    @Test
+    public void normalChainTest() {
+        testChainType(VideoProcessingChain.Chain.NORMAL, 120);
+    }
+
+    private void testChainType(VideoProcessingChain.Chain chainType, long timeout) {
         // test setup
         lock = new CountDownLatch(1);
+        try {
+            chain = new VideoProcessingChain(vidInput, metaInput, keyInput,
+                    account, videoName, response, chainType);
+        } catch (IOException e) {
+            Assert.fail();
+        }
 
         // test
-        manager.addTask(null, null, null, null, null, response, VideoProcessingChain.Chain.EMPTY);
+
+        chain.run();
 
         // check result
-        lock.await(2000, TimeUnit.MILLISECONDS);
-        Assert.assertEquals(responseString, "Not all inputs were given correctly");
-    }
+        try {
+            lock.await(timeout, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Logger.getGlobal().warning("Interrupted while waiting for response");
+        }
 
-    @Test
-    public void addValidTaskTest() throws InterruptedException {
-        //test setup
-        lock = new CountDownLatch(1);
-        Mockito.when(account.getId()).thenReturn(-1);
-        setupStreams();
-
-        // test
-        manager.addTask(vidInput, metaInput, keyInput, account, videoName, response, VideoProcessingChain.Chain.EMPTY);
-
-        // check result
-        lock.await(2000, TimeUnit.MILLISECONDS);
         Assert.assertEquals(responseString, "Finished editing video " + videoName);
     }
 
-    @Test
-    public void shutdownTest() throws InterruptedException {
-        // test setup
-        lock = new CountDownLatch(1);
-        setupStreams();
-
-        // test
-        manager.shutdown();
-        manager.addTask(vidInput, metaInput, keyInput, account, videoName, response, VideoProcessingChain.Chain.EMPTY);
-
-        // check result
-        lock.await(2000, TimeUnit.MILLISECONDS);
-        Assert.assertTrue(responseString.endsWith("Processing module is shut down."));
-    }
-
-    // helper methods
+    // helper functions
 
     private AsyncResponse setupResponse() {
         return new AsyncResponse() {
