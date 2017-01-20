@@ -22,6 +22,11 @@ public abstract class AAnonymizer implements IStage {
         return anonymize(context.getDecVid(), context.getAnonymizedVid());
     }
 
+    @Override
+    public String getName() {
+        return "Anonymizer";
+    }
+
     /**
      * Takes an input video file, analyzes it for personal content
      * and makes the personal content unrecognizable.

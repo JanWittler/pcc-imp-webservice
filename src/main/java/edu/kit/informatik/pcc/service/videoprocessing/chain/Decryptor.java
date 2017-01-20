@@ -46,6 +46,11 @@ public class Decryptor implements IStage {
                 context.getEncMetadata(), context.getDecVid(), context.getDecMetadata());
     }
 
+    @Override
+    public String getName() {
+        return "Decryptor";
+    }
+
     /**
      * Takes the encrypted key and decrypts it via the keyDecryptor.
      * After that the decrypted key is used to decrypt the video and the

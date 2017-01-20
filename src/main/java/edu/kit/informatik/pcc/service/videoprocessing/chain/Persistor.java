@@ -32,6 +32,11 @@ public class Persistor implements IStage {
                 , context.getAccount(), context.getVideoName());
     }
 
+    @Override
+    public String getName() {
+        return "Persistor";
+    }
+
     /**
      * Moves copies the files to their final destination after
      * adding the metadata to it.
