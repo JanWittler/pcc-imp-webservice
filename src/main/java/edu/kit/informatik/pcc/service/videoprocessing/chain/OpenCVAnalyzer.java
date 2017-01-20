@@ -1,22 +1,35 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain;
 
+import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.server.Main;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 
 /**
- * Created by Josh Romanowski on 18.01.2017.
+ * Class that analyzes a frame with the OpenCV
+ * framework and identifies all frontal faces.
+ *
+ * @author Josh Romanowski
  */
-public class ExampleAnalyzer implements IAnalyzer {
+public class OpenCVAnalyzer implements IAnalyzer {
 
+    // attributes
+
+    /**
+     * Classifier used to detect faces.
+     */
     private CascadeClassifier classifier;
 
-    public ExampleAnalyzer() {
-        classifier = new CascadeClassifier(System.getProperty("user.dir") + "\\src\\main\\resources\\haarcascade_frontalface_alt.xml");
+    // constructors
+
+    /**
+     * Loads the classifier.
+     */
+    public OpenCVAnalyzer() {
+        classifier = new CascadeClassifier(LocationConfig.RESOURCES_DIR + "\\haarcascade_frontalface_alt.xml");
         if (classifier.empty()) {
             Logger.getGlobal().severe("Classifier couldn't be loaded");
             Main.stopServer();
@@ -24,6 +37,8 @@ public class ExampleAnalyzer implements IAnalyzer {
             Logger.getGlobal().info("Successfully loaded classifier");
         }
     }
+
+    // methods
 
     public MatOfRect analyze(Mat frame) {
         MatOfRect detections = new MatOfRect();

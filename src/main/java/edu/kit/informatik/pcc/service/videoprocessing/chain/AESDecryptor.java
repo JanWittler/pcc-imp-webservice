@@ -10,9 +10,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
 /**
- * Created by Josh Romanowski on 18.01.2017.
+ * Class that takes an input file and decrypts it with
+ * an AES Secret key.
+ *
+ * @author Josh Romanowski
  */
-public class AESDecryptor implements IFileDecryptor{
+public class AESDecryptor implements IFileDecryptor {
+
+    // methods
 
     public boolean decrypt(File input, SecretKey key, File output) {
         if (input == null || key == null || output == null) {
@@ -20,6 +25,7 @@ public class AESDecryptor implements IFileDecryptor{
             return false;
         }
 
+        // open files
         FileInputStream encfis = null;
         FileOutputStream decfos = null;
 
@@ -31,7 +37,7 @@ public class AESDecryptor implements IFileDecryptor{
             return false;
         }
 
-
+        // create cipher
         Cipher decipher = null;
         try {
             decipher = Cipher.getInstance("AES");
@@ -43,6 +49,7 @@ public class AESDecryptor implements IFileDecryptor{
 
         CipherOutputStream cos = new CipherOutputStream(decfos, decipher);
 
+        // decrypt
         int read;
         byte[] buffer = new byte[1024];
 

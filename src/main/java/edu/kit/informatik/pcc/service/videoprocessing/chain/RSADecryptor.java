@@ -1,6 +1,6 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.server.Main;
 
 import javax.crypto.*;
@@ -15,45 +15,69 @@ import java.util.Base64;
 import java.util.logging.Logger;
 
 /**
- * Created by Josh Romanowski on 18.01.2017.
+ * Decrypts a SecretKey with it's private asymmetric Key.
+ * Therefore uses the RSA algorithm for decryption.
+ *
+ * @author Josh Romanowski
  */
 public class RSADecryptor implements IKeyDecryptor {
 
-    private static final String PRIVATE_KEY_FILE = System.getProperty("user.dir") + "\\src\\main\\resources\\private.key";
+    // attributes
+
+    /**
+     * Location of the private asymmetric key.
+     */
+    private static final String PRIVATE_KEY_FILE = LocationConfig.RESOURCES_DIR + "\\private.key";
+    /**
+     * Private asymmetric key.
+     */
     private PrivateKey privateKey;
 
+    // constructors
+
+    /**
+     * Loads the private asymmetric key.
+     */
     public RSADecryptor() {
-        ObjectInputStream inputStream = null;
+        ObjectInputStream inputStream;
         try {
             inputStream = new ObjectInputStream(new FileInputStream(PRIVATE_KEY_FILE));
             privateKey = (PrivateKey) inputStream.readObject();
         } catch (FileNotFoundException e) {
             Logger.getGlobal().severe("Private key file was missing");
             Main.stopServer();
-            return;
         } catch (ClassNotFoundException | IOException e) {
             Logger.getGlobal().severe("Reading the private key failed");
             Main.stopServer();
-            return;
         }
-        Logger.getGlobal().info("Successfully read private key");
     }
 
-    public SecretKey decrypt (File input) {
+    public SecretKey decrypt(File input) {
         if (input == null) {
-            Logger.getGlobal().warning("Empty key " + input.getName());
+            Logger.getGlobal().warning("Asymmetric key missing");
             return null;
         }
 
         byte[] cipherText = openCrypt(input);
         final String plainText = decryptData(cipherText);
+
+        if (plainText == null) {
+            return null;
+        }
+
         byte[] decodedKey = Base64.getDecoder().decode(plainText);
         Logger.getGlobal().info("Successfully decrypted key " + input.getName());
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
     }
 
-    private String decryptData (byte[] text) {
-        byte[] dectyptedText = null;
+    /**
+     * Decrypts the input data with the private RSA key.
+     *
+     * @param text Input data.
+     * @return Returns the decrypted text. Returns null if decrypting failed.
+     */
+    private String decryptData(byte[] text) {
+        byte[] dectyptedText;
         try {
             // get an RSA cipher object and print the provider
             final Cipher cipher = Cipher.getInstance("RSA");
@@ -71,6 +95,12 @@ public class RSADecryptor implements IKeyDecryptor {
         return new String(dectyptedText);
     }
 
+    /**
+     * Opens a crypt.
+     *
+     * @param file File location of the crypt.
+     * @return Returns the crypts data. Returns null if reading failed.
+     */
     private byte[] openCrypt(File file) {
         try {
             return Files.readAllBytes(Paths.get(file.getAbsolutePath()));

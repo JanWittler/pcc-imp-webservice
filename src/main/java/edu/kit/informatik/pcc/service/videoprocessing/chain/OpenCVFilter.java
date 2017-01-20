@@ -7,10 +7,13 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 /**
- * Created by Josh Romanowski on 18.01.2017.
+ * Uses an OpenCV blur filter to anonymize face detections.
+ *
+ * @author Josh Romanowski
  */
-public class ExampleFilter implements IFilter {
+public class OpenCVFilter implements IFilter {
 
+    //methods
 
     public Mat applyFilter(Mat frame, MatOfRect detections) {
         for (Rect rect : detections.toArray()) {

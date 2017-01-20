@@ -13,27 +13,45 @@ import java.io.File;
 import java.util.logging.Logger;
 
 /**
- * Created by Josh Romanowski on 18.01.2017.
+ * Implements the AAnonymizer interface.
+ * Takes a video file and divides it into frames.
+ * Then it analyzes each frames for faces and finally
+ * makes it unrecognizable.
+ *
+ * @author Josh Romanowski
  */
-public class Anonymizer extends AAnonymizer {
+public class OpenCVAnonymizer extends AAnonymizer {
 
+    // attributes
+
+    /**
+     * Analyzer that takes a frame and analyzes it for faces.
+     */
     private IAnalyzer analyzer;
+    /**
+     * Filter that makes a face recognition unrecognizable.
+     */
     private IFilter filter;
 
-    public Anonymizer() {
-        try
-        {
+    // constructors
+
+    /**
+     * Loads the OpenCV library and creates the filters
+     */
+    public OpenCVAnonymizer() {
+        try {
             System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
             System.loadLibrary("opencv_ffmpeg310_64");
-        }
-        catch (UnsatisfiedLinkError e) {
+        } catch (UnsatisfiedLinkError e) {
             Logger.getGlobal().severe("Loading OpenCV failed. Check project setup");
             Main.stopServer();
         }
 
-        analyzer = new ExampleAnalyzer();
-        filter = new ExampleFilter();
+        analyzer = new OpenCVAnalyzer();
+        filter = new OpenCVFilter();
     }
+
+    // methods
 
     public boolean anonymize(File input, File output) {
         if (input == null || output == null) {
