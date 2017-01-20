@@ -14,6 +14,8 @@ public class DatabaseManager {
 	private static final String PORT = "5432";
 	private static final String HOST = "localhost";
 	private static final String DB_NAME = "PrivacyCrashCam";
+	private static final String USER = "";
+	private static final String PASSWORD = "";
 	private Connection c = null;
 	// constructors
 
@@ -35,7 +37,7 @@ public class DatabaseManager {
 		try {
 			Class.forName("org.postgresql.Driver");
          	this.c = DriverManager
-            	.getConnection("jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME + "");
+            	.getConnection("jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME ,USER, PASSWORD);
       	} catch (Exception e) {
 			e.printStackTrace();
         	System.err.println(e.getClass().getName()+": "+e.getMessage());
@@ -57,7 +59,6 @@ public class DatabaseManager {
             // sql command
 			String sql = "insert into \"video\" (user_id,video_name,meta_name) values (" + account.getId() + ",'" + videoName + "','" + metaName + "');";
             stmt.executeUpdate(sql);
-            this.c.commit();
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
@@ -133,7 +134,6 @@ public class DatabaseManager {
             // sql command
             String sql = "DELETE from \"video\" where id=" + videoId + ";";
             stmt.executeUpdate(sql);
-            this.c.commit();
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
@@ -171,7 +171,6 @@ public class DatabaseManager {
             // sql command
             String sql = "UPDATE \"user\" set mail='" + newMail + "' where id=" + account.getId() + ";";
             stmt.executeUpdate(sql);
-            this.c.commit();
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
@@ -194,7 +193,6 @@ public class DatabaseManager {
             // sql command
             String sql = "UPDATE \"user\" set password='" + newPasswordHash + "' where id=" + account.getId() + ";";
             stmt.executeUpdate(sql);
-            this.c.commit();
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
@@ -244,7 +242,6 @@ public class DatabaseManager {
 			// sql command
             String sql = "delete from \"user\" where \"user\".\"id\"=" + account.getId();
 			stmt.executeUpdate(sql);
-			this.c.commit();
 			stmt.close();
 			this.c.close();
 		} catch (NullPointerException | SQLException e) {
@@ -268,7 +265,6 @@ public class DatabaseManager {
 			while ( rs.next() ) {
 			   accountId = Integer.parseInt(rs.getString("id"));
 			}
-			this.c.commit();
 			stmt.close();
 			this.c.close();
 		} catch (SQLException sqlException) {
@@ -291,7 +287,6 @@ public class DatabaseManager {
             // sql command
 			String sql = "insert into \"user\" (mail,password,uuid,verified) values ('" + account.getEmail() + "','" + account.getPasswordHash() + "'," + uuid + ",false);";
             stmt.executeUpdate(sql);
-            this.c.commit();
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {

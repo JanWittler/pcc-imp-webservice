@@ -68,6 +68,19 @@
             <version>1.9.5</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.schemacrawler/schemacrawler-postgresql -->
+        <dependency>
+            <groupId>net.sourceforge.schemacrawler</groupId>
+            <artifactId>schemacrawler-postgresql</artifactId>
+            <version>9.6</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
 
     </dependencies>
 
@@ -83,8 +96,6 @@
             </plugin>
         </plugins>
     </build>
-
-
 
 
 </project>

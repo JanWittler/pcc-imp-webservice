@@ -1,5 +1,9 @@
 package edu.kit.informatik.pcc.service.data;
 
+import org.json.JSONObject;
+
+import java.sql.ResultSet;
+
 /**
  * @author Fabian Wenzel and David Laubenstein
  * Created by David Laubenstein at 17.01.2017
@@ -17,18 +21,24 @@ public class Account {
 	 */
 	public Account(String json) {
 	    // convert json String to class attributes
-		//TODO: write constructor
+        // create JSON Object
+		JSONObject obj = new JSONObject(json);
+		// go into accountData object
+		JSONObject accountData = obj.getJSONObject("accountData");
+		// save Strings in accountData object to class attributes
+		this.email = accountData.getString("mail");
+		this.passwordHash = hashPassword(accountData.getString("password"));
 	}
-	// methods
 
+	// methods
 	/**
 	 * hashes a password with a function
 	 * @param password password in plain text
 	 * @return: hashed password
 	 */
 	public String hashPassword(String password) {
-	    // TODO create Method
-        return "";
+	    //TODO: hashPassword
+        return password;
 	}
 	// getter/setter
 	public int getId() {
