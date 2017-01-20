@@ -4,20 +4,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-public class DatabaseManager { //TODO: LOGGER
+public class DatabaseManager {
 	// attributes
 	private Account account;
-	private static String PORT = "5432";
-	private static String HOST = "localhost";
-	private static String DB_NAME = "PrivacyCrashCam";
+	private static final String PORT = "5432";
+	private static final String HOST = "localhost";
+	private static final String DB_NAME = "PrivacyCrashCam";
 	private Connection c = null;
 	// constructors
-	public void DatabaseManager(Account account) {
+	public DatabaseManager(Account account) {
 	    // create access to account
 	    this.account = account;
 	}
 	// methods
-	public void connectDatabase() {
+	private void connectDatabase() {
 		c = null;
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -34,31 +34,24 @@ public class DatabaseManager { //TODO: LOGGER
         connectDatabase();
 		// send sql command and catch possible exeptions
         try {
-            Statement stmt = null;
-            stmt = this.c.createStatement();
+            Statement stmt = this.c.createStatement();
             // sql command
-			//TODO: change id in sql command
 			String sql = "insert into \"video\" (user_id,video_name,meta_name) values (" + account.getId() + ",'" + videoName + "','" + metaName + "');";
             stmt.executeUpdate(sql);
             this.c.commit();
             stmt.close();
             this.c.close();
-        } catch (NullPointerException nPE) {
-        	Logger.getGlobal().severe("saveProcessedVideoAndMeta " + nPE);
-        } catch (SQLException sqlException) {
-            Logger.getGlobal().severe("saveProcessedVideoAndMeta " + sqlException);
+        } catch (NullPointerException | SQLException e) {
+        	Logger.getGlobal().severe("saveProcessedVideoAndMeta " + e);
         }
 		return true;
 	}
 
 	public VideoInfo getVideoInfo(int videoId) {
-        //TODO: write method
-
         VideoInfo vI = null;
 		// execute sql command and insert result in ArrayList
 		try {
-			Statement stmt = null;
-			stmt = this.c.createStatement();
+			Statement stmt = this.c.createStatement();
 			ResultSet rs = stmt.executeQuery( "select \"video_name\",vid.\"id\" from \"video\" as vid  join \"user\" as usr ON vid.user_id=usr.id where usr.id='" + account.getId() + "' AND vid.\"id\"=" + videoId);
 			// insert result in ArrayList
 			while ( rs.next() ) {
@@ -69,10 +62,8 @@ public class DatabaseManager { //TODO: LOGGER
 			rs.close();
 			stmt.close();
 			this.c.close();
-		} catch (NullPointerException nPE) {
-			Logger.getGlobal().severe("getVideoInfoList " + nPE);
-		} catch (SQLException sqlException) {
-			Logger.getGlobal().severe("getVideoInfoList " + sqlException);
+		} catch (NullPointerException | SQLException e) {
+			Logger.getGlobal().severe("getVideoInfoList " + e);
 		}
 		return vI;
 	}
@@ -83,13 +74,12 @@ public class DatabaseManager { //TODO: LOGGER
 	 */
 	public ArrayList<VideoInfo> getVideoInfoList() {
 		// create ArrayList
-		ArrayList<VideoInfo> videoInfoList= new ArrayList<VideoInfo>();
+		ArrayList<VideoInfo> videoInfoList= new ArrayList<>();
 	    // connect to database
 	    connectDatabase();
 	    // execute sql command and insert result in ArrayList
 	    try {
-			Statement stmt = null;
-			stmt = this.c.createStatement();
+			Statement stmt = this.c.createStatement();
 			ResultSet rs = stmt.executeQuery( "select \"video_name\",vid.\"id\" from \"video\" as vid  join \"user\" as usr ON vid.user_id=usr.id where usr.id='" + account.getId() + "'" );
 			// insert result in ArrayList
 			while ( rs.next() ) {
@@ -101,10 +91,8 @@ public class DatabaseManager { //TODO: LOGGER
 			rs.close();
 			stmt.close();
 			this.c.close();
-		} catch (NullPointerException nPE) {
-	        Logger.getGlobal().severe("getVideoInfoList " + nPE);
-		} catch (SQLException sqlException) {
-			Logger.getGlobal().severe("getVideoInfoList " + sqlException);
+		} catch (NullPointerException | SQLException e) {
+	        Logger.getGlobal().severe("getVideoInfoList " + e);
 		}
 		return videoInfoList;
 	}
@@ -117,18 +105,15 @@ public class DatabaseManager { //TODO: LOGGER
 	public boolean deleteVideoAndMeta(int videoId) {
 	    connectDatabase();
 	    try {
-            Statement stmt = null;
-            stmt = this.c.createStatement();
+            Statement stmt = this.c.createStatement();
             // sql command
             String sql = "DELETE from \"video\" where id=" + videoId + ";";
             stmt.executeUpdate(sql);
             this.c.commit();
             stmt.close();
             this.c.close();
-        } catch (NullPointerException nPE) {
-	        Logger.getGlobal().severe("deleteVideoAndMeta " + nPE);
-        } catch (SQLException sqlException) {
-			Logger.getGlobal().severe("deleteVideoAndMeta " + sqlException);
+        } catch (NullPointerException | SQLException e) {
+	        Logger.getGlobal().severe("deleteVideoAndMeta " + e);
         }
 		return false;
 	}
@@ -158,20 +143,17 @@ public class DatabaseManager { //TODO: LOGGER
         connectDatabase();
         // send sql command and catch possible exeptions
         try {
-            Statement stmt = null;
-            stmt = this.c.createStatement();
+            Statement stmt = this.c.createStatement();
             // sql command
             String sql = "UPDATE \"user\" set mail='" + newMail + "' where id=" + account.getId() + ";";
             stmt.executeUpdate(sql);
             this.c.commit();
             stmt.close();
             this.c.close();
-        } catch (NullPointerException nPE) {
-            Logger.getGlobal().severe("setMail " + nPE);
-        } catch (SQLException sqlException) {
-        	Logger.getGlobal().severe("setMail " + sqlException);
+        } catch (NullPointerException | SQLException e) {
+            Logger.getGlobal().severe("setMail " + e);
         }
-        return true;
+		return true;
 	}
 
 	/**
@@ -184,19 +166,15 @@ public class DatabaseManager { //TODO: LOGGER
         connectDatabase();
         // send sql command and catch possible exeptions
         try {
-            Statement stmt = null;
-            stmt = this.c.createStatement();
-            stmt = c.createStatement();
+            Statement stmt = this.c.createStatement();
             // sql command
             String sql = "UPDATE \"user\" set password='" + newPasswordHash + "' where id=" + account.getId() + ";";
             stmt.executeUpdate(sql);
             this.c.commit();
             stmt.close();
             this.c.close();
-        } catch (NullPointerException nPE) {
-            Logger.getGlobal().severe("setPassword " + nPE);
-        } catch (SQLException sqlException) {
-            Logger.getGlobal().severe("setPassword " + sqlException);
+        } catch (NullPointerException | SQLException e) {
+            Logger.getGlobal().severe("setPassword " + e);
         }
 		return false;
 	}
@@ -212,8 +190,7 @@ public class DatabaseManager { //TODO: LOGGER
 	    connectDatabase();
 	    // execute sql command and insert result in ArrayList
 	    try {
-			Statement stmt = null;
-			stmt = this.c.createStatement();
+			Statement stmt = this.c.createStatement();
 
 			ResultSet rs = stmt.executeQuery( "select \"mail\",\"password\" from \"user\" where id='" + account.getId() + "'" );
 			// insert result in ArrayList
@@ -224,10 +201,8 @@ public class DatabaseManager { //TODO: LOGGER
 			rs.close();
 			stmt.close();
 			this.c.close();
-		} catch (NullPointerException nPE) {
-	        Logger.getGlobal().severe("authenticate " + nPE);
-		} catch (SQLException sqlException) {
-	        Logger.getGlobal().severe("authenticate " + sqlException);
+		} catch (NullPointerException | SQLException e) {
+	        Logger.getGlobal().severe("authenticate " + e);
 		}
 		//return boolean, if password and mail are equal to database data
 		return mail.equals(account.getEmail()) && passwordHash.equals(account.getPasswordHash());
@@ -241,18 +216,15 @@ public class DatabaseManager { //TODO: LOGGER
 	public boolean deleteAccount() {
 		connectDatabase();
 		try {
-			Statement stmt = null;
-			stmt = this.c.createStatement();
+			Statement stmt = this.c.createStatement();
 			// sql command
             String sql = "delete from \"user\" where \"user\".\"id\"=" + account.getId();
 			stmt.executeUpdate(sql);
 			this.c.commit();
 			stmt.close();
 			this.c.close();
-		} catch (NullPointerException nPE) {
-		    Logger.getGlobal().severe("deleteAccount " + nPE);
-		} catch (SQLException sqlException) {
-		    Logger.getGlobal().severe("deleteAccount " + sqlException);
+		} catch (NullPointerException | SQLException e) {
+		    Logger.getGlobal().severe("deleteAccount " + e);
 		}
 		return true;
 	}
@@ -265,9 +237,7 @@ public class DatabaseManager { //TODO: LOGGER
 	    int accountId = -2;
 	    connectDatabase();
 		try {
-			Statement stmt = null;
-			stmt = this.c.createStatement();
-			stmt = c.createStatement();
+			Statement stmt = this.c.createStatement();
 			ResultSet rs = stmt.executeQuery( "select \"id\" from \"user\" where \"user\".\"mail\"=" + account
 					.getEmail());
 			// insert result in ArrayList
@@ -278,7 +248,7 @@ public class DatabaseManager { //TODO: LOGGER
 			stmt.close();
 			this.c.close();
 		} catch (SQLException sqlException) {
-			System.out.println(sqlException);
+		    Logger.getGlobal().severe("getAccountId " + sqlException);
 			return -1;
 		}
 		return accountId;
@@ -291,23 +261,17 @@ public class DatabaseManager { //TODO: LOGGER
 	 */
 	public boolean register(String uuid) {
 		connectDatabase();
-		//TODO: check, if mail is already existing. If not, create Account
 		// send sql command and catch possible exeptions
         try {
-            Statement stmt = null;
-            stmt = this.c.createStatement();
+            Statement stmt = this.c.createStatement();
             // sql command
-            //TODO: change id
 			String sql = "insert into \"user\" (mail,password,uuid,verified) values ('" + account.getEmail() + "','" + account.getPasswordHash() + "'," + uuid + ",false);";
             stmt.executeUpdate(sql);
             this.c.commit();
             stmt.close();
             this.c.close();
-        } catch (NullPointerException nPE) {
-            Logger.getGlobal().severe("register " + nPE);
-            return false;
-        } catch (SQLException sqlException) {
-            Logger.getGlobal().severe("register " + sqlException);
+        } catch (NullPointerException | SQLException e) {
+            Logger.getGlobal().severe("register " + e);
             return false;
         }
 		return true;
@@ -325,40 +289,34 @@ public class DatabaseManager { //TODO: LOGGER
 		// get uuid from account
         String uuidDatabase = "";
 		try {
-			Statement stmt = null;
-			stmt = this.c.createStatement();
+			Statement stmt = this.c.createStatement();
 
 			ResultSet rs = stmt.executeQuery( "select \"uuid\" from \"user\" as usr  where usr.id='" + account.getId() + "'" );
 			// insert result in ArrayList
 			uuidDatabase= rs.getString("uuid");
 			rs.close();
 			stmt.close();
-		} catch (NullPointerException nPE) {
-		    Logger.getGlobal().severe("verifyAccount " + nPE);
-		} catch (SQLException sqlException) {
-		    Logger.getGlobal().severe("verifyAccount " + sqlException);
+		} catch (NullPointerException | SQLException e) {
+		    Logger.getGlobal().severe("verifyAccount " + e);
 		}
 		if (uuidDatabase.equals(uuid)) {
             try {
-                Statement stmt = null;
-                stmt = this.c.createStatement();
+                Statement stmt = this.c.createStatement();
 
                 stmt.executeQuery("update \"user\" set verified=TRUE where id=" + account.getId() + ";");
                 stmt.close();
                 this.c.close();
-            } catch (NullPointerException nPE) {
-                System.out.println(nPE);
-            } catch (SQLException sqlException) {
-                System.out.println(sqlException);
+            } catch (NullPointerException | SQLException e) {
+                Logger.getGlobal().severe("verifyAccount " + e);
             }
-            return true;
+			return true;
 		} else {
 		    Logger.getGlobal().severe("verifyAccount: uuid not like uuid in database");
             // close c, because when if=true, c is needed
             try {
                 this.c.close();
             } catch (SQLException sqlE) {
-                System.out.println(sqlE);
+                Logger.getGlobal().severe("verifyAccount " + sqlE);
             }
             return false;
         }
@@ -384,10 +342,8 @@ public class DatabaseManager { //TODO: LOGGER
             rs.close();
             stmt.close();
             this.c.close();
-        } catch (NullPointerException nPE) {
-            Logger.getGlobal().severe("isVerified: " + nPE);
-        } catch (SQLException sqlException) {
-            Logger.getGlobal().severe("isVerified " + sqlException);
+        } catch (NullPointerException | SQLException e) {
+            Logger.getGlobal().severe("isVerified: " + e);
         }
         if(verified == 0) {
             return false;
@@ -411,8 +367,7 @@ public class DatabaseManager { //TODO: LOGGER
 	    connectDatabase();
         String meta = "";
 	    try {
-			Statement stmt = null;
-			stmt = this.c.createStatement();
+			Statement stmt = this.c.createStatement();
 
 			ResultSet rs = stmt.executeQuery("select \"meta_name \" from \"video \" as vid where vid.id=" + videoId + ";");
 			// insert result in ArrayList
@@ -422,11 +377,9 @@ public class DatabaseManager { //TODO: LOGGER
 			rs.close();
 			stmt.close();
 			this.c.close();
-		} catch (NullPointerException nPE) {
-			System.out.println(nPE);
-		} catch (SQLException sqlException) {
-			System.out.println(sqlException);
-        }
+		} catch (NullPointerException | SQLException e) {
+	        Logger.getGlobal().severe("getMetaNameByVideoId " + e);
+		}
 		return meta;
     }
 }
