@@ -32,10 +32,6 @@ public class VideoProcessingManager {
     private static VideoProcessingManager instance;
 
     /**
-     * Queue that holds the tasks that are not yet executed.
-     */
-    private BlockingQueue<Runnable> queue;
-    /**
      * Executor that controls the execution of the tasks.
      */
     private ExecutorService executor;
@@ -47,14 +43,27 @@ public class VideoProcessingManager {
      * and a task is being inserted.
      */
     private VideoProcessingManager() {
-        queue = new LinkedBlockingDeque<Runnable>(QUEUE_SIZE);
+        /*
+      Queue that holds the tasks that are not yet executed.
+     */
+        BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>(QUEUE_SIZE);
         executor = new ThreadPoolExecutor(POOL_SIZE, POOL_SIZE, 30,
                 TimeUnit.SECONDS, queue, new RejectedExecutionHandler() {
             @Override
             public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
                 VideoProcessingChain chain = (VideoProcessingChain) r;
                 chain.cleanUp();
-                chain.getResponse().resume("Processing queue is full. Processing aborted");
+
+                String errorMessage = "Inserting video " + chain.getVideoName()
+                        + " in queue failed. ";
+                if (executor.isShutdown()) {
+                    errorMessage += "Processing module is shut down.";
+                } else {
+                    errorMessage += "Queue is full.";
+                }
+
+                Logger.getGlobal().warning(errorMessage);
+                chain.getResponse().resume(errorMessage);
             }
         });
     }
@@ -65,7 +74,7 @@ public class VideoProcessingManager {
      * @return Returns the singleton instance.
      */
     public static VideoProcessingManager getInstance() {
-        return (instance == null) ? new VideoProcessingManager() : instance;
+        return (instance == null) ? instance = new VideoProcessingManager() : instance;
     }
 
     // methods
@@ -83,14 +92,42 @@ public class VideoProcessingManager {
      */
     public void addTask(InputStream video, InputStream metadata, InputStream key,
                         Account account, String videoName, AsyncResponse response) {
-        VideoProcessingChain chain = null;
+        addTask(video, metadata, key, account, videoName, response, VideoProcessingChain.Chain.SIMPLE);
+    }
+
+    /**
+     * TODO: javadoc
+     *
+     * @param video
+     * @param metadata
+     * @param key
+     * @param account
+     * @param videoName
+     * @param response
+     * @param chainType
+     */
+    protected void addTask(InputStream video, InputStream metadata, InputStream key,
+                           Account account, String videoName, AsyncResponse response, VideoProcessingChain.Chain chainType) {
+        if (response == null) {
+            Logger.getGlobal().warning("No response given.");
+        }
+
+        if (video == null || metadata == null || key == null
+                || account == null || videoName == null) {
+            Logger.getGlobal().warning("Not all inputs were given correctly");
+            response.resume("Not all inputs were given correctly");
+            return;
+        }
+
+        VideoProcessingChain chain;
 
         try {
-            chain = new VideoProcessingChain(video, metadata, key, account, videoName, response);
+            chain = new VideoProcessingChain(video, metadata, key, account, videoName, response, chainType);
         } catch (IOException e) {
             Logger.getGlobal().warning("Setting up for editing video "
                     + videoName + " of user " + account.getId() + " failed. Processing aborted");
             response.resume("Setting up for editing video " + videoName + " failed. Processing aborted");
+            return;
         }
 
         executor.execute(chain);
@@ -101,10 +138,12 @@ public class VideoProcessingManager {
      */
     public void shutdown() {
         try {
+            executor.shutdown();
             executor.awaitTermination(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            Logger.getGlobal().info("Got interruped while waiting for shutdown");
+            Logger.getGlobal().info("Got interrupted while waiting for shutdown");
         }
-        executor.shutdown();
+        instance = null;
+        Logger.getGlobal().info("Video processing manager stopped");
     }
 }

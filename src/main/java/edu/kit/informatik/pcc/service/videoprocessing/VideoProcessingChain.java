@@ -22,6 +22,7 @@ public class VideoProcessingChain implements Runnable {
     private AsyncResponse response;
     private LinkedList<IStage> stages;
     private EditingContext context;
+    private String videoName;
 
     // constructors
 
@@ -38,6 +39,7 @@ public class VideoProcessingChain implements Runnable {
 
         // save response
         this.response = response;
+        this.videoName = videoName;
 
         // create context
         context = new EditingContext(account, videoName);
@@ -81,6 +83,10 @@ public class VideoProcessingChain implements Runnable {
 
     public AsyncResponse getResponse() {
         return response;
+    }
+
+    public String getVideoName() {
+        return videoName;
     }
 
     // helper methods

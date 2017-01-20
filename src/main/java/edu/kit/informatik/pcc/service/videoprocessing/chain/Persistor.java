@@ -27,7 +27,7 @@ public class Persistor implements IStage {
 
     @Override
     public boolean execute(EditingContext context) {
-        databaseManager = new DatabaseManager();
+        databaseManager = new DatabaseManager(context.getAccount());
         return persist(context.getAnonymizedVid(), context.getDecMetadata()
                 , context.getAccount(), context.getVideoName());
     }
@@ -67,7 +67,7 @@ public class Persistor implements IStage {
 
 
             //Add database entry.
-            databaseManager.saveProcessecVideoAndMeta(videoName, videoName + "meta");
+            databaseManager.saveProcessedVideoAndMeta(videoName, videoName + "_" + "meta");
         } catch (IOException e) {
             Logger.getGlobal().warning("Persisting video " + videoName + " failed");
             return false;
