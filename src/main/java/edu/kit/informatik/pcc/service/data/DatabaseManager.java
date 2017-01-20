@@ -97,7 +97,6 @@ public class DatabaseManager { //TODO: LOGGER
         } catch (SQLException sqlException) {
             System.out.println(sqlException);
         }
-        //TODO: check, if video is deleted
 		return false;
 	}
 	public Metadata getMetaData(int videoId){
