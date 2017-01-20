@@ -1,6 +1,7 @@
 package edu.kit.informatik.pcc.service.server;
 
 import edu.kit.informatik.pcc.service.data.LocationConfig;
+import edu.kit.informatik.pcc.service.videoprocessing.VideoProcessingManager;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -56,7 +57,12 @@ public class Main{
 
     public static void stopServer() {
         Logger.getGlobal().info("Stopping Server");
+
+        // shutdown video processing
+        VideoProcessingManager.getInstance().shutdown();
+
         try {
+            // shutdown server
             server.stop();
         } catch (Exception e) {
             Logger.getGlobal().warning("Stopping the server failed.");
