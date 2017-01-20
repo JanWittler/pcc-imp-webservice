@@ -46,7 +46,6 @@ public class DatabaseManager { //TODO: LOGGER
         } catch (SQLException sqlException) {
             System.out.println(sqlException);
         }
-		//TODO: check, if insert was successful??? or do I have to test this in TestCases?
 		return true;
 	}
 	public VideoInfo getVideoInfo(int videoId) {
@@ -207,11 +206,12 @@ public class DatabaseManager { //TODO: LOGGER
             this.c.close();
         } catch (NullPointerException nPE) {
             System.out.println(nPE);
+            return false;
         } catch (SQLException sqlException) {
             System.out.println(sqlException);
+            return false;
         }
-		//TODO: check, if insert was successful??? or do I have to test this in TestCases?
-		return false;
+		return true;
 	}
 	public String verifyAccount(String uuid) {
 	    String ret = "";
