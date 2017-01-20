@@ -87,6 +87,8 @@ public class OpenCVAnonymizer extends AAnonymizer {
             }
             videoWriter.write(frame);
         }
+        capture.release();
+        videoWriter.release();
         Logger.getGlobal().info("Finished anonymizing video " + input.getName());
         return true;
     }
