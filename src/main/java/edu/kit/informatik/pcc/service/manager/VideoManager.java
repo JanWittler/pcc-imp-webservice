@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import javax.ws.rs.container.AsyncResponse;
 
 /**
- * @author Fabian Wenzel
+ * @author Fabian Wenzel and David Laubenstein
+ * Created by David Laubenstein on 01/18/2017
  */
 public class VideoManager {
 	// attributes
@@ -19,7 +20,7 @@ public class VideoManager {
 
 	// constructor
 	public VideoManager(Account account) {
-	    dbms = new DatabaseManager();
+	    dbms = new DatabaseManager(account);
 	    this.account = account;
 	}
 	// methods

@@ -4,7 +4,8 @@ import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
 
 /**
- * @author Fabian Wenzel
+ * @author David Laubenstein
+ * Created by David Laubenstein on 01/18/2017
  */
 public class AccountManager {
 	// attributes
@@ -13,7 +14,7 @@ public class AccountManager {
 
 	// constructor
 	public AccountManager(Account account) {
-		dbms = new DatabaseManager();
+		dbms = new DatabaseManager(account);
 		this.account = account;
 	}
 
