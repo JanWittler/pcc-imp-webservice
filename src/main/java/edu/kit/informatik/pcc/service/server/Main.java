@@ -1,5 +1,6 @@
 package edu.kit.informatik.pcc.service.server;
 
+import edu.kit.informatik.pcc.service.data.LocationConfig;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -7,6 +8,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.*;
 
@@ -19,14 +21,15 @@ public class Main{
     private static Logger LOGGER;
 
     public static void main(String[] args ) {
-        if (!setupLogger() || !setupDirectories()) {
-            System.out.println("Setup failed");
-            return;
-        }
         startServer();
     }
 
     private static boolean startServer() {
+        if (!setupLogger() || !setupDirectories()) {
+            System.out.println("Setup failed");
+            return false;
+        }
+
         Logger.getGlobal().info("starting Server");
         ResourceConfig config = new ResourceConfig();
         config.packages("edu.kit.informatik.pcc.service.server"); //where to search for rest requests
@@ -41,10 +44,9 @@ public class Main{
             server.start();
             server.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Logger.getGlobal().warning("Server was interrupted during execution");
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         } finally {
             server.destroy();
@@ -57,13 +59,13 @@ public class Main{
         try {
             server.stop();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getGlobal().warning("Stopping the server failed.");
         }
     }
 
     public static void restartServer() {
+        Logger.getGlobal().info("Restarting server");
         stopServer();
-        //wait
         startServer();
     }
 
@@ -88,7 +90,28 @@ public class Main{
     }
 
     private static boolean setupDirectories() {
+        boolean ret = true;
 
-        return false;
+        File vidDir = new File(LocationConfig.ANONYM_VID_DIR);
+        File metaDir = new File(LocationConfig.META_DIR);
+        File tempDir = new File(LocationConfig.TEMP_DIR);
+
+        if (!vidDir.exists()) {
+            ret &= vidDir.mkdir();
+        }
+        if (!metaDir.exists()) {
+            ret &= metaDir.mkdir();
+        }
+        if (!tempDir.exists()) {
+            ret &= tempDir.mkdir();
+        } else {
+            //delete all temp files
+            File[] tempFiles = tempDir.listFiles();
+            for (File file : tempFiles) {
+                ret &= file.delete();
+            }
+        }
+        Logger.getGlobal().info("Setup directories");
+        return ret;
     }
 }
