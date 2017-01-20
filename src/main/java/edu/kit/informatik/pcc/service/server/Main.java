@@ -6,13 +6,14 @@ import java.util.logging.*;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 public class Main{
 	private static Server server;
 	private static final int PORT = 2222;
-	public static Logger LOGGER;
+	private static Logger LOGGER;
 	public static void main( String[] args ) {
 		setupLogger();
 		setupDirectories();
@@ -20,10 +21,11 @@ public class Main{
 	}
 	private static boolean startServer() {
 		ResourceConfig config = new ResourceConfig();
-		config.packages("edu.kit.informatik.pcc.service.server");
-		ServletHolder servlet = new ServletHolder(new ServletContainer(config));
+		config.packages("edu.kit.informatik.pcc.service.server"); //where to search for rest requests
+		config.register(MultiPartFeature.class); //register feature for file upload (multipartfeature)
+		ServletHolder servlet = new ServletHolder(new ServletContainer(config)); // add the config to the servletholder
 
-		server = new Server(2222);
+		server = new Server(PORT);
 		ServletContextHandler context = new ServletContextHandler(server, "/*");
 		context.addServlet(servlet, "/*");
 

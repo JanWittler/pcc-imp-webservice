@@ -4,6 +4,7 @@
 # User-specific stuff:
 .idea/workspace.xml
 .idea/tasks.xml
+.idea/.name
 
 # Mac User
 .DS_Store
@@ -43,5 +44,10 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+#log stuff
+log.txt
+log.txt.lck
+
 
 /target
