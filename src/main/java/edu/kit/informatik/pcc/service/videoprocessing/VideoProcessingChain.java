@@ -2,6 +2,7 @@ package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.videoprocessing.chain.Decryptor;
+import edu.kit.informatik.pcc.service.videoprocessing.chain.FileForwarder;
 import edu.kit.informatik.pcc.service.videoprocessing.chain.OpenCVAnonymizer;
 import edu.kit.informatik.pcc.service.videoprocessing.chain.Persistor;
 
@@ -25,13 +26,6 @@ public class VideoProcessingChain implements Runnable {
     private String videoName;
 
     // constructors
-
-    public VideoProcessingChain(InputStream video, InputStream metadata,
-                                InputStream key, Account account, String videoName, AsyncResponse response)
-            throws IOException {
-
-        this(video, metadata, key, account, videoName, response, Chain.SIMPLE);
-    }
 
     protected VideoProcessingChain(InputStream video, InputStream metadata,
                                    InputStream key, Account account, String videoName, AsyncResponse response, Chain chain)
@@ -63,6 +57,7 @@ public class VideoProcessingChain implements Runnable {
         for (IStage stage : stages) {
             if (!stage.execute(context)) {
                 Logger.getGlobal().warning("Stage " + stage.getName() + " failed");
+                cleanUp();
                 return;
             }
         }
@@ -97,6 +92,7 @@ public class VideoProcessingChain implements Runnable {
                 break;
             case SIMPLE:
                 stages.add(new Decryptor());
+                stages.add(new FileForwarder());
                 stages.add(new Persistor());
                 break;
             case NORMAL:
@@ -116,7 +112,7 @@ public class VideoProcessingChain implements Runnable {
 
         //create output files
         FileOutputStream videoOut = new FileOutputStream(context.getEncVid());
-        FileOutputStream metaOut = new FileOutputStream(context.getEncVid());
+        FileOutputStream metaOut = new FileOutputStream(context.getEncMetadata());
         FileOutputStream keyOut = new FileOutputStream(context.getEncKey());
 
         //save files
