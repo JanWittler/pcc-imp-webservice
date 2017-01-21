@@ -29,7 +29,7 @@ public class ServerProxy {
     @POST
     @Path("videoUpload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-	public String videoUpload (@FormDataParam("video") InputStream video, @FormDataParam("metadata") InputStream metadata, @FormDataParam("key") String encryptedSymmetricKey, @FormDataParam("data") String accountData, @FormDataParam("videoName") String videoName, @Suspended AsyncResponse response) {
+	public String videoUpload (@FormDataParam("video") InputStream video, @FormDataParam("metadata") InputStream metadata, @FormDataParam("key") InputStream encryptedSymmetricKey, @FormDataParam("data") String accountData, @FormDataParam("videoName") String videoName, @Suspended AsyncResponse response) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
 			return videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
@@ -39,9 +39,14 @@ public class ServerProxy {
 
 	@POST
     @Path("videoDownload")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response videoDownload (@FormParam("id") int videoId, @FormParam("data") String accountData) {
 		setUpForRequest(accountData);
 		String accountStatus = setUpForRequest(accountData);
+		if (accountStatus == null) {
+			//TODO: Problem on accountStatus needs to be checked?
+			return null;
+		}
 		Response.ResponseBuilder response = null;
 		if (accountStatus.equals("SUCCESS")) {
 			File video = videoManager.download(videoId);
@@ -62,6 +67,7 @@ public class ServerProxy {
 
     @POST
     @Path("videoInfo")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String videoInfo (@FormParam("id") int videoId, @FormParam("data") String accountData) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
@@ -72,7 +78,9 @@ public class ServerProxy {
 
     @POST
     @Path("videoDelete")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String videoDelete (@FormParam("id") int videoId, @FormParam("data") String accountData) {
+
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
 			return videoManager.videoDelete(videoId);
@@ -82,6 +90,7 @@ public class ServerProxy {
 
     @POST
     @Path("getVideosByAccount")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String getVideosByAccount (@FormParam("data") String accountData) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
@@ -99,13 +108,14 @@ public class ServerProxy {
 
     @POST
     @Path("authenticate")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String authenticateAccount (@FormParam("data") String accountData) {
 		return setUpForRequest(accountData);
 	}
 
     @POST
     @Path("createAccount")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String createAccount (@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("NO ACCOUNTID")) {
@@ -116,7 +126,7 @@ public class ServerProxy {
 
     @POST
     @Path("changeAccount")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String changeAccount (@FormParam("newData") String accountDataNew, @FormParam("data") String accountData) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
@@ -133,7 +143,7 @@ public class ServerProxy {
 
     @POST
     @Path("deleteAccount")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String deleteAccount (@FormParam("data") String accountData) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
@@ -142,7 +152,7 @@ public class ServerProxy {
 				for (VideoInfo videoInfo: videoInfoList){
 					String status = videoManager.videoDelete(videoInfo.getVideoId());
 					if (status.equals("FAILURE")){
-						//exception handling
+						//TODO: handle failure of videoDelete? how?
 					}
 				}
 			}
@@ -153,7 +163,7 @@ public class ServerProxy {
 
     @POST
     @Path("verfiyAccount")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String verifyAccount (@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
@@ -169,7 +179,7 @@ public class ServerProxy {
 		accountManager = new AccountManager(account);
 
 		//authentication process
-		int accountId = account.getId();
+		int accountId = accountManager.getAccountId();
 		if (accountId == -1) {
 			return "NO ACCOUNTID";
 		}

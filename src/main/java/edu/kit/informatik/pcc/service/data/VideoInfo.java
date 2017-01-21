@@ -1,15 +1,15 @@
 package edu.kit.informatik.pcc.service.data;
 
 /**
- * @author David Laubenstein
+ * @author David Laubenstein, Fabian Wenzel
  * Created by David Laubenstein on 01/18/2017
  */
 public class VideoInfo {
 	// attributes
 	private int videoId;
 	private String videoName;
-	// constructors
 
+	// constructors
 	/**
 	 * constructor
 	 * @param videoId the id of the video
@@ -19,8 +19,8 @@ public class VideoInfo {
 		this.videoId = videoId;
 		this.videoName = videoName;
 	}
-	// methods
 
+	// methods
 	/**
 	 * return VideoInfo-Object as json String
 	 * @return json String of videoInfo object
@@ -29,13 +29,11 @@ public class VideoInfo {
 		//TODO: write method
 		return "";
 	}
-	// getter/setter
 
+	// getter/setter
 	public String getName() {
-		//TODO: write method
 		return videoName;
 	}
-
 	public int getVideoId() {
 		return videoId;
 	}

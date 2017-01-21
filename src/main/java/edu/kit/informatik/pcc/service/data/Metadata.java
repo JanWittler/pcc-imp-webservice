@@ -1,7 +1,7 @@
 package edu.kit.informatik.pcc.service.data;
 
 /**
- * @author David Laubenstein
+ * @author David Laubenstein, Fabian Wenzel
  * Created by David Laubenstein on 01/18/2017
  */
 public class Metadata {
@@ -10,8 +10,8 @@ public class Metadata {
 	private String date;
 	private String triggerType;
 	private float[] gForce;
-	// constructors
 
+	// constructors
 	/**
 	 * constructor
 	 * @param metaName name of Metadata file
@@ -23,10 +23,24 @@ public class Metadata {
 		//TODO: write constructor
         return;
 	}
+
 	// methods
 	public String getAsJson() {
 		//TODO: write method
         return "";
 	}
+
 	// getter/setter
+	public String getMetaName() {
+		return metaName;
+	}
+	public String getDate() {
+		return date;
+	}
+	public String getTriggerType() {
+		return triggerType;
+	}
+	public float[] getgForce() {
+		return gForce;
+	}
 }

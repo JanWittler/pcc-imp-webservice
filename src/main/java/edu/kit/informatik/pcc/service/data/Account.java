@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.sql.ResultSet;
 
 /**
- * @author Fabian Wenzel and David Laubenstein
+ * @author Fabian Wenzel, David Laubenstein
  * Created by David Laubenstein at 17.01.2017
  */
 public class Account {
