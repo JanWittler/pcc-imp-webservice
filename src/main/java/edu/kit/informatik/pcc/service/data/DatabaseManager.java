@@ -9,6 +9,10 @@ import java.util.logging.Logger;
  * Created by David Laubenstein at 1/18/17
  */
 public class DatabaseManager {
+
+    //TODO: spelling, case correction
+    //TODO: Dont log exceptions !!! Give useful analytics of possible errors
+
 	// attributes
 	private Account account;
 	private static final String PORT = "5432";

@@ -8,6 +8,8 @@ import edu.kit.informatik.pcc.service.data.DatabaseManager;
  * Created by David Laubenstein on 01/18/2017
  */
 public class AccountManager {
+	//TODO: FAILURE and SUCCESS -> as static final String constants!
+
 	// attributes
 	private Account account;
 	private DatabaseManager databaseManager;
@@ -20,6 +22,7 @@ public class AccountManager {
 
 	// methods
 	public String setMail(String newMail) {
+		// return databaseManager.setMail(newMail) ? "SUCCESS" : "FAILURE"; macht das gleiche
 		boolean status = databaseManager.setMail(newMail);
 		if (status == false) {
 			return "FAILURE";

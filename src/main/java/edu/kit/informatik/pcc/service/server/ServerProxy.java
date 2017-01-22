@@ -7,7 +7,10 @@ import edu.kit.informatik.pcc.service.manager.AccountManager;
 import edu.kit.informatik.pcc.service.manager.VideoManager;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
@@ -21,6 +24,8 @@ import java.util.ArrayList;
  */
 @Path("webservice")
 public class ServerProxy {
+	//TODO: Logging
+
 	// attributes
 	private VideoManager videoManager;
 	private AccountManager accountManager;

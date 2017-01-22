@@ -109,6 +109,7 @@ public class VideoProcessingChain implements Runnable {
 
     private void saveTempFiles(InputStream video, InputStream metadata, InputStream key)
             throws IOException {
+        //TODO: cleanup on failure
 
         //create output files
         FileOutputStream videoOut = new FileOutputStream(context.getEncVid());
