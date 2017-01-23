@@ -23,11 +23,11 @@ public class Account {
 	    // convert json String to class attributes
         // create JSON Object
 		JSONObject obj = new JSONObject(json);
-		// go into accountData object
-		JSONObject accountData = obj.getJSONObject("accountData");
-		// save Strings in accountData object to class attributes
-		this.email = accountData.getString("mail");
-		this.passwordHash = hashPassword(accountData.getString("password"));
+		// go into account object
+		JSONObject account = obj.getJSONObject("account");
+		// save Strings in account object to class attributes
+		this.email = account.getString("mail");
+		this.passwordHash = hashPassword(account.getString("password"));
 	}
 
 	// methods

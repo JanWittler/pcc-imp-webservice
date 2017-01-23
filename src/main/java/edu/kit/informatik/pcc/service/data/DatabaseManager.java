@@ -1,5 +1,11 @@
 package edu.kit.informatik.pcc.service.data;
 
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -155,12 +161,27 @@ public class DatabaseManager {
      */
     public Metadata getMetaData(int videoId){
         // create String, where meta file is stored
-        String filePath = LocationConfig.META_DIR + "/" + getMetaNameByVideoId(videoId);
-        System.out.println(filePath);
+        //String filePath = LocationConfig.META_DIR + File.separator + getMetaNameByVideoId(videoId);
+        String filePath = LocationConfig.TEST_RESOURCES_DIR + File.separator + "testData" + File.separator + "metaDataFile.txt";
+        //read the json File into a String
+        String metaJSON = "";
         // read Meta file to get infos
-        // TODO read Meta file to get infos
-        // Metadata meta = new Metadata();
-        // return meta;
+        try {
+            metaJSON = new String(Files.readAllBytes(Paths.get(filePath)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // put String into JSON
+        JSONObject obj = new JSONObject(metaJSON);
+        // go into meta object
+        JSONObject meta = obj.getJSONObject("settings");
+        int quality = Integer.parseInt(meta.getString("quality"));
+        int bufferSizeSec = Integer.parseInt(meta.getString("bufferSizeSec"));
+        int fps = Integer.parseInt(meta.getString("fps"));
+
+        // return Metadata object
+        //Metadata metaData = new Metadata();
+        //return meta;
         return null;
     }
 

@@ -1,5 +1,6 @@
 package edu.kit.informatik.pcc.service.data;
 
+import org.json.JSONObject;
 import org.junit.*;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class DatabaseManagerTest {
     private DatabaseManager dm;
     private final String OWN_UUID = "102394871234";
     private boolean registered = false;
+    private String json = "";
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -22,12 +24,21 @@ public class DatabaseManagerTest {
     public void setUpBefore() {
         String MAIL = "\"testEMAIL@123schonVorbei.com\"";
         String PASSWORD = "\"testPasswordForUni\"";
-        String json = "{\n" +
-                "  \"accountData\": {\n" +
+        String QUALITY = "\"123\"";
+        String BUFFER_SIZE_SEC = "\"123\"";
+        String FPS = "\"30\"";
+        json = "{\n" +
+                "  \"account\": {\n" +
                 "    \"mail\": " + MAIL + ",\n" +
                 "    \"password\": " + PASSWORD + "\n" +
+                "  },\n" +
+                "  \"settings\": {\n" +
+                "    \"quality\": " + QUALITY + ",\n" +
+                "    \"bufferSizeSec\": " + BUFFER_SIZE_SEC + ",\n" +
+                "    \"fps\": " + FPS + "\n" +
                 "  }\n" +
                 "}";
+        System.out.println(json);
         account = new Account(json);
         dm = new DatabaseManager(account);
         registered = dm.register(OWN_UUID);
@@ -134,6 +145,10 @@ public class DatabaseManagerTest {
         //String videoName = "videoTestGETMETADATA";
         //String metaName = "metaTestGETMETADATA";
         ////TODO: write metadataFile to analyze
+
+        // save Strings in account object to class attributes
+
+        dm.getMetaData(2);
         //dm.saveProcessedVideoAndMeta(videoName, metaName);
         //Metadata md = dm.getMetaData(dm.getVideoIdByName(videoName));
         //System.out.println(md.getMetaName() + md.getDate());

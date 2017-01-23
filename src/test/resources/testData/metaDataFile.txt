@@ -1,0 +1,11 @@
+{
+  "account": {
+    "mail": "testEMAIL@123schonVorbei.com",
+    "password": "testPasswordForUni"
+  },
+  "settings": {
+    "quality": "123",
+    "bufferSizeSec": "123",
+    "fps": "30"
+  }
+}
