@@ -155,6 +155,7 @@ public class DatabaseManager {
     public Metadata getMetaData(int videoId){
         // create String, where meta file is stored
         String filePath = LocationConfig.META_DIR + "/" + getMetaNameByVideoId(videoId);
+        System.out.println(filePath);
         // read Meta file to get infos
         // TODO read Meta file to get infos
         // Metadata meta = new Metadata();
@@ -399,16 +400,17 @@ public class DatabaseManager {
      * @param videoId: to get the related video to the metadata
      * @return String of metadata name
      */
-    private String getMetaNameByVideoId(int videoId) {
+    //TODO: can be private, but for testing it is public
+    public String getMetaNameByVideoId(int videoId) {
         //connect to database
         connectDatabase();
         String meta = "";
         try {
             Statement stmt = this.c.createStatement();
 
-			ResultSet rs = stmt.executeQuery("select \"meta_name \" from \"video \" as vid where vid.id=" + videoId + ";");
+			ResultSet rs = stmt.executeQuery("select \"meta_name\" from \"video\" as vid where vid.id=" + videoId + ";");
 			// insert result in ArrayList
-            if (rs.getFetchSize() <= 1) {
+            if (rs.next()) {
                 meta = rs.getString("meta_name");
             }
 			rs.close();

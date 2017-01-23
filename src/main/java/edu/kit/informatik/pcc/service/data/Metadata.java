@@ -20,8 +20,10 @@ public class Metadata {
 	 * @param gForce the gps data
 	 */
 	public Metadata(String metaName, String date, String triggerType, float[] gForce) {
-		//TODO: write constructor
-        return;
+	    this.metaName = metaName;
+	    this.date = date;
+	    this.triggerType = triggerType;
+	    this.gForce = gForce;
 	}
 
 	// methods

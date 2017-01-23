@@ -2,6 +2,8 @@ package edu.kit.informatik.pcc.service.data;
 
 import org.junit.*;
 
+import java.util.ArrayList;
+
 /**
  * @author David Laubenstein
  * Created by David Laubenstein on 1/18/17.
@@ -9,10 +11,7 @@ import org.junit.*;
 public class DatabaseManagerTest {
     private Account account;
     private DatabaseManager dm;
-    private String json;
     private final String OWN_UUID = "102394871234";
-    private final String MAIL = "\"testEMAIL@123schonVorbei.com\"";
-    private final String PASSWORD = "\"testPasswordForUni\"";
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -20,7 +19,9 @@ public class DatabaseManagerTest {
 
     @Before
     public void setUpBefore() {
-        json = "{\n" +
+        String MAIL = "\"testEMAIL@123schonVorbei.com\"";
+        String PASSWORD = "\"testPasswordForUni\"";
+        String json = "{\n" +
                 "  \"accountData\": {\n" +
                 "    \"mail\": " + MAIL + ",\n" +
                 "    \"password\": " + PASSWORD + "\n" +
@@ -86,7 +87,32 @@ public class DatabaseManagerTest {
 
     @Test
     public void getVideoInfoListTest() {
-        //TODO: write test
+        String videoName1 = "videoGetVideoInfoListTest";
+        String videoName2 = "video2GetVideoInfoListTest";
+        String metaName1 = "meta1GetVideoInfoListTest";
+        String metaName2 = "meta2GetVideoInfoListTest";
+        boolean check1 = false;
+        boolean check2= false;
+        // create 2 testVideos
+        dm.saveProcessedVideoAndMeta(videoName1, metaName1);
+        dm.saveProcessedVideoAndMeta(videoName2, metaName2);
+
+        // save List in ArrayList<VideoInfo>
+        ArrayList<VideoInfo> arrayList= dm.getVideoInfoList();
+        // check, if both videos are in list
+        for (VideoInfo listElement : arrayList) {
+            if (listElement.getName().equals(videoName1) && listElement.getVideoId() == dm.getVideoIdByName(videoName1)) {
+                check1 = true;
+            }
+            if (listElement.getName().equals(videoName2) && listElement.getVideoId() == dm.getVideoIdByName(videoName2)) {
+                check2 = true;
+            }
+        }
+        // if length of ArrayList = 2 and both videos are found, test success
+        Assert.assertTrue(check1 && check2 && arrayList.size() == 2);
+        // delete both videos to delete Account
+        dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName1));
+        dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName2));
     }
 
     @Test
@@ -99,18 +125,27 @@ public class DatabaseManagerTest {
 
     @Test
     public void getMetaDataTest() {
+        String videoName = "videoTestGETMETADATA";
+        String metaName = "metaTestGETMETADATA";
         //TODO: write metadataFile to analyze
-        dm.saveProcessedVideoAndMeta("videoTestGETMETADATA", "metaTestGETMETADATA");
-        //TODO: change videoId
-        Metadata md = dm.getMetaData(dm.getVideoIdByName("videoTestGETMETADATA"));
-        System.out.println(md.getMetaName() + md.getDate());
+        dm.saveProcessedVideoAndMeta(videoName, metaName);
+        Metadata md = dm.getMetaData(dm.getVideoIdByName(videoName));
+        //System.out.println(md.getMetaName() + md.getDate());
         //boolean check = (md.getMetaName().equals("") & md.getDate().equals("") & md.getgForce().equals(""));
         //Assert.assertTrue(check);
+        dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
     }
 
     @Test
     public void getMetaNameByVideoId() {
-        //TODO: write method
+        String videoName = "videoGetMetaNameByVideoId";
+        String metaName = "metaGetMetaNameByVideoId";
+        // save video in database
+        dm.saveProcessedVideoAndMeta(videoName, metaName);
+        // if metaName equals the info in database, test passes
+        Assert.assertTrue(dm.getMetaNameByVideoId(dm.getVideoIdByName(videoName)).equals(metaName));
+        // delete Video, so that the account can be deleted
+        dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
     }
 
     @Test
