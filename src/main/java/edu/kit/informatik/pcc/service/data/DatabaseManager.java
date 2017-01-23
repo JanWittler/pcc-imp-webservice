@@ -78,6 +78,7 @@ public class DatabaseManager {
      */
     public VideoInfo getVideoInfo(int videoId) {
         VideoInfo vI = null;
+        connectDatabase();
         // execute sql command and insert result in ArrayList
         try {
             Statement stmt = this.c.createStatement();
