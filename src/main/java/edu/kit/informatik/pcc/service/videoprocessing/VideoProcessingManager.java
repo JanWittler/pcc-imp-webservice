@@ -3,7 +3,6 @@ package edu.kit.informatik.pcc.service.videoprocessing;
 import edu.kit.informatik.pcc.service.data.Account;
 
 import javax.ws.rs.container.AsyncResponse;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
@@ -123,13 +122,14 @@ public class VideoProcessingManager {
 
         try {
             chain = new VideoProcessingChain(video, metadata, key, account, videoName, response, chainType);
-        } catch (IOException e) {
+        } catch (IllegalArgumentException e) {
             Logger.getGlobal().warning("Setting up for editing video "
                     + videoName + " of user " + account.getId() + " failed. Processing aborted");
             response.resume("Setting up for editing video " + videoName + " failed. Processing aborted");
             return;
         }
 
+        Logger.getGlobal().info("Insert video " + videoName + " of user " + account.getId() + " into queue.");
         executor.execute(chain);
     }
 

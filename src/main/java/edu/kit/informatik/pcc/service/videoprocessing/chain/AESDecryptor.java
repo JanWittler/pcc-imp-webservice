@@ -65,7 +65,6 @@ public class AESDecryptor implements IFileDecryptor {
             Logger.getGlobal().warning("Error while decrypting file " + input.getName());
             return false;
         }
-        Logger.getGlobal().info("Successfully decrypted " + input.getName());
         return true;
     }
 }

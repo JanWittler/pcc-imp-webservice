@@ -16,7 +16,6 @@ import javax.ws.rs.container.TimeoutHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -105,7 +104,7 @@ public class VideoProcessingChainTest {
         try {
             chain = new VideoProcessingChain(vidInput, metaInput, keyInput,
                     account, videoName, response, chainType);
-        } catch (IOException e) {
+        } catch (IllegalArgumentException e) {
             Assert.fail();
         }
 

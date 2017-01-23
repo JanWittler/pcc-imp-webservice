@@ -29,7 +29,7 @@ public class VideoProcessingChain implements Runnable {
 
     protected VideoProcessingChain(InputStream video, InputStream metadata,
                                    InputStream key, Account account, String videoName, AsyncResponse response, Chain chain)
-            throws IOException {
+            throws IllegalArgumentException {
 
         // save response
         this.response = response;
@@ -51,7 +51,9 @@ public class VideoProcessingChain implements Runnable {
     @Override
     public void run() {
         Logger.getGlobal().info("Start editing video "
-                + context.getVideoName() + " of user " + context.getAccount().getId());
+                + context.getVideoName() + " of user " + context.getAccount().getId() + ".");
+
+        long startTime = System.currentTimeMillis();
 
         //execute all stages
         for (IStage stage : stages) {
@@ -64,8 +66,11 @@ public class VideoProcessingChain implements Runnable {
 
         deleteTempFiles(context);
 
+        long endTime = System.currentTimeMillis() - startTime;
+
         Logger.getGlobal().info("Finished editing video "
-                + context.getVideoName() + " of user " + context.getAccount().getId());
+                + context.getVideoName() + " of user " + context.getAccount().getId()
+                + ". It took " + (endTime / 1000) + " seconds.");
 
         response.resume("Finished editing video " + context.getVideoName());
     }
@@ -103,23 +108,24 @@ public class VideoProcessingChain implements Runnable {
         }
     }
 
-    protected enum Chain {
-        EMPTY, SIMPLE, NORMAL
-    }
-
     private void saveTempFiles(InputStream video, InputStream metadata, InputStream key)
-            throws IOException {
-        //TODO: cleanup on failure
+            throws IllegalArgumentException {
 
-        //create output files
-        FileOutputStream videoOut = new FileOutputStream(context.getEncVid());
-        FileOutputStream metaOut = new FileOutputStream(context.getEncMetadata());
-        FileOutputStream keyOut = new FileOutputStream(context.getEncKey());
+        try {
 
-        //save files
-        saveFile(video, videoOut);
-        saveFile(metadata, metaOut);
-        saveFile(key, keyOut);
+            //create output files
+            FileOutputStream videoOut = new FileOutputStream(context.getEncVid());
+            FileOutputStream metaOut = new FileOutputStream(context.getEncMetadata());
+            FileOutputStream keyOut = new FileOutputStream(context.getEncKey());
+
+            //save files
+            saveFile(video, videoOut);
+            saveFile(metadata, metaOut);
+            saveFile(key, keyOut);
+        } catch (IOException e) {
+            cleanUp();
+            throw new IllegalArgumentException();
+        }
     }
 
     private void saveFile(InputStream input, OutputStream output) throws IOException {
@@ -143,5 +149,9 @@ public class VideoProcessingChain implements Runnable {
                 file.delete();
             }
         }
+    }
+
+    protected enum Chain {
+        EMPTY, SIMPLE, NORMAL
     }
 }

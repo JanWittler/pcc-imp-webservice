@@ -33,8 +33,6 @@ public class OpenCVAnalyzer implements IAnalyzer {
         if (classifier.empty()) {
             Logger.getGlobal().severe("Classifier couldn't be loaded");
             Main.stopServer();
-        } else {
-            Logger.getGlobal().info("Successfully loaded classifier");
         }
     }
 

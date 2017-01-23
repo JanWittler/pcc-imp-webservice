@@ -67,7 +67,6 @@ public class RSADecryptor implements IKeyDecryptor {
         }
 
         byte[] decodedKey = Base64.getDecoder().decode(plainText);
-        Logger.getGlobal().info("Successfully decrypted key " + input.getName());
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
     }
 
