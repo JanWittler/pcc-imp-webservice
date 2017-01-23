@@ -248,7 +248,7 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
             // sql command
-            String sql = "delete from \"user\" where \"user\".\"mail\"='" + account.getEmail() + "'";
+            String sql = "delete from \"user\" where \"user\".\"id\"='" + account.getId() + "'";
             stmt.executeUpdate(sql);
             stmt.close();
             this.c.close();
