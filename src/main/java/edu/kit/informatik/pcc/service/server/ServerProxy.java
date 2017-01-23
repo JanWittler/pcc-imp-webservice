@@ -6,6 +6,7 @@ import edu.kit.informatik.pcc.service.data.VideoInfo;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
 import edu.kit.informatik.pcc.service.manager.VideoManager;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.json.JSONArray;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -85,7 +86,6 @@ public class ServerProxy {
     @Path("videoDelete")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String videoDelete (@FormParam("id") int videoId, @FormParam("data") String accountData) {
-
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
 			return videoManager.videoDelete(videoId);
@@ -99,14 +99,13 @@ public class ServerProxy {
 	public String getVideosByAccount (@FormParam("data") String accountData) {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
+			//convert VideoInfos to JSONArray
 			ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
-			ArrayList<String> videosAsJson = new ArrayList<>();
-			for (VideoInfo videoInfo : videoInfoList) {
-				String json = videoInfo.getAsJson();
-				videosAsJson.add(json);
+			JSONArray videoInfoArray = new JSONArray();
+			for (int i = 0; i < videoInfoList.size(); i++) {
+				videoInfoArray.put(i, videoInfoList.get(i).getAsJson());
 			}
-			String json = new Gson().toJson(videosAsJson);
-			return json;
+			return videoInfoArray.toString();
 		}
 		return "WRONG ACCOUNT";
 	}

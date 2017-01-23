@@ -15,6 +15,8 @@ import javax.ws.rs.container.AsyncResponse;
  */
 public class VideoManager {
 	// attributes
+	private final String SUCCESS = "SUCCESS";
+	private final String FAILURE = "FAILURE";
 	private Account account;
 	private DatabaseManager databaseManager;
 
@@ -25,14 +27,12 @@ public class VideoManager {
 	}
 	// methods
 	public ArrayList<VideoInfo> getVideoInfoList() {
-		//TODO: more stuff?
 		return databaseManager.getVideoInfoList();
 	}
 	public String upload(InputStream video, InputStream metadata, InputStream encryptedSymmetricKey, String videoName, AsyncResponse response) {
 		VideoProcessingManager videoProcessingManager = VideoProcessingManager.getInstance();
 		videoProcessingManager.addTask(video, metadata, encryptedSymmetricKey, account, videoName, response);
-		//TODO: return more strings? why addTask returns void?
-		return "SUCCESS";
+		return SUCCESS;
 	}
 	public File download(int videoId) {
 		VideoInfo videoInfo = databaseManager.getVideoInfo(videoId);
@@ -45,11 +45,11 @@ public class VideoManager {
 	public String videoDelete(int videoId) {
 		VideoInfo videoInfo = databaseManager.getVideoInfo(videoId);
 		if (videoInfo == null) {
-			return "FAILURE";
+			return FAILURE;
 		}
 		Metadata metadata = databaseManager.getMetaData(videoId);
 		if (metadata == null) {
-			return "FAILURE";
+			return FAILURE;
 		}
 		String videoName = videoInfo.getName();
 		String metaName = metadata.getMetaName();
@@ -57,7 +57,6 @@ public class VideoManager {
 		try {
 			videoFile = new File(LocationConfig.ANONYM_VID_DIR + "/" + videoName);
 		} catch (NullPointerException e) {
-			//TODO: Logger!
 			e.printStackTrace();
 		}
 		videoFile.delete();
@@ -65,16 +64,11 @@ public class VideoManager {
 		try {
 			metaFile = new File(LocationConfig.META_DIR + "/" + metaName);
 		} catch (NullPointerException e) {
-			//TODO: Logger!
 			e.printStackTrace();
 		}
 		metaFile.delete();
-		boolean status = databaseManager.deleteVideoAndMeta(videoId);
-		if (status == false) {
-			//TODO: what to restore here?
-			return "FAILURE";
-		}
-		return "SUCCESS";
+		return databaseManager.deleteVideoAndMeta(videoId) ? SUCCESS : FAILURE;
+
 	}
 	public String getMetaData(int videoId) {
 		Metadata metadata = databaseManager.getMetaData(videoId);

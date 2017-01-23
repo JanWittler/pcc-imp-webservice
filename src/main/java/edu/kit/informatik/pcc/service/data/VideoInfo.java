@@ -26,8 +26,13 @@ public class VideoInfo {
 	 * @return json String of videoInfo object
 	 */
 	public String getAsJson() {
-		//TODO: write method
-		return "";
+		//language=JSON
+		String json = "{\"videoInfo\": {\n" +
+				"  \"name\": \"" + videoName + "\",\n" +
+				"  \"id\": \""+ videoId +"\"\n" +
+				"}}";
+		String asd = "";
+		return json;
 	}
 
 	// getter/setter

@@ -84,6 +84,7 @@ public class Main{
     public static void restartServer() {
         Logger.getGlobal().info("Restarting server");
         stopServer();
+
         startServer();
     }
 

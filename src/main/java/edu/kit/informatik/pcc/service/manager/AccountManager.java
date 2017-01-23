@@ -8,9 +8,9 @@ import edu.kit.informatik.pcc.service.data.DatabaseManager;
  * Created by David Laubenstein on 01/18/2017
  */
 public class AccountManager {
-	//TODO: FAILURE and SUCCESS -> as static final String constants!
-
 	// attributes
+	private final String SUCCESS = "SUCCESS";
+	private final String FAILURE = "FAILURE";
 	private Account account;
 	private DatabaseManager databaseManager;
 
@@ -22,46 +22,31 @@ public class AccountManager {
 
 	// methods
 	public String setMail(String newMail) {
-		// return databaseManager.setMail(newMail) ? "SUCCESS" : "FAILURE"; macht das gleiche
-		boolean status = databaseManager.setMail(newMail);
-		if (status == false) {
-			return "FAILURE";
-		}
-		return "SUCCESS";
+		return databaseManager.setMail(newMail) ? SUCCESS : FAILURE;
 	}
+
 	public String setPassword(String passwordHash) {
-		boolean status = databaseManager.setMail(passwordHash);
-		if (status == false) {
-			return "FAILURE";
-		}
-		return "SUCCESS";
+		return databaseManager.setMail(passwordHash) ? SUCCESS : FAILURE;
 	}
+
 	public int getAccountId() {
 	    return databaseManager.getAccountId();
 	}
+
 	public String registerAccount(String uuid) {
-		boolean status = databaseManager.register(uuid);
-		if (status == false) {
-			return "FAILURE";
-		}
-		return "SUCCESS";
+		return databaseManager.register(uuid) ? SUCCESS : FAILURE;
 	}
+
 	public String deleteAccount() {
-		boolean status = databaseManager.deleteAccount();
-		if (status == false) {
-			return "FAILURE";
-		}
-		return "SUCCESS";
+		return databaseManager.deleteAccount() ? SUCCESS : FAILURE;
 	}
+
 	public boolean authenticate() {
 		return databaseManager.authenticate();
 	}
+
 	public String verifyAccount(String uuid) {
-		boolean status = databaseManager.verifyAccount(uuid);
-		if (status == false) {
-			return "FAILURE";
-		}
-		return "SUCCESS";
+		return databaseManager.verifyAccount(uuid) ? SUCCESS : FAILURE;
 	}
 	public boolean isVerified() {
 		return databaseManager.isVerified();
