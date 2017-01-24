@@ -16,9 +16,6 @@ import java.util.logging.Logger;
  */
 public class DatabaseManager {
 
-    //TODO: spelling, case correction
-    //TODO: Dont log exceptions !!! Give useful analytics of possible errors
-
 	// attributes
 	private Account account;
 	private static final String PORT = "5432";
@@ -50,16 +47,16 @@ public class DatabaseManager {
                 .getConnection("jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME ,USER, PASSWORD);
           } catch (Exception e) {
             e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.err.println(e.getClass().getName()+": " + e.getMessage());
             System.exit(0);
           }
     }
 
     /**
-     * save uploaded video to database with metadata, related to an account
+     * save anonymized video to database with metadata, related to an account
      * @param videoName name of the video file, which should be saved
      * @param metaName name of the meta data file, which should be saved
-     * @return boolean for success of failure
+     * @return boolean to indicate success or failure
      */
     public boolean saveProcessedVideoAndMeta(String videoName, String metaName) {
         connectDatabase();
@@ -67,12 +64,14 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
             // sql command
-            String sql = "insert into \"video\" (user_id,video_name,meta_name) values (" + account.getId() + ",'" + videoName + "','" + metaName + "');";
+            String sql = "insert into \"video\" (user_id,video_name,meta_name) values (" + account.getId() + ",'" +
+                    videoName + "','" + metaName + "');";
             stmt.executeUpdate(sql);
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("saveProcessedVideoAndMeta " + e);
+            Logger.getGlobal().warning("Insert SQL command has not been executed successfully: " +
+                    "Video was not saved in database: " + e);
         }
         return true;
     }
@@ -80,7 +79,7 @@ public class DatabaseManager {
     /**
      * get the saved information for a video
      * @param videoId the id of the video
-     * @return a VideoInfo object, where all information are in.
+     * @return a VideoInfo object, where all information is in.
      */
     public VideoInfo getVideoInfo(int videoId) {
         VideoInfo vI = null;
@@ -88,7 +87,9 @@ public class DatabaseManager {
         // execute sql command and insert result in ArrayList
         try {
             Statement stmt = this.c.createStatement();
-            ResultSet rs = stmt.executeQuery( "select \"video_name\",vid.\"id\" from \"video\" as vid  join \"user\" as usr ON vid.user_id=usr.id where usr.id='" + account.getId() + "' AND vid.\"id\"=" + videoId);
+            ResultSet rs = stmt.executeQuery( "select \"video_name\",vid.\"id\" from \"video\" as vid  " +
+                    "join \"user\" as usr ON vid.user_id=usr.id where usr.id='" + account.getId() + "' " +
+                    "AND vid.\"id\"=" + videoId);
             // insert result in ArrayList
             while ( rs.next() ) {
                 String video_name = rs.getString("video_name");
@@ -99,7 +100,7 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("getVideoInfoList " + e);
+            Logger.getGlobal().warning("Select SQL command has not been executed successfully: " + e);
         }
         return vI;
     }
@@ -116,7 +117,8 @@ public class DatabaseManager {
         // execute sql command and insert result in ArrayList
         try {
             Statement stmt = this.c.createStatement();
-            ResultSet rs = stmt.executeQuery( "select \"video_name\",vid.\"id\" from \"video\" as vid  join \"user\" as usr ON vid.user_id=usr.id where usr.id='" + account.getId() + "'" );
+            ResultSet rs = stmt.executeQuery( "select \"video_name\",vid.\"id\" from \"video\" as vid  " +
+                    "join \"user\" as usr ON vid.user_id=usr.id where usr.id='" + account.getId() + "'" );
             // insert result in ArrayList
             while ( rs.next() ) {
                 String video_name = rs.getString("video_name");
@@ -128,7 +130,7 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("getVideoInfoList " + e);
+            Logger.getGlobal().warning("SELECT SQL command has not been executed successfully: " + e);
         }
         return videoInfoList;
     }
@@ -149,7 +151,7 @@ public class DatabaseManager {
             this.c.close();
             return true;
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("deleteVideoAndMeta " + e);
+            Logger.getGlobal().severe("DELETE SQL command has not been executed successfully: There is a problem with the Video, maybe the id of the video: " + e);
         }
         return false;
     }
@@ -162,27 +164,29 @@ public class DatabaseManager {
     public Metadata getMetaData(int videoId){
         // create String, where meta file is stored
         //String filePath = LocationConfig.META_DIR + File.separator + getMetaNameByVideoId(videoId);
-        String filePath = LocationConfig.TEST_RESOURCES_DIR + File.separator + "testData" + File.separator + "metaDataFile.txt";
+        String filePath = LocationConfig.TEST_RESOURCES_DIR + File.separator + "testData" + File.separator +
+                getMetaNameByVideoId(videoId) + ".json";
         //read the json File into a String
         String metaJSON = "";
         // read Meta file to get infos
         try {
             metaJSON = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getGlobal().warning("An IOException occurred in getMetaData. " +
+                    "The filepath seems to be wrong: " + e);
         }
-        // put String into JSON
+        // put String into JSON and save them into java variables
         JSONObject obj = new JSONObject(metaJSON);
-        // go into meta object
-        JSONObject meta = obj.getJSONObject("settings");
-        int quality = Integer.parseInt(meta.getString("quality"));
-        int bufferSizeSec = Integer.parseInt(meta.getString("bufferSizeSec"));
-        int fps = Integer.parseInt(meta.getString("fps"));
+        JSONObject meta = obj.getJSONObject("metaInfo");
+        String date = meta.getString("date");
+        String triggerType = meta.getString("triggerType");
+        float gForceX = (float) meta.getDouble("gForceX");
+        float gForceY = (float) meta.getDouble("gForceY");
+        float gForceZ = (float) meta.getDouble("gForceZ");
+        float[] gForce = {gForceX, gForceY, gForceZ};
 
         // return Metadata object
-        //Metadata metaData = new Metadata();
-        //return meta;
-        return null;
+        return new Metadata(date, triggerType, gForce);
     }
 
     /**
@@ -202,7 +206,7 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("setMail " + e);
+            Logger.getGlobal().warning("UPDATE SQL command has not been executed successfully: " + e);
         }
         return true;
     }
@@ -225,7 +229,7 @@ public class DatabaseManager {
             this.c.close();
             return true;
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("setPassword " + e);
+            Logger.getGlobal().severe("UPDATE SQL command has not been executed successfully: " + e);
         }
         return false;
     }
@@ -243,7 +247,8 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
 
-            ResultSet rs = stmt.executeQuery( "select \"mail\",\"password\" from \"user\" where id='" + account.getId() + "'" );
+            ResultSet rs = stmt.executeQuery( "select \"mail\",\"password\" from \"user\" where id='" +
+                    account.getId() + "'" );
             // insert result in ArrayList
             while ( rs.next() ) {
                 mail = rs.getString("mail");
@@ -253,7 +258,8 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("authenticate " + e);
+            Logger.getGlobal().severe("SELECT SQL command or get JSON variable seems to have a problem, " +
+                    "check mail and password! " + e);
         }
         //return boolean, if password and mail are equal to database data
         return mail.equals(account.getEmail()) && passwordHash.equals(account.getPasswordHash());
@@ -274,7 +280,7 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("deleteAccount " + e);
+            Logger.getGlobal().warning("DELTE SQL command has not been executed successfully. Check, if the account is existing! " + e);
         }
         return true;
     }
@@ -288,15 +294,17 @@ public class DatabaseManager {
         connectDatabase();
         try {
             Statement stmt = this.c.createStatement();
-            ResultSet rs = stmt.executeQuery( "select \"id\" from \"user\" where \"user\".\"mail\"='" + account.getEmail() + "'");
+            ResultSet rs = stmt.executeQuery( "select \"id\" from \"user\" where \"user\".\"mail\"='" +
+                    account.getEmail() + "'");
             // insert result in ArrayList
             while ( rs.next() ) {
                accountId = Integer.parseInt(rs.getString("id"));
             }
             stmt.close();
             this.c.close();
-        } catch (SQLException sqlException) {
-            Logger.getGlobal().severe("getAccountId " + sqlException);
+        } catch (SQLException | NullPointerException e) {
+            Logger.getGlobal().warning("getAccountId: SELECT SQL command or getting the JSON variable seems " +
+                    "to have a problem. Check Account Mail Address! " + e);
             return -1;
         }
         return accountId;
@@ -313,12 +321,14 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
             // sql command
-            String sql = "insert into \"user\" (mail,password,uuid,verified) values ('" + account.getEmail() + "','" + account.getPasswordHash() + "'," + uuid + ", false);";
+            String sql = "insert into \"user\" (mail,password,uuid,verified) values ('" + account.getEmail() + "','" +
+                    account.getPasswordHash() + "'," + uuid + ", false);";
             stmt.executeUpdate(sql);
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("register " + e);
+            Logger.getGlobal().severe("Account registration has occurred a problem. check uuid, " +
+                    "mail and passwordHash! " + e);
             return false;
         }
         return true;
@@ -330,7 +340,6 @@ public class DatabaseManager {
      * @return String of success
      */
     public boolean verifyAccount(String uuid) {
-        String ret = "";
         //connect to Database
         connectDatabase();
         // get uuid from account
@@ -338,7 +347,8 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
 
-            ResultSet rs = stmt.executeQuery( "select \"uuid\" from \"user\" as usr  where usr.id='" + account.getId() + "'" );
+            ResultSet rs = stmt.executeQuery( "select \"uuid\" from \"user\" as usr  where usr.id='" +
+                    account.getId() + "'" );
             // insert result in ArrayList
             if (rs != null && rs.next()) {
                 uuidDatabase= rs.getString("uuid");
@@ -346,7 +356,7 @@ public class DatabaseManager {
             rs.close();
             stmt.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("verifyAccount " + e);
+            Logger.getGlobal().warning("verifyAccount occurred a problem in storing uuid temporarily: " + e);
         }
         if (uuidDatabase.equals(uuid)) {
             try {
@@ -356,16 +366,17 @@ public class DatabaseManager {
                 this.c.close();
                 return true;
             } catch (NullPointerException | SQLException e) {
-                Logger.getGlobal().severe("verifyAccount " + e);
+                Logger.getGlobal().severe("verifyAccount occurred a problem in updating account to isVerified! "
+                        + e);
             }
             return false;
         } else {
-            Logger.getGlobal().severe("verifyAccount: uuid not like uuid in database");
+            Logger.getGlobal().warning("verifyAccount: uuid not like uuid in database!");
             // close c, because when if=true, c is needed
             try {
                 this.c.close();
             } catch (SQLException sqlE) {
-                Logger.getGlobal().severe("verifyAccount " + sqlE);
+                Logger.getGlobal().warning("verifyAccount: Connection c cannot be closed! " + sqlE);
             }
             return false;
         }
@@ -382,7 +393,8 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
 
-            ResultSet rs = stmt.executeQuery("select \"verified\" from \"user\" where id=" + account.getId() + ";");
+            ResultSet rs = stmt.executeQuery("select \"verified\" from \"user\" where id=" +
+                    account.getId() + ";");
             while(rs.next()) {
                 verified = rs.getBoolean("verified");
             }
@@ -390,7 +402,8 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("isVerified: " + e);
+            Logger.getGlobal().warning("isVerified occurred a problem. SELECT command has thrown an exception! "
+                    + e);
         }
         return verified;
     }
@@ -403,7 +416,8 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
 
-            ResultSet rs = stmt.executeQuery("select id from \"video\" where \"video_name\"='" + video_name + "'");
+            ResultSet rs = stmt.executeQuery("select id from \"video\" where \"video_name\"='" +
+                    video_name + "'");
             // insert result in ArrayList
             while (rs.next()) {
                 id = Integer.parseInt(rs.getString("id"));
@@ -412,7 +426,8 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("getMetaNameByVideoId " + e);
+            Logger.getGlobal().warning("getVideoIdByName: SELECT SQL command or " +
+                    "storing column variable of database occurred a problem. " + e);
         }
         return id;
     }
@@ -430,7 +445,8 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
 
-			ResultSet rs = stmt.executeQuery("select \"meta_name\" from \"video\" as vid where vid.id=" + videoId + ";");
+			ResultSet rs = stmt.executeQuery("select \"meta_name\" from \"video\" as vid where vid.id=" +
+                    videoId + ";");
 			// insert result in ArrayList
             if (rs.next()) {
                 meta = rs.getString("meta_name");
@@ -439,7 +455,8 @@ public class DatabaseManager {
 			stmt.close();
 			this.c.close();
 		} catch (NullPointerException | SQLException e) {
-	        Logger.getGlobal().severe("getMetaNameByVideoId " + e);
+	        Logger.getGlobal().severe("getMetaNameByVideoId: SELECT SQL command or " +
+                    "storing column variable of database occurred a problem. " + e);
 		}
 		return meta;
     }

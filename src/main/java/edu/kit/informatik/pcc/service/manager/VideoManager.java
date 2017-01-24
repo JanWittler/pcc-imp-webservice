@@ -52,7 +52,8 @@ public class VideoManager {
 			return FAILURE;
 		}
 		String videoName = videoInfo.getName();
-		String metaName = metadata.getMetaName();
+		String metaName = databaseManager.getMetaNameByVideoId(
+					databaseManager.getVideoIdByName(videoName));
 		File videoFile = null;
 		try {
 			videoFile = new File(LocationConfig.ANONYM_VID_DIR + "/" + videoName);

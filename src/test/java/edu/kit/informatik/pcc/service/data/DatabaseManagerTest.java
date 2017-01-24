@@ -1,6 +1,5 @@
 package edu.kit.informatik.pcc.service.data;
 
-import org.json.JSONObject;
 import org.junit.*;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class DatabaseManagerTest {
     private DatabaseManager dm;
     private final String OWN_UUID = "102394871234";
     private boolean registered = false;
-    private String json = "";
+
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -22,23 +21,27 @@ public class DatabaseManagerTest {
 
     @Before
     public void setUpBefore() {
+        String json = "";
         String MAIL = "\"testEMAIL@123schonVorbei.com\"";
         String PASSWORD = "\"testPasswordForUni\"";
-        String QUALITY = "\"123\"";
-        String BUFFER_SIZE_SEC = "\"123\"";
-        String FPS = "\"30\"";
+        String DATE = "\"123\"";
+        String TRIGGER_TYPE = "\"23\"";
+        String G_FORCE_X = "30.33333";
+        String G_FORCE_Y = "40";
+        String G_FORCE_Z = "50";
         json = "{\n" +
                 "  \"account\": {\n" +
                 "    \"mail\": " + MAIL + ",\n" +
                 "    \"password\": " + PASSWORD + "\n" +
                 "  },\n" +
-                "  \"settings\": {\n" +
-                "    \"quality\": " + QUALITY + ",\n" +
-                "    \"bufferSizeSec\": " + BUFFER_SIZE_SEC + ",\n" +
-                "    \"fps\": " + FPS + "\n" +
+                "  \"metaInfo\": {\n" +
+                "    \"date\": " + DATE + ",\n" +
+                "    \"triggerType\": " + TRIGGER_TYPE + ",\n" +
+                "    \"gForceX\": " + G_FORCE_X + ",\n" +
+                "    \"gForceY\": " + G_FORCE_Y + ",\n" +
+                "    \"gForceZ\": " + G_FORCE_Z + "\n" +
                 "  }\n" +
                 "}";
-        System.out.println(json);
         account = new Account(json);
         dm = new DatabaseManager(account);
         registered = dm.register(OWN_UUID);
@@ -59,14 +62,12 @@ public class DatabaseManagerTest {
     @Test
     public void isVerifiedTest() {
        Assert.assertTrue(!dm.isVerified());
-       //TODO: if isVerified and verifyAccount works, uncomment this downside
        dm.verifyAccount(OWN_UUID);
        Assert.assertTrue(dm.isVerified());
     }
 
     @Test
     public void saveProcessedVideoAndMetaTest() {
-        //TODO: write test
         String videoName = "videoTest123";
         String metaName = "metaTest123";
         // save video
@@ -134,7 +135,6 @@ public class DatabaseManagerTest {
 
     @Test
     public void deleteVideoAndMetaTest() {
-        //TODO: write test
         boolean create  = dm.saveProcessedVideoAndMeta("test","test");
         boolean delete = dm.deleteVideoAndMeta(dm.getVideoIdByName("test"));
         Assert.assertTrue("insert video or delete Video not working!", create && delete);
@@ -142,19 +142,19 @@ public class DatabaseManagerTest {
 
     @Test
     public void getMetaDataTest() {
-        //String videoName = "videoTestGETMETADATA";
-        //String metaName = "metaTestGETMETADATA";
-        ////TODO: write metadataFile to analyze
-
+        String videoName = "videoTestGETMETADATA";
+        String metaName = "metaTestGETMETADATA";
+        // save bsp video, where the metafile already exists
+        dm.saveProcessedVideoAndMeta(videoName, metaName);
         // save Strings in account object to class attributes
 
-        dm.getMetaData(2);
-        //dm.saveProcessedVideoAndMeta(videoName, metaName);
-        //Metadata md = dm.getMetaData(dm.getVideoIdByName(videoName));
-        //System.out.println(md.getMetaName() + md.getDate());
-        //boolean check = (md.getMetaName().equals("") & md.getDate().equals("") & md.getgForce().equals(""));
-        //Assert.assertTrue(check);
-        //dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
+        Metadata md = dm.getMetaData(dm.getVideoIdByName(videoName));
+        Assert.assertTrue(md.getDate().equals("123") && md.getTriggerType().equals("23"));
+        dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
+        Assert.assertTrue(md.getgForce()[0] == (float) 30.33333
+                && md.getgForce()[1] == (float) 40
+                && md.getgForce()[2] == (float) 50);
+        //delete Video
     }
 
     @Test
@@ -186,7 +186,6 @@ public class DatabaseManagerTest {
 
     @Test
     public void verifyAccountTest() {
-        //TODO: write test
         Assert.assertTrue(!dm.isVerified());
         dm.verifyAccount(OWN_UUID);
         Assert.assertTrue(dm.isVerified());

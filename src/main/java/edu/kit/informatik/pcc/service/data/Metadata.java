@@ -6,7 +6,6 @@ package edu.kit.informatik.pcc.service.data;
  */
 public class Metadata {
 	// attributes
-	private String metaName;
 	private String date;
 	private String triggerType;
 	private float[] gForce;
@@ -14,13 +13,11 @@ public class Metadata {
 	// constructors
 	/**
 	 * constructor
-	 * @param metaName name of Metadata file
 	 * @param date date of metadata file creation
 	 * @param triggerType if trigger type is manually of automatically
 	 * @param gForce the gps data
 	 */
-	public Metadata(String metaName, String date, String triggerType, float[] gForce) {
-	    this.metaName = metaName;
+	public Metadata(String date, String triggerType, float[] gForce) {
 	    this.date = date;
 	    this.triggerType = triggerType;
 	    this.gForce = gForce;
@@ -33,9 +30,6 @@ public class Metadata {
 	}
 
 	// getter/setter
-	public String getMetaName() {
-		return metaName;
-	}
 	public String getDate() {
 		return date;
 	}
