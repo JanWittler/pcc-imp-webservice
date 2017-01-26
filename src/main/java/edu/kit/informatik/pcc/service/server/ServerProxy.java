@@ -1,6 +1,5 @@
 package edu.kit.informatik.pcc.service.server;
 
-import com.google.gson.Gson;
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
@@ -30,6 +29,7 @@ public class ServerProxy {
 	// attributes
 	private VideoManager videoManager;
 	private AccountManager accountManager;
+	private final String WRONGACCOUNT = "WRONG ACCOUNT";
 
 	// methods
     @POST
@@ -40,7 +40,7 @@ public class ServerProxy {
 		if (accountStatus.equals("SUCCESS")) {
 			return videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
 		}
-    	return "WRONG ACCOUNT";
+    	return WRONGACCOUNT;
 	}
 
 	@POST
@@ -50,7 +50,7 @@ public class ServerProxy {
 		setUpForRequest(accountData);
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus == null) {
-			//TODO: Problem on accountStatus needs to be checked?
+			//TODO: Problem on accountStatus needs to be checked? Not sure i think not :)
 			return null;
 		}
 		Response.ResponseBuilder response = null;
@@ -68,7 +68,7 @@ public class ServerProxy {
 				return response.build();
 			}
 		}
-		return response.status(200).entity("WRONG ACCOUNT").build();
+		return response.status(200).entity(WRONGACCOUNT).build();
 	}
 
     @POST
@@ -79,7 +79,7 @@ public class ServerProxy {
 		if (accountStatus.equals("SUCCESS")) {
 			return videoManager.getMetaData(videoId);
 		}
-    	return "WRONG ACCOUNT";
+    	return WRONGACCOUNT;
 	}
 
     @POST
@@ -90,7 +90,7 @@ public class ServerProxy {
 		if (accountStatus.equals("SUCCESS")) {
 			return videoManager.videoDelete(videoId);
 		}
-		return "WRONG ACCOUNT";
+		return WRONGACCOUNT;
 	}
 
     @POST
@@ -107,7 +107,7 @@ public class ServerProxy {
 			}
 			return videoInfoArray.toString();
 		}
-		return "WRONG ACCOUNT";
+		return WRONGACCOUNT;
 	}
 
     @POST
@@ -135,14 +135,14 @@ public class ServerProxy {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("SUCCESS")) {
 			Account newAccount = new Account(accountDataNew);
-			String status = accountManager.setMail(newAccount.getEmail());
+			String status = accountManager.setMail(newAccount.getMail());
 			if (!(status.equals("SUCCESS"))){
 				return status;
 			}
 			status = accountManager.setPassword(newAccount.getPasswordHash());
 			return status;
 		}
-		return "WRONG ACCOUNT";
+		return WRONGACCOUNT;
 	}
 
     @POST
@@ -162,7 +162,7 @@ public class ServerProxy {
 			}
 			return accountManager.deleteAccount();
 		}
-		return "WRONG ACCOUNT";
+		return WRONGACCOUNT;
 	}
 
     @POST
@@ -173,7 +173,7 @@ public class ServerProxy {
 		if (accountStatus.equals("SUCCESS")) {
 			return accountManager.verifyAccount(uuid);
 		}
-		return "WRONG ACCOUNT";
+		return WRONGACCOUNT;
 	}
 
 	private String setUpForRequest(String accountData) {

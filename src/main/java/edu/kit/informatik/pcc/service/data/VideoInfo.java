@@ -9,7 +9,6 @@ public class VideoInfo {
 	private int videoId;
 	private String videoName;
 
-	// constructors
 	/**
 	 * constructor
 	 * @param videoId the id of the video
@@ -27,12 +26,10 @@ public class VideoInfo {
 	 */
 	public String getAsJson() {
 		//language=JSON
-		String json = "{\"videoInfo\": {\n" +
+		return	"{\"videoInfo\": {\n" +
 				"  \"name\": \"" + videoName + "\",\n" +
 				"  \"id\": \""+ videoId +"\"\n" +
 				"}}";
-		String asd = "";
-		return json;
 	}
 
 	// getter/setter

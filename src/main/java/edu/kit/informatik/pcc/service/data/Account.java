@@ -2,18 +2,15 @@ package edu.kit.informatik.pcc.service.data;
 
 import org.json.JSONObject;
 
-import java.sql.ResultSet;
-
 /**
  * @author Fabian Wenzel, David Laubenstein
  * Created by David Laubenstein at 17.01.2017
  */
 public class Account {
 	// attributes
-	private String email;
+	private String mail;
 	private String passwordHash;
 	private int id;
-	// constructors
 
 	/**
 	 * constructor, which relates the json string to the class variables
@@ -26,7 +23,7 @@ public class Account {
 		// go into account object
 		JSONObject account = obj.getJSONObject("account");
 		// save Strings in account object to class attributes
-		this.email = account.getString("mail");
+		this.mail = account.getString("mail");
 		this.passwordHash = hashPassword(account.getString("password"));
 	}
 
@@ -47,8 +44,8 @@ public class Account {
 	public String getPasswordHash() {
 		return passwordHash;
 	}
-	public String getEmail() {
-		return email;
+	public String getMail() {
+		return mail;
 	}
 	public void setId(int id) {
 		this.id = id;

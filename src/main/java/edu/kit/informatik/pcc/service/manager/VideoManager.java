@@ -56,6 +56,7 @@ public class VideoManager {
 					databaseManager.getVideoIdByName(videoName));
 		File videoFile = null;
 		try {
+			//TODO: Check Path
 			videoFile = new File(LocationConfig.ANONYM_VID_DIR + "/" + videoName);
 		} catch (NullPointerException e) {
 			e.printStackTrace();
@@ -63,6 +64,7 @@ public class VideoManager {
 		videoFile.delete();
 		File metaFile = null;
 		try {
+			//TODO: Check Path
 			metaFile = new File(LocationConfig.META_DIR + "/" + metaName);
 		} catch (NullPointerException e) {
 			e.printStackTrace();

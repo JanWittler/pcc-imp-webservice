@@ -10,7 +10,6 @@ public class Metadata {
 	private String triggerType;
 	private float[] gForce;
 
-	// constructors
 	/**
 	 * constructor
 	 * @param date date of metadata file creation
@@ -25,8 +24,12 @@ public class Metadata {
 
 	// methods
 	public String getAsJson() {
-		//TODO: write method
-        return "";
+		//TODO: how to interpret gForce in JSON
+        return "{\"metadata\": {\n" +
+				"  \"date\": \""+ date + "\",\n" +
+				"  \"triggertype\": \""+ triggerType + " \",\n" +
+				"  \"gForce\": \"gForce\"\n" +
+				"}}";
 	}
 
 	// getter/setter
@@ -36,7 +39,7 @@ public class Metadata {
 	public String getTriggerType() {
 		return triggerType;
 	}
-	public float[] getgForce() {
+	public float[] getGForce() {
 		return gForce;
 	}
 }
