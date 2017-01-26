@@ -48,7 +48,7 @@ public class OpenCVAnonymizer extends AAnonymizer {
         }
 
         analyzer = new OpenCVAnalyzer();
-        filter = new OpenCVFilter();
+        filter = new OpenCVBoxfilter();
     }
 
     // methods

@@ -50,7 +50,7 @@ public class VideoProcessingManagerTest {
         response = setupResponse();
 
         vidFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encVid.mp4");
-        metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encMeta.txt");
+        metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encMeta.json");
         keyFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encKey.txt");
 
         videoName = "testVideo";

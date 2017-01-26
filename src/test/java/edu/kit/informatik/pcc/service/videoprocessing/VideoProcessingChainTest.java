@@ -54,7 +54,7 @@ public class VideoProcessingChainTest {
         response = setupResponse();
 
         vidFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encVid.mp4");
-        metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encMeta.txt");
+        metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encMeta.json");
         keyFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encKey.txt");
 
         videoName = "testVideo";
@@ -77,10 +77,10 @@ public class VideoProcessingChainTest {
         File testedVid = new File(LocationConfig.ANONYM_VID_DIR + "\\-1_testVideo.avi");
         File testedMeta = new File(LocationConfig.META_DIR + "\\-1_testVideo_meta.txt");
 
-        if (testedVid.exists())
+        /*if (testedVid.exists())
             testedVid.delete();
         if (testedMeta.exists())
-            testedMeta.delete();
+            testedMeta.delete();*/
     }
 
     @Test

@@ -72,11 +72,11 @@ public class EditingContext {
         this.encKey = new File(LocationConfig.TEMP_DIR
                 + "\\" + account.getId() + "_" + videoName + "_" + "encKey.txt");
         this.encMetadata = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + "encMetadata.txt");
+                + "\\" + account.getId() + "_" + videoName + "_" + "encMetadata.json");
         this.decVid = new File(LocationConfig.TEMP_DIR
                 + "\\" + account.getId() + "_" + videoName + "_" + "decVid.mp4");
         this.decMetadata = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + "meta.txt");
+                + "\\" + account.getId() + "_" + videoName + "_" + "meta.json");
         this.anonymizedVid = new File(LocationConfig.TEMP_DIR
                 + "\\" + account.getId() + "_" + videoName + "_" + "anonymVid.avi");
         this.vidWithMeta = new File(LocationConfig.TEMP_DIR
