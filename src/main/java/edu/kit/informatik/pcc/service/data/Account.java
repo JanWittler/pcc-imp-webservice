@@ -26,15 +26,17 @@ public class Account {
      * @param json which includes account information
      */
     public Account(String json) {
+    	//TODO: PARSE JSON CORRECTLY ?
         // convert json String to class attributes
         // create JSON Object
         JSONObject obj = new JSONObject(json);
         // go into account object
         JSONObject account = obj.getJSONObject("account");
         // save Strings in account object to class attributes
+
         this.mail = account.getString("mail");
-        this.passwordHash = hashPassword(account.getString("password"));
-    }
+		this.passwordHash = hashPassword(account.getString("password"));
+	}
 
     // methods
 
@@ -47,7 +49,7 @@ public class Account {
     public String hashPassword(String password) {
         //TODO: hashPassword
         String originalPassword = password;
-        return "hey";
+        return password;
     }
 
 

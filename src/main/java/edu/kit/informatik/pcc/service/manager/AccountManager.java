@@ -29,7 +29,7 @@ public class AccountManager {
 	// methods
 	/**
 	 * @param newMail string of new mail to set
-	 * @return string if mail set successfully
+	 * @return string if success or failure
 	 */
 	public String setMail(String newMail) {
 		return databaseManager.setMail(newMail) ? SUCCESS : FAILURE;
@@ -37,10 +37,10 @@ public class AccountManager {
 
 	/**
 	 * @param passwordHash string of hashed password to set
-	 * @return string if password set successfully
+	 * @return string if success or failure
 	 */
 	public String setPassword(String passwordHash) {
-		return databaseManager.setMail(passwordHash) ? SUCCESS : FAILURE;
+		return databaseManager.setPassword(passwordHash) ? SUCCESS : FAILURE;
 	}
 
 	/**
@@ -63,6 +63,7 @@ public class AccountManager {
 	 * @return string if deletion worked successfully
 	 */
 	public String deleteAccount(VideoManager videoManager) {
+		//TODO: right path
 		ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
 		if (videoInfoList != null) {
 			for (VideoInfo videoInfo: videoInfoList){

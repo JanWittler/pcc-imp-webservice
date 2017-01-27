@@ -6,6 +6,7 @@ import edu.kit.informatik.pcc.service.manager.AccountManager;
 import edu.kit.informatik.pcc.service.manager.VideoManager;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -15,8 +16,7 @@ import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -62,12 +62,11 @@ public class ServerProxy {
 	@POST
     @Path("videoDownload")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response videoDownload (@FormParam("id") int videoId, @FormParam("data") String accountData) {
+	public Response videoDownload (@FormParam("videoId") int videoId, @FormParam("data") String accountData) {
 		Logger.getGlobal().info("Download Request");
 		setUpForRequest(accountData);
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus == null) {
-			//TODO: Problem on accountStatus needs to be checked? Not sure i think not :)
 			return null;
 		}
 		Response.ResponseBuilder response = null;
@@ -75,17 +74,22 @@ public class ServerProxy {
 			File video = videoManager.download(videoId);
 			if (video == null) {
 				try {
-					return response.status(200).entity("VideoNotFound").build();
+					return response.status(404).build();
 				} catch (NullPointerException e) {
 					e.printStackTrace();
 				}
 			} else {
-				response = Response.ok(video);
-				response.header("Content-Disposition", "attachment; filename=\""+video.getName()+".mp4\"");
-				return response.status(200).entity(SUCCESS).build();
+				InputStream inputStream = null;
+				try {
+					inputStream = new FileInputStream(video.getPath());
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				response = Response.ok();
+				return response.status(200).entity(inputStream).build();
 			}
 		}
-		return response.status(200).entity(WRONGACCOUNT).build();
+		return response.status(401).build();
 	}
 
 
@@ -135,11 +139,15 @@ public class ServerProxy {
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals(SUCCESS)) {
 			//convert VideoInfos to JSONArray
+			//TODO:FAILURE MESSAGE, CHECK IF videoInfoList == null ?
 			ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
 			JSONArray videoInfoArray = new JSONArray();
 			for (int i = 0; i < videoInfoList.size(); i++) {
-				videoInfoArray.put(i, videoInfoList.get(i).getAsJson());
+				String json = videoInfoList.get(i).getAsJson();
+				JSONObject jsonObject = new JSONObject(json);
+				videoInfoArray.put(i, jsonObject);
 			}
+			System.out.println(videoInfoArray);
 			return videoInfoArray.toString();
 		}
 		return WRONGACCOUNT;
@@ -175,18 +183,18 @@ public class ServerProxy {
 	}
 
 	/**
-	 * @param accountDataNew json string of new accountdata
+	 * @param newAccountData json string of new accountdata
 	 * @param accountData json string of accountdata
 	 * @return string if accountdata change successfully accomplished
 	 */
 	@POST
     @Path("changeAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public String changeAccount (@FormParam("newData") String accountDataNew, @FormParam("data") String accountData) {
+	public String changeAccount (@FormParam("newData") String newAccountData, @FormParam("data") String accountData) {
 		Logger.getGlobal().info("AccountData Changing Request");
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals(SUCCESS)) {
-			Account newAccount = new Account(accountDataNew);
+			Account newAccount = new Account(newAccountData);
 			String status = accountManager.setMail(newAccount.getMail());
 			if (!(status.equals(SUCCESS))){
 				return status;
@@ -224,7 +232,7 @@ public class ServerProxy {
 	public String verifyAccount (@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
 		Logger.getGlobal().info("Account Verification Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals(SUCCESS)) {
+		if (accountStatus.equals("NOT VERIFIED")) {
 			return accountManager.verifyAccount(uuid);
 		}
 		return WRONGACCOUNT;
@@ -242,7 +250,7 @@ public class ServerProxy {
 
 		//authentication process
 		int accountId = accountManager.getAccountId();
-		if (accountId == -1) {
+		if (accountId < 1) {
 			return "NO ACCOUNTID";
 		}
 		account.setId(accountId);

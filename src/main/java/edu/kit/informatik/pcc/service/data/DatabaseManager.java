@@ -198,7 +198,7 @@ public class DatabaseManager {
     public Metadata getMetaData(int videoId){
         // create String, where meta file is stored
         //String filePath = LocationConfig.META_DIR + File.separator + getMetaNameByVideoId(videoId);
-        String filePath = LocationConfig.TEST_RESOURCES_DIR + File.separator + "testData" + File.separator +
+        String filePath = LocationConfig.TEST_RESOURCES_DIR + File.separator +
                 getMetaNameByVideoId(videoId) + ".json";
         //read the json File into a String
         String metaJSON = "";

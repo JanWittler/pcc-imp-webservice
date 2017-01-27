@@ -55,12 +55,13 @@ public class VideoManager {
 	 * @return file to download
 	 */
 	public File download(int videoId) {
+		//TODO: FIX PATH AFTER TESTING!
 		VideoInfo videoInfo = databaseManager.getVideoInfo(videoId);
 		if (videoInfo == null) {
 			return null;
 		}
 		String videoName = videoInfo.getName();
-		return new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName);
+		return new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + videoName + ".mp4");
 	}
 
 	/**
@@ -72,24 +73,25 @@ public class VideoManager {
 		if (videoInfo == null) {
 			return FAILURE;
 		}
-		Metadata metadata = databaseManager.getMetaData(videoId);
-		if (metadata == null) {
-			return FAILURE;
-		}
+		//TODO: NOT SURE IF NEEDED
+//		Metadata metadata = databaseManager.getMetaData(videoId);
+//		if (metadata == null) {
+//			return FAILURE;
+//		}
 		String videoName = videoInfo.getName();
 		String metaName = databaseManager.getMetaNameByVideoId(databaseManager.getVideoIdByName(videoName));
 		File videoFile = null;
 		try {
-			//TODO: Check Path
-			videoFile = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName);
+			//TODO: Check Path (TESTING PATH)
+			videoFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + videoName + ".mp4");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 		videoFile.delete();
 		File metaFile = null;
 		try {
-			//TODO: Check Path
-			metaFile = new File(LocationConfig.META_DIR + File.separator + metaName);
+			//TODO: Check Path (TESTING PATH)
+			metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + metaName + ".json");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
