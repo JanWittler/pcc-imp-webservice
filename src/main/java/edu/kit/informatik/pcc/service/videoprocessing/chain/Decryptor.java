@@ -61,10 +61,15 @@ public class Decryptor implements IStage {
      * @param encMeta Encrypted metadata file.
      * @param decVid  Decrypted video file.
      * @param decMeta Decrypted metadata file.
-     * @return Returns whether decrypting was successfull or not.
+     * @return Returns whether decrypting was successful or not.
      */
     protected boolean decrypt(File encVid, File encKey, File encMeta, File decVid, File decMeta) {
         SecretKey key = keyDecryptor.decrypt(encKey);
+
+        if (key == null) {
+            return false;
+        }
+
         return fileDecryptor.decrypt(encVid, key, decVid) && fileDecryptor.decrypt(encMeta, key, decMeta);
     }
 }
