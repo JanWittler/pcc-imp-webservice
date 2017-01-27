@@ -18,26 +18,28 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * @author Fabian Wenzel
  */
 @Path("webservice")
 public class ServerProxy {
-	//TODO: Logging
 
 	// attributes
 	private VideoManager videoManager;
 	private AccountManager accountManager;
 	private final String WRONGACCOUNT = "WRONG ACCOUNT";
+	private final String SUCCESS = "SUCCESS";
 
 	// methods
     @POST
     @Path("videoUpload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
 	public String videoUpload (@FormDataParam("video") InputStream video, @FormDataParam("metadata") InputStream metadata, @FormDataParam("key") InputStream encryptedSymmetricKey, @FormDataParam("data") String accountData, @FormDataParam("videoName") String videoName, @Suspended AsyncResponse response) {
+		Logger.getGlobal().info("Upload Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals("SUCCESS")) {
+		if (accountStatus.equals(SUCCESS)) {
 			return videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
 		}
     	return WRONGACCOUNT;
@@ -47,6 +49,7 @@ public class ServerProxy {
     @Path("videoDownload")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response videoDownload (@FormParam("id") int videoId, @FormParam("data") String accountData) {
+		Logger.getGlobal().info("Download Request");
 		setUpForRequest(accountData);
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus == null) {
@@ -54,7 +57,7 @@ public class ServerProxy {
 			return null;
 		}
 		Response.ResponseBuilder response = null;
-		if (accountStatus.equals("SUCCESS")) {
+		if (accountStatus.equals(SUCCESS)) {
 			File video = videoManager.download(videoId);
 			if (video == null) {
 				try {
@@ -75,8 +78,9 @@ public class ServerProxy {
     @Path("videoInfo")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String videoInfo (@FormParam("id") int videoId, @FormParam("data") String accountData) {
+		Logger.getGlobal().info("Get Metadata Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals("SUCCESS")) {
+		if (accountStatus.equals(SUCCESS)) {
 			return videoManager.getMetaData(videoId);
 		}
     	return WRONGACCOUNT;
@@ -86,8 +90,9 @@ public class ServerProxy {
     @Path("videoDelete")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String videoDelete (@FormParam("id") int videoId, @FormParam("data") String accountData) {
+		Logger.getGlobal().info("Video Deletion Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals("SUCCESS")) {
+		if (accountStatus.equals(SUCCESS)) {
 			return videoManager.videoDelete(videoId);
 		}
 		return WRONGACCOUNT;
@@ -97,8 +102,9 @@ public class ServerProxy {
     @Path("getVideosByAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String getVideosByAccount (@FormParam("data") String accountData) {
+		Logger.getGlobal().info("GetVideosByAccount Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals("SUCCESS")) {
+		if (accountStatus.equals(SUCCESS)) {
 			//convert VideoInfos to JSONArray
 			ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
 			JSONArray videoInfoArray = new JSONArray();
@@ -114,6 +120,7 @@ public class ServerProxy {
     @Path("authenticate")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String authenticateAccount (@FormParam("data") String accountData) {
+		Logger.getGlobal().info("Authenticate Request");
 		return setUpForRequest(accountData);
 	}
 
@@ -121,6 +128,7 @@ public class ServerProxy {
     @Path("createAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String createAccount (@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
+		Logger.getGlobal().info("Account Creation Request");
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals("NO ACCOUNTID")) {
 			return accountManager.registerAccount(uuid);
@@ -132,11 +140,12 @@ public class ServerProxy {
     @Path("changeAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String changeAccount (@FormParam("newData") String accountDataNew, @FormParam("data") String accountData) {
+		Logger.getGlobal().info("AccountData Changing Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals("SUCCESS")) {
+		if (accountStatus.equals(SUCCESS)) {
 			Account newAccount = new Account(accountDataNew);
 			String status = accountManager.setMail(newAccount.getMail());
-			if (!(status.equals("SUCCESS"))){
+			if (!(status.equals(SUCCESS))){
 				return status;
 			}
 			status = accountManager.setPassword(newAccount.getPasswordHash());
@@ -149,18 +158,10 @@ public class ServerProxy {
     @Path("deleteAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String deleteAccount (@FormParam("data") String accountData) {
+		Logger.getGlobal().info("Account Deletion Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals("SUCCESS")) {
-			ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
-			if (videoInfoList != null) {
-				for (VideoInfo videoInfo: videoInfoList){
-					String status = videoManager.videoDelete(videoInfo.getVideoId());
-					if (status.equals("FAILURE")){
-						//TODO: handle failure of videoDelete? how?
-					}
-				}
-			}
-			return accountManager.deleteAccount();
+		if (accountStatus.equals(SUCCESS)) {
+			return accountManager.deleteAccount(videoManager);
 		}
 		return WRONGACCOUNT;
 	}
@@ -169,8 +170,9 @@ public class ServerProxy {
     @Path("verfiyAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String verifyAccount (@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
+		Logger.getGlobal().info("Account Verification Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals("SUCCESS")) {
+		if (accountStatus.equals(SUCCESS)) {
 			return accountManager.verifyAccount(uuid);
 		}
 		return WRONGACCOUNT;
@@ -196,7 +198,7 @@ public class ServerProxy {
 		if (!verfied) {
 			return "NOT VERIFIED";
 		}
-    	return "SUCCESS";
+    	return SUCCESS;
 	}
 
 

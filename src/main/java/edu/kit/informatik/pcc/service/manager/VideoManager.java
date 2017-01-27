@@ -6,7 +6,6 @@ import edu.kit.informatik.pcc.service.videoprocessing.VideoProcessingManager;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 import javax.ws.rs.container.AsyncResponse;
 
 /**
@@ -40,7 +39,7 @@ public class VideoManager {
 			return null;
 		}
 		String videoName = videoInfo.getName();
-		return new File(LocationConfig.ANONYM_VID_DIR + "/" + videoName);
+		return new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName);
 	}
 	public String videoDelete(int videoId) {
 		VideoInfo videoInfo = databaseManager.getVideoInfo(videoId);
@@ -52,12 +51,11 @@ public class VideoManager {
 			return FAILURE;
 		}
 		String videoName = videoInfo.getName();
-		String metaName = databaseManager.getMetaNameByVideoId(
-					databaseManager.getVideoIdByName(videoName));
+		String metaName = databaseManager.getMetaNameByVideoId(databaseManager.getVideoIdByName(videoName));
 		File videoFile = null;
 		try {
 			//TODO: Check Path
-			videoFile = new File(LocationConfig.ANONYM_VID_DIR + "/" + videoName);
+			videoFile = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName);
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
@@ -65,7 +63,7 @@ public class VideoManager {
 		File metaFile = null;
 		try {
 			//TODO: Check Path
-			metaFile = new File(LocationConfig.META_DIR + "/" + metaName);
+			metaFile = new File(LocationConfig.META_DIR + File.separator + metaName);
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
@@ -76,7 +74,7 @@ public class VideoManager {
 	public String getMetaData(int videoId) {
 		Metadata metadata = databaseManager.getMetaData(videoId);
 		if (metadata == null) {
-			return "FAILURE";
+			return FAILURE;
 		}
 		return metadata.getAsJson();
 	}

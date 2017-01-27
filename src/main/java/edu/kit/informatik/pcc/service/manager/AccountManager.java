@@ -2,6 +2,9 @@ package edu.kit.informatik.pcc.service.manager;
 
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
+import edu.kit.informatik.pcc.service.data.VideoInfo;
+
+import java.util.ArrayList;
 
 /**
  * @author David Laubenstein, Fabian Wenzel
@@ -37,7 +40,16 @@ public class AccountManager {
 		return databaseManager.register(uuid) ? SUCCESS : FAILURE;
 	}
 
-	public String deleteAccount() {
+	public String deleteAccount(VideoManager videoManager) {
+		ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
+		if (videoInfoList != null) {
+			for (VideoInfo videoInfo: videoInfoList){
+				String status = videoManager.videoDelete(videoInfo.getVideoId());
+				if (status.equals(FAILURE)){
+					//TODO: handle failure of videoDelete? how?
+				}
+			}
+		}
 		return databaseManager.deleteAccount() ? SUCCESS : FAILURE;
 	}
 
