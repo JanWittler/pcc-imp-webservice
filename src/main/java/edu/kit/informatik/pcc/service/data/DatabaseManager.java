@@ -1,5 +1,6 @@
 package edu.kit.informatik.pcc.service.data;
 
+import edu.kit.informatik.pcc.service.server.Main;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
+ * This class handles all low-level database queries
+ *
  * @author David Laubenstein
  * Created by David Laubenstein at 1/18/17
  */
@@ -27,7 +30,9 @@ public class DatabaseManager {
     // constructors
 
     /**
-     * constructor, which includes the account object.
+     * Constructor, which includes the {@link Account} object in the {@link DatabaseManager}.
+     * The {@link Account} object saves important information about the user.
+     *
      * @param account to have access to the actual account.
      */
     public DatabaseManager(Account account) {
@@ -37,7 +42,13 @@ public class DatabaseManager {
     // methods
 
     /**
-     * creates the connection to the database.
+     * This method is used to open a connection to the database with the class attributes.
+     * If the connection fails, the
+     *
+     * <p>
+     *     IMPORTANT: A Connection c will be opened, but not closed. After calling this method,
+     *     you have to close the connection with <b>this.c.close()</b>
+     * </p>
      */
     private void connectDatabase() {
         c = null;
@@ -47,14 +58,16 @@ public class DatabaseManager {
                 .getConnection("jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME ,USER, PASSWORD);
           } catch (Exception e) {
             e.printStackTrace();
-            Logger.getGlobal().severe("No connection to database!"
-                    + e.getClass().getName()+": " + e.getMessage());
-            System.exit(0);
+            Logger.getGlobal().severe("No connection to database!");
+            Main.stopServer();
           }
     }
 
     /**
-     * save anonymized video to database with metadata, related to an account
+     * Save Video and Metadata to database, related to an account
+     * This is not the real file or the path to the file. This is only the name of the
+     * video file and metadata file as a String
+     *
      * @param videoName name of the video file, which should be saved
      * @param metaName name of the meta data file, which should be saved
      * @return boolean to indicate success or failure
@@ -72,15 +85,18 @@ public class DatabaseManager {
             this.c.close();
         } catch (NullPointerException | SQLException e) {
             Logger.getGlobal().warning("Insert SQL command has not been executed successfully: " +
-                    "Video was not saved in database: " + e);
+                    "Video was not saved in database: ");
         }
         return true;
     }
 
     /**
-     * get the saved information for a video
-     * @param videoId the id of the video
-     * @return a VideoInfo object, where all information is in.
+     * Get the saved information for a video as a {@link VideoInfo} object.
+     * The database command selects the video_name and the id of the video from the
+     * table <b>video</b> and creates a {@link VideoInfo} object with this information
+     *
+     * @param videoId is the id of the video the information should be collected
+     * @return a VideoInfo object, where all information are saved in the database
      */
     public VideoInfo getVideoInfo(int videoId) {
         VideoInfo vI = null;
@@ -101,14 +117,17 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().warning("Select SQL command has not been executed successfully: " + e);
+            Logger.getGlobal().warning("Select SQL command has not been executed successfully: ");
         }
         return vI;
     }
 
     /**
-     * return an ArrayList, which includes all Videos of a user
-     * @return ArrayList ov VideoInfo-Objects
+     * Get all videos of a user packed in {@link VideoInfo} objects
+     * The SQL command collects all video_name and id's of the videos and store them into an ArrayList of
+     * {@link VideoInfo} objects.
+     *
+     * @return all information for the videos of a user
      */
     public ArrayList<VideoInfo> getVideoInfoList() {
         // create ArrayList
@@ -131,14 +150,21 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().warning("SELECT SQL command has not been executed successfully: " + e);
+            Logger.getGlobal().warning("SELECT SQL command has not been executed successfully: ");
         }
         return videoInfoList;
     }
 
     /**
-     * delete the row with all infos for the video, but just in Database, the files are already existing...
-     * @param videoId: the unique id of the video
+     * Delete the row with all information for the video in the table <b>video</b>
+     * But the deletion is just in the database, the files are already existing.
+     *
+     * <p><b>
+     *     You have to delete the videos before you call this method,
+     *     so you are not able to find the video anymore
+     * </b></p>
+     *
+     * @param videoId: the <b>unique</b> id of the video
      * @return a boolean, to review the success of the sql statement
      */
     public boolean deleteVideoAndMeta(int videoId) {
@@ -152,13 +178,20 @@ public class DatabaseManager {
             this.c.close();
             return true;
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("DELETE SQL command has not been executed successfully: There is a problem with the Video, maybe the id of the video: " + e);
+            Logger.getGlobal().severe("DELETE SQL command has not been executed successfully: There is a problem with the Video, maybe the id of the video: ");
         }
         return false;
     }
 
     /**
-     * return metadata of a videoId
+     * Get the metadata of a video as a {@link Metadata} object.
+     * <p>
+     *      The SQL command search for the id of the video and get the name of the metadata File.
+     *      Then the path will be merged by the path to the folder, where all metadata are saved, the name of the
+     *      metadata file and the extension of the file.
+     *      With this path the metadata File will be read out and stored in a {@link Metadata} object.
+     * </p>
+     *
      * @param videoId: unique id of a video
      * @return a metadata-object
      */
@@ -191,9 +224,16 @@ public class DatabaseManager {
     }
 
     /**
-     * changes the mail address of an account
-     * @param newMail: new Mail address which will be set as new mail address
-     * @return boolean, which symbolizes the success of the sql statement
+     * Changes the mail address of an account
+     *
+     * <p>
+     *     Check, if the mail is not given to another user, because the column "mail" is unique.
+     *     If the mail is not assigned to another account, the new mail will be set
+     * </p>
+     *
+     * @param newMail: mail address, which should be updated in the account, if the mail is not assigned to another
+     *               account
+     * @return if the mail address was changed
      */
     public boolean setMail(String newMail) {
         // connect to database
@@ -201,21 +241,28 @@ public class DatabaseManager {
         // send sql command and catch possible exeptions
         try {
             Statement stmt = this.c.createStatement();
-            // sql command
-            String sql = "UPDATE \"user\" set mail='" + newMail + "' where id=" + account.getId() + ";";
-            stmt.executeUpdate(sql);
-            stmt.close();
-            this.c.close();
+            // if mail is not given to another account, execute sql command
+            if (!isMailExisting(newMail)) {
+                String sql = "UPDATE \"user\" set mail='" + newMail + "' where id=" + account.getId() + ";";
+                stmt.executeUpdate(sql);
+                stmt.close();
+                this.c.close();
+                return true;
+            } else {
+                Logger.getGlobal().warning("The mail address you want to update is already stored" +
+                        "in another user account. Please choose another mail address");
+            }
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().warning("UPDATE SQL command has not been executed successfully: " + e);
+            Logger.getGlobal().warning("UPDATE SQL command has not been executed successfully: ");
         }
-        return true;
+        return false;
     }
 
     /**
-     * set new password for user
+     * Set new password for user in the database
+     *
      * @param newPasswordHash: set this passwordHash as new password for this user
-     * @return boolean if sql statement was successful
+     * @return if setting password was successful
      */
     public boolean setPassword(String newPasswordHash) {
         // connect to database
@@ -230,14 +277,15 @@ public class DatabaseManager {
             this.c.close();
             return true;
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("UPDATE SQL command has not been executed successfully: " + e);
+            Logger.getGlobal().severe("Failed to set new password");
         }
         return false;
     }
 
     /**
-     * authenticate account (check, if password and mail are correct)
-     * @return boolean true=successful auth, false=wrong passwd or mail
+     * Authenticate account (check, if password and mail are correct)
+     *
+     * @return if the account information (mail, password) are the same as in the database
      */
     public boolean authenticate() {
         String mail = "";
@@ -268,8 +316,9 @@ public class DatabaseManager {
     }
 
     /**
-     * delete user row
-     * @return boolean that symbolizes success of deletion
+     * Deletes account of the user
+     *
+     * @return success of user deletion
      */
     public boolean deleteAccount() {
         connectDatabase();
@@ -287,8 +336,9 @@ public class DatabaseManager {
     }
 
     /**
-     * get the account id, which is saved in the database
-     * @return int of account id, which is the database
+     * Get the account id, which is saved in the database
+     *
+     * @return account id as integer from the database
      */
     public int getAccountId() {
         int accountId = -2;
@@ -305,16 +355,18 @@ public class DatabaseManager {
             this.c.close();
         } catch (SQLException | NullPointerException e) {
             Logger.getGlobal().warning("getAccountId: SELECT SQL command or getting the JSON variable seems " +
-                    "to have a problem. Check Account Mail Address! " + e);
+                    "to have a problem. Check Account Mail Address! ");
             return -1;
         }
         return accountId;
     }
 
     /**
-     * register an account. necessary data is the account object and the uuid
+     * Registers an account.
+     * Necessary data is fetched in the account object and the uuid
+     *
      * @param uuid is unique and is for verification process
-     * @return boolean, which symbolizes success of sql statement
+     * @return success of registration
      */
     public boolean register(String uuid) {
         connectDatabase();
@@ -329,14 +381,15 @@ public class DatabaseManager {
             this.c.close();
         } catch (NullPointerException | SQLException e) {
             Logger.getGlobal().severe("Account registration has occurred a problem. check uuid, " +
-                    "mail and passwordHash! " + e);
+                    "mail and passwordHash! ");
             return false;
         }
         return true;
     }
 
     /**
-     * verifies an account, compare uuid of database and uuid of url
+     * Verifies an account, compares uuid of database and uuid of url
+     *
      * @param uuid is the uuid, which is in the link of the verification mail
      * @return String of success
      */
@@ -357,7 +410,7 @@ public class DatabaseManager {
             rs.close();
             stmt.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().warning("verifyAccount occurred a problem in storing uuid temporarily: " + e);
+            Logger.getGlobal().warning("verifyAccount occurred a problem in storing uuid temporarily: ");
         }
         if (uuidDatabase.equals(uuid)) {
             try {
@@ -367,8 +420,7 @@ public class DatabaseManager {
                 this.c.close();
                 return true;
             } catch (NullPointerException | SQLException e) {
-                Logger.getGlobal().severe("verifyAccount occurred a problem in updating account to isVerified! "
-                        + e);
+                Logger.getGlobal().severe("verifyAccount occurred a problem in updating account to isVerified! ");
             }
             return false;
         } else {
@@ -377,7 +429,7 @@ public class DatabaseManager {
             try {
                 this.c.close();
             } catch (SQLException sqlE) {
-                Logger.getGlobal().warning("verifyAccount: Connection c cannot be closed! " + sqlE);
+                Logger.getGlobal().warning("verifyAccount: Connection c cannot be closed! ");
             }
             return false;
         }
@@ -385,6 +437,7 @@ public class DatabaseManager {
 
     /**
      * check, if the value "verified" in table "user" is true or false
+     *
      * @return value "verified" in table "user"
      */
     public boolean isVerified() {
@@ -434,11 +487,11 @@ public class DatabaseManager {
     }
 
     /**
-     * get the name of the metadata file
+     * Get the name of the metadata file, which will be searched by the id of the video
+     *
      * @param videoId: to get the related video to the metadata
      * @return String of metadata name
      */
-    //TODO: can be private, but for testing it is public
     public String getMetaNameByVideoId(int videoId) {
         //connect to database
         connectDatabase();
@@ -460,5 +513,37 @@ public class DatabaseManager {
                     "storing column variable of database occurred a problem. " + e);
 		}
 		return meta;
+    }
+
+    /**
+     * check, if a mail address is already saved in database table <b>user</b>
+     *
+     * @param mail is the mail, which will be checked
+     * @return if mail exists in database
+     */
+    protected boolean isMailExisting(String mail) {
+        //connect to database
+        connectDatabase();
+        int count_mail = 0;
+        try {
+            Statement stmt = this.c.createStatement();
+
+            ResultSet rs = stmt.executeQuery("select count(mail) from \"user\" where mail='" + mail + "';");
+            // insert result in ArrayList
+            if (rs.next()) {
+                count_mail = rs.getInt("count");
+            }
+            rs.close();
+            stmt.close();
+            this.c.close();
+        } catch (NullPointerException | SQLException e) {
+            Logger.getGlobal().severe("getMetaNameByVideoId: SELECT SQL command or " +
+                    "storing column variable of database occurred a problem. " + e);
+        }
+        if (count_mail == 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

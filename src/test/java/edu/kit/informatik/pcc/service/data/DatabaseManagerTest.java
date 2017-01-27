@@ -151,9 +151,9 @@ public class DatabaseManagerTest {
         Metadata md = dm.getMetaData(dm.getVideoIdByName(videoName));
         Assert.assertTrue(md.getDate().equals("123") && md.getTriggerType().equals("23"));
         dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
-        Assert.assertTrue(md.getgForce()[0] == (float) 30.33333
-                && md.getgForce()[1] == (float) 40
-                && md.getgForce()[2] == (float) 50);
+        Assert.assertTrue(md.getGForce()[0] == (float) 30.33333
+                && md.getGForce()[1] == (float) 40
+                && md.getGForce()[2] == (float) 50);
         //delete Video
     }
 
@@ -195,6 +195,13 @@ public class DatabaseManagerTest {
     public void authenticateTest() {
         Assert.assertTrue(dm.authenticate());
     }
+
+    @Test
+    public void isMailExistingTest() {
+        Assert.assertTrue(dm.isMailExisting(account.getMail()));
+        Assert.assertFalse(dm.isMailExisting("mailWhichIsNotExisting@notExisting.NO"));
+    }
+
     @After
     public void cleanUpAfter() {
         dm.deleteAccount();
