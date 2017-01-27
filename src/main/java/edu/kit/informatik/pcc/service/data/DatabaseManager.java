@@ -341,7 +341,7 @@ public class DatabaseManager {
      * @return account id as integer from the database
      */
     public int getAccountId() {
-        int accountId = -2;
+        int accountId = -1;
         connectDatabase();
         try {
             Statement stmt = this.c.createStatement();
