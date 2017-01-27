@@ -22,6 +22,9 @@ public class Main{
     private static Logger LOGGER;
     private final static String REQUESTLOCATION = "edu.kit.informatik.pcc.service.server";
 
+    /**
+     * @param args no args
+     */
     public static void main(String[] args ) {
         startServer();
     }

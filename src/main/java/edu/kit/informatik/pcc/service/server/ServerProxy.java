@@ -33,18 +33,32 @@ public class ServerProxy {
 	private final String SUCCESS = "SUCCESS";
 
 	// methods
-    @POST
-    @Path("videoUpload")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+	/**
+	 * @param video inputstream of videofile to upload
+	 * @param metadata inputstream of metadatafile to upload
+	 * @param encryptedSymmetricKey inputstream of keyfile to upload
+	 * @param accountData json string of accountdata
+	 * @param videoName string of videoname
+	 * @param response create async response
+	 * @return string if task started successfully
+	 */
+	@POST
+	@Path("videoUpload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public String videoUpload (@FormDataParam("video") InputStream video, @FormDataParam("metadata") InputStream metadata, @FormDataParam("key") InputStream encryptedSymmetricKey, @FormDataParam("data") String accountData, @FormDataParam("videoName") String videoName, @Suspended AsyncResponse response) {
 		Logger.getGlobal().info("Upload Request");
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals(SUCCESS)) {
 			return videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
 		}
-    	return WRONGACCOUNT;
+		return WRONGACCOUNT;
 	}
 
+	/**
+	 * @param videoId integer of videoid to download
+	 * @param accountData json string of accountdata
+	 * @return response with video or failure message
+	 */
 	@POST
     @Path("videoDownload")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -68,13 +82,19 @@ public class ServerProxy {
 			} else {
 				response = Response.ok(video);
 				response.header("Content-Disposition", "attachment; filename=\""+video.getName()+".mp4\"");
-				return response.build();
+				return response.status(200).entity(SUCCESS).build();
 			}
 		}
 		return response.status(200).entity(WRONGACCOUNT).build();
 	}
 
-    @POST
+
+	/**
+	 * @param videoId integer of videoid of associated metadata
+	 * @param accountData json string of accountdata
+	 * @return json string with metadata
+	 */
+	@POST
     @Path("videoInfo")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String videoInfo (@FormParam("id") int videoId, @FormParam("data") String accountData) {
@@ -86,7 +106,12 @@ public class ServerProxy {
     	return WRONGACCOUNT;
 	}
 
-    @POST
+	/**
+	 * @param videoId integer of videoid
+	 * @param accountData json string of accountdata
+	 * @return string if deletion successfully accomplished
+	 */
+	@POST
     @Path("videoDelete")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String videoDelete (@FormParam("id") int videoId, @FormParam("data") String accountData) {
@@ -98,7 +123,11 @@ public class ServerProxy {
 		return WRONGACCOUNT;
 	}
 
-    @POST
+	/**
+	 * @param accountData json string of accountdata
+	 * @return json array with all videoinfos of account
+	 */
+	@POST
     @Path("getVideosByAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String getVideosByAccount (@FormParam("data") String accountData) {
@@ -116,7 +145,11 @@ public class ServerProxy {
 		return WRONGACCOUNT;
 	}
 
-    @POST
+	/**
+	 * @param accountData json string of accountdata
+	 * @return string if authentication successfully accomplished
+	 */
+	@POST
     @Path("authenticate")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String authenticateAccount (@FormParam("data") String accountData) {
@@ -124,7 +157,12 @@ public class ServerProxy {
 		return setUpForRequest(accountData);
 	}
 
-    @POST
+	/**
+	 * @param accountData json string of accountdata
+	 * @param uuid strinf of uuid to set in database
+	 * @return string if account creation successfully accomplished
+	 */
+	@POST
     @Path("createAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String createAccount (@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
@@ -136,7 +174,12 @@ public class ServerProxy {
     	return "ACCOUNT EXISTS";
 	}
 
-    @POST
+	/**
+	 * @param accountDataNew json string of new accountdata
+	 * @param accountData json string of accountdata
+	 * @return string if accountdata change successfully accomplished
+	 */
+	@POST
     @Path("changeAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String changeAccount (@FormParam("newData") String accountDataNew, @FormParam("data") String accountData) {
@@ -154,7 +197,11 @@ public class ServerProxy {
 		return WRONGACCOUNT;
 	}
 
-    @POST
+	/**
+	 * @param accountData json string of accountdata
+	 * @return string if account deletion successfully accomplished
+	 */
+	@POST
     @Path("deleteAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String deleteAccount (@FormParam("data") String accountData) {
@@ -166,8 +213,13 @@ public class ServerProxy {
 		return WRONGACCOUNT;
 	}
 
-    @POST
-    @Path("verfiyAccount")
+	/**
+	 * @param accountData json string of accountdata
+	 * @param uuid string of uuid to compare with database uuid
+	 * @return string if verification successfully accomplished
+	 */
+	@POST
+    @Path("verifyAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String verifyAccount (@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
 		Logger.getGlobal().info("Account Verification Request");
@@ -178,6 +230,10 @@ public class ServerProxy {
 		return WRONGACCOUNT;
 	}
 
+	/**
+	 * @param accountData json string of accountdata
+	 * @return string if authentication accomplished or error message
+	 */
 	private String setUpForRequest(String accountData) {
     	//setup account and manager
 		Account account = new Account(accountData);
