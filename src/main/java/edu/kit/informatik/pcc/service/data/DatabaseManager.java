@@ -47,7 +47,8 @@ public class DatabaseManager {
                 .getConnection("jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME ,USER, PASSWORD);
           } catch (Exception e) {
             e.printStackTrace();
-            System.err.println(e.getClass().getName()+": " + e.getMessage());
+            Logger.getGlobal().severe("No connection to database!"
+                    + e.getClass().getName()+": " + e.getMessage());
             System.exit(0);
           }
     }
@@ -262,7 +263,7 @@ public class DatabaseManager {
                     "check mail and password! " + e);
         }
         //return boolean, if password and mail are equal to database data
-        return mail.equals(account.getEmail()) && passwordHash.equals(account.getPasswordHash());
+        return mail.equals(account.getMail()) && passwordHash.equals(account.getPasswordHash());
 
     }
 
@@ -295,7 +296,7 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
             ResultSet rs = stmt.executeQuery( "select \"id\" from \"user\" where \"user\".\"mail\"='" +
-                    account.getEmail() + "'");
+                    account.getMail() + "'");
             // insert result in ArrayList
             while ( rs.next() ) {
                accountId = Integer.parseInt(rs.getString("id"));
@@ -321,7 +322,7 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
             // sql command
-            String sql = "insert into \"user\" (mail,password,uuid,verified) values ('" + account.getEmail() + "','" +
+            String sql = "insert into \"user\" (mail,password,uuid,verified) values ('" + account.getMail() + "','" +
                     account.getPasswordHash() + "'," + uuid + ", false);";
             stmt.executeUpdate(sql);
             stmt.close();
