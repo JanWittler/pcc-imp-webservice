@@ -6,6 +6,7 @@ import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
+import edu.kit.informatik.pcc.service.manager.VideoManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.*;
@@ -31,10 +32,10 @@ import java.util.logging.Logger;
  * Created by Fabi on 20.01.2017.
  */
 public class ServerProxyTest {
-    private ServerProxy serverProxy;
     private DatabaseManager databaseManager;
     private Account account;
     private VideoInfo videoInfo;
+    private final String SUCCESS = "SUCCESS";
     private String uuid = "1234";
     private String newUuid = "1235";
     private String validJson = "{\n" +
@@ -52,40 +53,47 @@ public class ServerProxyTest {
 
     @Before
     public void setUp() {
-        serverProxy = new ServerProxy();
         account = new Account(validJson);
         databaseManager = new DatabaseManager(account);
         databaseManager.register(uuid);
         account.setId(databaseManager.getAccountId());
         databaseManager.saveProcessedVideoAndMeta("input", "testMeta");
         databaseManager.saveProcessedVideoAndMeta("input2", "testMeta2");
+        databaseManager.saveProcessedVideoAndMeta("input3", "metaTest");
+        databaseManager.verifyAccount(uuid);
     }
 
     @org.junit.Test
     public void authenticateTest() {
-        databaseManager.verifyAccount(uuid);
+        Client client = ClientBuilder.newClient();
         Form f = new Form();
         f.param("data", validJson);
-        Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("authenticate");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
-        Assert.assertTrue(response.readEntity(String.class).equals("SUCCESS"));
+        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
     }
 
     @org.junit.Test
     public void verifyTest() {
+        //setup for test
+        Account tempAccount = new Account(newJson);
+        DatabaseManager tempDatabaseManager = new DatabaseManager(tempAccount);
+        tempDatabaseManager.register(newUuid);
+        tempAccount.setId(tempDatabaseManager.getAccountId());
+
         Form f = new Form();
-        f.param("data", validJson);
-        f.param("uuid", uuid);
+        f.param("data", newJson);
+        f.param("uuid", newUuid);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("verifyAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
-        Assert.assertTrue(response.readEntity(String.class).equals("SUCCESS"));
+        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+
+        tempDatabaseManager.deleteAccount();
     }
 
     @org.junit.Test
     public void downloadTest() {
-        databaseManager.verifyAccount(uuid);
         String videoId = Integer.toString(databaseManager.getVideoIdByName("input"));
         Form f = new Form();
         f.param("data", validJson);
@@ -95,7 +103,7 @@ public class ServerProxyTest {
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
         InputStream inputStream = response.readEntity(InputStream.class);
         if (response.getStatus() == 200) {
-            File downloadfile = new File("c://test/input.mp4");
+            File downloadfile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTestFail.mp4");
             try {
                 Files.copy(inputStream, downloadfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
@@ -107,7 +115,6 @@ public class ServerProxyTest {
 
     @org.junit.Test
     public void videosByAccountTest() {
-        databaseManager.verifyAccount(uuid);
         Form f = new Form();
         f.param("data", validJson);
         Client client = ClientBuilder.newClient();
@@ -129,7 +136,7 @@ public class ServerProxyTest {
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("createAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
-        Assert.assertTrue(response.readEntity(String.class).equals("SUCCESS"));
+        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
         DatabaseManager tempDM = new DatabaseManager(account2);
         account2.setId(tempDM.getAccountId());
         tempDM.deleteAccount();
@@ -137,25 +144,27 @@ public class ServerProxyTest {
 
     @org.junit.Test
     public void changeAccountTest() {
-        databaseManager.verifyAccount(uuid);
         Form f = new Form();
         f.param("data", validJson);
         f.param("newData", newJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("changeAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
-        Assert.assertTrue(response.readEntity(String.class).equals("SUCCESS"));
+        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
     }
 
     @org.junit.Test
     public void deleteAccountTest() {
-        Account account2 = new Account(newJson);
-        DatabaseManager tempDatabaseManager = new DatabaseManager(account2);
+        //setup for test
+        Account tempAccount = new Account(newJson);
+        DatabaseManager tempDatabaseManager = new DatabaseManager(tempAccount);
         tempDatabaseManager.register(newUuid);
-        account2.setId(tempDatabaseManager.getAccountId());
+        tempAccount.setId(tempDatabaseManager.getAccountId());
         tempDatabaseManager.verifyAccount(newUuid);
         tempDatabaseManager.saveProcessedVideoAndMeta("deleteVideo1", "deleteMeta1");
         tempDatabaseManager.saveProcessedVideoAndMeta("deleteVideo2", "deleteMeta2");
+
+        //create files for testing
         File file1 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo1" + ".mp4");
         File file2 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo2" + ".mp4");
         File file3 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta1" + ".json");
@@ -168,13 +177,61 @@ public class ServerProxyTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        account2.setId(tempDatabaseManager.getAccountId());
+
         Form f = new Form();
         f.param("data", newJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("deleteAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
-        Assert.assertTrue(response.readEntity(String.class).equals("SUCCESS"));
+        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+
+        tempDatabaseManager.deleteAccount();
+    }
+
+
+    @org.junit.Test
+    public void videoDeleteTest() {
+        String videoId = "-1";
+        databaseManager.saveProcessedVideoAndMeta("input4", "blaa");
+        VideoManager videoManager = new VideoManager(account);
+        for (VideoInfo videoInfo: videoManager.getVideoInfoList()) {
+            if (videoInfo.getName().equals("input4")) {
+                videoId = Integer.toString(videoInfo.getVideoId());
+            }
+        }
+        Assert.assertFalse(videoId.equals("-1"));
+
+        Form f = new Form();
+        f.param("data", validJson);
+        f.param("videoId", videoId);
+        Client client = ClientBuilder.newClient();
+        WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoDelete");
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input4"));
+    }
+
+    @org.junit.Test
+    public void videoInfoTest() {
+        String videoId = "-1";
+        VideoManager videoManager = new VideoManager(account);
+        for (VideoInfo videoInfo: videoManager.getVideoInfoList()) {
+            if (videoInfo.getName().equals("input3")) {
+                videoId = Integer.toString(videoInfo.getVideoId());
+            }
+        }
+        Assert.assertFalse(videoId.equals("-1"));
+
+        Form f = new Form();
+        f.param("data", validJson);
+        f.param("videoId", videoId);
+        Client client = ClientBuilder.newClient();
+        WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoInfo");
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        JSONObject jsonObject = new JSONObject(response.readEntity(String.class));
+        JSONObject metadata = jsonObject.getJSONObject("metadata");
+        String gForceY = metadata.getString("gForceY");
+        Assert.assertTrue(gForceY.equals("40.0"));
     }
 
 //    @org.junit.Test
@@ -211,6 +268,7 @@ public class ServerProxyTest {
     public void after() {
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input"));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input2"));
+        databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input3"));
         databaseManager.deleteAccount();
     }
 

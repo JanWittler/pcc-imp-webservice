@@ -69,7 +69,7 @@ public class AccountManager {
 			for (VideoInfo videoInfo: videoInfoList){
 				String status = videoManager.videoDelete(videoInfo.getVideoId());
 				if (status.equals(FAILURE)){
-					//TODO: handle failure of videoDelete? how?
+					//TODO: handle failure of videoDelete?
 				}
 			}
 		}

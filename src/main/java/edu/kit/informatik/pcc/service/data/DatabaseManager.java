@@ -211,6 +211,7 @@ public class DatabaseManager {
         }
         // put String into JSON and save them into java variables
         JSONObject obj = new JSONObject(metaJSON);
+        //TODO: json object name is metaInfo and not metadata link in metadata class?
         JSONObject meta = obj.getJSONObject("metaInfo");
         String date = meta.getString("date");
         String triggerType = meta.getString("triggerType");
