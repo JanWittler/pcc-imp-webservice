@@ -87,7 +87,7 @@ public class DatabaseManager {
             this.c.close();
         } catch (NullPointerException | SQLException e) {
             Logger.getGlobal().warning("Insert SQL command has not been executed successfully: " +
-                    "Video was not saved in database: ");
+                    "Video was not saved in database!");
         }
         return true;
     }

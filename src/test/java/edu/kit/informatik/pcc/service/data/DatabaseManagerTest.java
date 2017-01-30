@@ -2,6 +2,7 @@ package edu.kit.informatik.pcc.service.data;
 
 import org.junit.*;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 
 /**
@@ -44,30 +45,38 @@ public class DatabaseManagerTest {
                 "}";
         account = new Account(json);
         dm = new DatabaseManager(account);
-        registered = dm.register(OWN_UUID);
-        account.setId(dm.getAccountId());
     }
 
     @Test
     public void registerTest() {
-        // already registered in beforeTest
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         Assert.assertTrue(registered);
     }
 
     @Test
     public void getAccountIdTest() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         Assert.assertEquals("account.getId() is not equals dm.getAccountId()", account.getId(), dm.getAccountId());
     }
 
+    /**
+     * same as verifyAccountTest, so we will not duplicate them
+     */
     @Test
     public void isVerifiedTest() {
-       Assert.assertTrue(!dm.isVerified());
-       dm.verifyAccount(OWN_UUID);
-       Assert.assertTrue(dm.isVerified());
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
+        Assert.assertTrue(!dm.isVerified());
+        dm.verifyAccount(OWN_UUID);
+        Assert.assertTrue(dm.isVerified());
     }
 
     @Test
     public void saveProcessedVideoAndMetaTest() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         String videoName = "videoTest123";
         String metaName = "metaTest123";
         // save video
@@ -84,6 +93,8 @@ public class DatabaseManagerTest {
 
     @Test
     public void getVideoInfoTest() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         String videoName = "videoTest123321";
         String metaName = "videoTest123321";
         // save Video
@@ -98,12 +109,16 @@ public class DatabaseManagerTest {
 
     @Test
     public void getVideoIdByNameTest() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         dm.saveProcessedVideoAndMeta("getVideoIdByNameTestVIDEO", "getVideoIdByNameTestMETA");
         Assert.assertTrue(dm.deleteVideoAndMeta(dm.getVideoIdByName("getVideoIdByNameTestVIDEO")));
     }
 
     @Test
     public void getVideoInfoListTest() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         String videoName1 = "videoGetVideoInfoListTest";
         String videoName2 = "video2GetVideoInfoListTest";
         String metaName1 = "meta1GetVideoInfoListTest";
@@ -134,6 +149,8 @@ public class DatabaseManagerTest {
 
     @Test
     public void deleteVideoAndMetaTest() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         boolean create  = dm.saveProcessedVideoAndMeta("test","test");
         boolean delete = dm.deleteVideoAndMeta(dm.getVideoIdByName("test"));
         Assert.assertTrue("insert video or delete Video not working!", create && delete);
@@ -141,6 +158,8 @@ public class DatabaseManagerTest {
 
     @Test
     public void getMetaDataTest() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         String videoName = "videoTestGETMETADATA";
         String metaName = "metaTestGETMETADATA";
         // save bsp video, where the metafile already exists
@@ -158,6 +177,8 @@ public class DatabaseManagerTest {
 
     @Test
     public void getMetaNameByVideoId() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         String videoName = "videoGetMetaNameByVideoId";
         String metaName = "metaGetMetaNameByVideoId";
         // save video in database
@@ -184,19 +205,16 @@ public class DatabaseManagerTest {
     }
 
     @Test
-    public void verifyAccountTest() {
-        Assert.assertTrue(!dm.isVerified());
-        dm.verifyAccount(OWN_UUID);
-        Assert.assertTrue(dm.isVerified());
-    }
-
-    @Test
     public void authenticateTest() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         Assert.assertTrue(dm.authenticate());
     }
 
     @Test
     public void isMailExistingTest() {
+        registered = dm.register(OWN_UUID);
+        account.setId(dm.getAccountId());
         Assert.assertTrue(dm.isMailExisting(account.getMail()));
         Assert.assertFalse(dm.isMailExisting("mailWhichIsNotExisting@notExisting.NO"));
     }
