@@ -15,7 +15,7 @@ public class LocationConfig {
     /**
      * Project directory
      */
-    private static final String PROJECT_DIR = System.getProperty("user.dir");
+    public static final String PROJECT_DIR = System.getProperty("user.dir");
     /**
      * Directory for the anonymized videos.
      */

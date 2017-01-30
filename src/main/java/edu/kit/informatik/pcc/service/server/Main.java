@@ -43,7 +43,7 @@ public class Main{
         ServletHolder servlet = new ServletHolder(new ServletContainer(config)); // add the config to the servletholder
 
         server = new Server(PORT);
-        ServletContextHandler context = new ServletContextHandler(server, "/*");
+        ServletContextHandler context = new ServletContextHandler(server, "/");
         context.addServlet(servlet, "/*");
 
         if (server.isStarted()) {
@@ -58,6 +58,11 @@ public class Main{
             Logger.getGlobal().warning("Server was interrupted during execution");
             return false;
         } finally {
+            try {
+                server.stop();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             server.destroy();
             return true;
         }
