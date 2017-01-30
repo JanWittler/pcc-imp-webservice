@@ -3,7 +3,7 @@
     "mail": "testEMAIL@123schonVorbei.com",
     "password": "testPasswordForUni"
   },
-  "metaInfo": {
+  "metadata": {
     "date": "123",
     "triggerType": "23",
     "gForceX": 30.33333,
