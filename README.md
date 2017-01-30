@@ -13,6 +13,7 @@ CREATE DATABASE PrivacyCrashCam;
 \q
 psql -d PrivacyCrashCam -a -f src/main/resources/postgres/createTablesAndTestData.sql
 ```
+To get a connection to the data, edit the file src/main/java/edu/kit/informatik/pcc/service/data/DatabaseManager.java to change username, password etc for your own details
 
 ####Setup OpenCV library
 To setup opencv on your runtime add the native library files to your java.library.path. <br /> 
