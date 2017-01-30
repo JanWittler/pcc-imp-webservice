@@ -1,0 +1,13 @@
+{
+  "account": {
+    "mail": "testEMAIL@123schonVorbei.com",
+    "password": "testPasswordForUni"
+  },
+  "metadata": {
+    "date": "123",
+    "triggerType": "23",
+    "gForceX": 30.33333,
+    "gForceY": 40,
+    "gForceZ": 50
+  }
+}

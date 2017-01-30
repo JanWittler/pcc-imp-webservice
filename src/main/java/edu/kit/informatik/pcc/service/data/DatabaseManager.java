@@ -50,7 +50,7 @@ public class DatabaseManager {
      *     you have to close the connection with <b>this.c.close()</b>
      * </p>
      */
-    private void connectDatabase() {
+    private boolean connectDatabase() {
         c = null;
         try {
             Class.forName("org.postgresql.Driver");
@@ -60,7 +60,9 @@ public class DatabaseManager {
             e.printStackTrace();
             Logger.getGlobal().severe("No connection to database!");
             Main.stopServer();
+            return false;
           }
+          return true;
     }
 
     /**
@@ -73,7 +75,7 @@ public class DatabaseManager {
      * @return boolean to indicate success or failure
      */
     public boolean saveProcessedVideoAndMeta(String videoName, String metaName) {
-        connectDatabase();
+        if(!connectDatabase()) return false;
         // send sql command and catch possible exeptions
         try {
             Statement stmt = this.c.createStatement();
@@ -100,7 +102,7 @@ public class DatabaseManager {
      */
     public VideoInfo getVideoInfo(int videoId) {
         VideoInfo vI = null;
-        connectDatabase();
+        if(!connectDatabase()) return null;
         // execute sql command and insert result in ArrayList
         try {
             Statement stmt = this.c.createStatement();
@@ -133,7 +135,7 @@ public class DatabaseManager {
         // create ArrayList
         ArrayList<VideoInfo> videoInfoList= new ArrayList<>();
         // connect to database
-        connectDatabase();
+        if(!connectDatabase()) return null;
         // execute sql command and insert result in ArrayList
         try {
             Statement stmt = this.c.createStatement();
@@ -168,7 +170,7 @@ public class DatabaseManager {
      * @return a boolean, to review the success of the sql statement
      */
     public boolean deleteVideoAndMeta(int videoId) {
-        connectDatabase();
+        if(!connectDatabase()) return false;
         try {
             Statement stmt = this.c.createStatement();
             // sql command
@@ -210,7 +212,7 @@ public class DatabaseManager {
         }
         // put String into JSON and save them into java variables
         JSONObject obj = new JSONObject(metaJSON);
-        JSONObject meta = obj.getJSONObject("metaInfo");
+        JSONObject meta = obj.getJSONObject("metadata");
         String date = meta.getString("date");
         String triggerType = meta.getString("triggerType");
         float gForceX = (float) meta.getDouble("gForceX");
@@ -236,7 +238,7 @@ public class DatabaseManager {
      */
     public boolean setMail(String newMail) {
         // connect to database
-        connectDatabase();
+        if(!connectDatabase()) return false;
         // send sql command and catch possible exeptions
         try {
             Statement stmt = this.c.createStatement();
@@ -265,7 +267,7 @@ public class DatabaseManager {
      */
     public boolean setPassword(String newPasswordHash) {
         // connect to database
-        connectDatabase();
+        if(!connectDatabase()) return false;
         // send sql command and catch possible exeptions
         try {
             Statement stmt = this.c.createStatement();
@@ -290,7 +292,7 @@ public class DatabaseManager {
         String mail = "";
         String passwordHash = "";
         // connect to database
-        connectDatabase();
+        if(!connectDatabase()) return false;
         // execute sql command and insert result in ArrayList
         try {
             Statement stmt = this.c.createStatement();
@@ -320,7 +322,7 @@ public class DatabaseManager {
      * @return success of user deletion
      */
     public boolean deleteAccount() {
-        connectDatabase();
+        if(!connectDatabase()) return false;
         try {
             Statement stmt = this.c.createStatement();
             // sql command
@@ -341,7 +343,7 @@ public class DatabaseManager {
      */
     public int getAccountId() {
         int accountId = -1;
-        connectDatabase();
+        if(!connectDatabase()) return -1;
         try {
             Statement stmt = this.c.createStatement();
             ResultSet rs = stmt.executeQuery( "select \"id\" from \"user\" where \"user\".\"mail\"='" +
@@ -368,7 +370,7 @@ public class DatabaseManager {
      * @return success of registration
      */
     public boolean register(String uuid) {
-        connectDatabase();
+        if(!connectDatabase()) return false;
         // send sql command and catch possible exeptions
         try {
             Statement stmt = this.c.createStatement();
@@ -394,7 +396,7 @@ public class DatabaseManager {
      */
     public boolean verifyAccount(String uuid) {
         //connect to Database
-        connectDatabase();
+        if(!connectDatabase()) return false;
         // get uuid from account
         String uuidDatabase = "";
         try {
@@ -441,7 +443,7 @@ public class DatabaseManager {
      */
     public boolean isVerified() {
         // connect to Database
-        connectDatabase();
+        if(!connectDatabase()) return false;
         boolean verified = false;
         try {
             Statement stmt = this.c.createStatement();
@@ -464,7 +466,7 @@ public class DatabaseManager {
     // getter/setter
 
     public int getVideoIdByName(String video_name) {
-        connectDatabase();
+        if(!connectDatabase()) return -1;
         int id = -1;
         try {
             Statement stmt = this.c.createStatement();
@@ -493,7 +495,7 @@ public class DatabaseManager {
      */
     public String getMetaNameByVideoId(int videoId) {
         //connect to database
-        connectDatabase();
+        if(!connectDatabase()) return null;
         String meta = "";
         try {
             Statement stmt = this.c.createStatement();
@@ -522,7 +524,7 @@ public class DatabaseManager {
      */
     protected boolean isMailExisting(String mail) {
         //connect to database
-        connectDatabase();
+        if(!connectDatabase()) return false;
         int count_mail = 0;
         try {
             Statement stmt = this.c.createStatement();

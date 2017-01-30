@@ -34,7 +34,7 @@ public class DatabaseManagerTest {
                 "    \"mail\": " + MAIL + ",\n" +
                 "    \"password\": " + PASSWORD + "\n" +
                 "  },\n" +
-                "  \"metaInfo\": {\n" +
+                "  \"metadata\": {\n" +
                 "    \"date\": " + DATE + ",\n" +
                 "    \"triggerType\": " + TRIGGER_TYPE + ",\n" +
                 "    \"gForceX\": " + G_FORCE_X + ",\n" +
@@ -77,8 +77,7 @@ public class DatabaseManagerTest {
         Assert.assertTrue(vI.getName().equals(videoName));
         // getMetaInfo
         //TODO: if metadata is working, outcomment following two lines
-        // Metadata mD = dm.getMetaData(dm.getVideoIdByName(videoName));
-        // Assert.assertTrue(mD.getMetaName().equals(metaName));
+        Assert.assertTrue((dm.getMetaNameByVideoId(dm.getVideoIdByName(videoName))).equals(metaName));
         // delete Video
         dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
     }

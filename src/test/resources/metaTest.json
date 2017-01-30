@@ -1,0 +1,9 @@
+{
+	"metaInfo": {
+		"date": "today",
+		"triggerType": "dd",
+		"gForceX": 30.33333,
+		"gForceY": 40,
+		"gForceZ": 50
+	}
+}

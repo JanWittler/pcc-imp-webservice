@@ -48,7 +48,6 @@ public class Account {
      */
     public String hashPassword(String password) {
         //TODO: hashPassword
-        String originalPassword = password;
         return password;
     }
 

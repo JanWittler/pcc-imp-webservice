@@ -24,11 +24,12 @@ public class Metadata {
 
 	// methods
 	public String getAsJson() {
-		//TODO: how to interpret gForce in JSON
         return "{\"metadata\": {\n" +
-				"  \"date\": \""+ date + "\",\n" +
-				"  \"triggertype\": \""+ triggerType + " \",\n" +
-				"  \"gForce\": \"gForce\"\n" +
+				"  \"date\": \"" + date + "\",\n" +
+				"  \"triggertype\": \"" + triggerType + " \",\n" +
+				"  \"gForceX\": \""+ gForce[0] +"\",\n" +
+				"  \"gForceY\": \""+ gForce[1] +"\",\n" +
+				"  \"gForceZ\": \""+ gForce[2] +"\"\n" +
 				"}}";
 	}
 
