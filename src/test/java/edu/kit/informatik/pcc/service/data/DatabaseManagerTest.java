@@ -1,9 +1,14 @@
 package edu.kit.informatik.pcc.service.data;
 
+import edu.kit.informatik.pcc.service.server.ServerProxy;
 import org.junit.*;
 
 import javax.validation.constraints.AssertTrue;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+
+import static edu.kit.informatik.pcc.service.server.ServerProxyTest.setFinalStatic;
 
 /**
  * @author David Laubenstein
@@ -44,7 +49,13 @@ public class DatabaseManagerTest {
                 "  }\n" +
                 "}";
         account = new Account(json);
+
         dm = new DatabaseManager(account);
+        try {
+            setFinalStatic(LocationConfig.class.getDeclaredField("META_DIR"), LocationConfig.TEST_RESOURCES_DIR);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

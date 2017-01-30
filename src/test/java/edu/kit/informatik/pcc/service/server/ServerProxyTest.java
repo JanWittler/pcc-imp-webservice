@@ -52,7 +52,7 @@ public class ServerProxyTest {
             "}";
 
     //mockup LocationConfig fields
-    static void setFinalStatic(Field field, Object newValue) throws Exception {
+    public static void setFinalStatic(Field field, Object newValue) throws Exception {
         field.setAccessible(true);
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
