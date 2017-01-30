@@ -5,6 +5,7 @@ The following software is required for this project:
 * Postgres
 * Maven
 * OpenCV
+
 ####Setup a Test-Database
 ```
 psql
