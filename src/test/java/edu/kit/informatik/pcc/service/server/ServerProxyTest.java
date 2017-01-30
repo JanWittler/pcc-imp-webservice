@@ -1,14 +1,15 @@
 package edu.kit.informatik.pcc.service.server;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -22,14 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Fabian Wenzel
  * Created by Fabi on 20.01.2017.
  */
+@Ignore
 public class ServerProxyTest {
     private ServerProxy serverProxy;
     private DatabaseManager databaseManager;

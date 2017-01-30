@@ -60,6 +60,8 @@ public class AESDecryptor implements IFileDecryptor {
                 cos.flush();
             }
             cos.close();
+            decfos.flush();
+            decfos.close();
             encfis.close();
         } catch (IOException e) {
             Logger.getGlobal().warning("Error while decrypting file " + input.getName());

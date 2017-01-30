@@ -4,10 +4,7 @@ import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -93,6 +90,7 @@ public class VideoProcessingChainTest {
         testChainType(VideoProcessingChain.Chain.SIMPLE, 5);
     }
 
+    @Ignore
     @Test
     public void normalChainTest() {
         testChainType(VideoProcessingChain.Chain.NORMAL, 120);

@@ -19,13 +19,13 @@ import java.util.logging.Logger;
  */
 public class DatabaseManager {
 
-	// attributes
-	private Account account;
 	private static final String PORT = "5432";
 	private static final String HOST = "localhost";
 	private static final String DB_NAME = "PrivacyCrashCam";
     private static final String USER = "postgres";
     private static final String PASSWORD = "";
+    // attributes
+    private Account account;
     private Connection c = null;
     // constructors
 
@@ -197,8 +197,7 @@ public class DatabaseManager {
      */
     public Metadata getMetaData(int videoId){
         // create String, where meta file is stored
-        //String filePath = LocationConfig.META_DIR + File.separator + getMetaNameByVideoId(videoId);
-        String filePath = LocationConfig.TEST_RESOURCES_DIR + File.separator +
+        String filePath = LocationConfig.META_DIR + File.separator +
                 getMetaNameByVideoId(videoId) + ".json";
         //read the json File into a String
         String metaJSON = "";

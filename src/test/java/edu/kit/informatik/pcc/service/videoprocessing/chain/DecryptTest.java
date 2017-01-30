@@ -28,7 +28,7 @@ public class DecryptTest {
         encVid = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encVid.mp4");
         decVid = new File(LocationConfig.OUTPUT_DIR + "\\decVid.mp4");
         encMeta = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encMeta.json");
-        decMeta = new File(LocationConfig.OUTPUT_DIR + "\\target\\decMeta.txt");
+        decMeta = new File(LocationConfig.OUTPUT_DIR + "\\decMeta.json");
         decryptor = new Decryptor();
     }
 

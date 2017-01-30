@@ -6,6 +6,7 @@ import java.io.File;
 /**
  * Interface for classes that decrypt single files with
  * a symmetric secret key.
+ * Should be synced with the file encryptor in the app so both use the same algorithm.
  *
  * @author Josh Romanowski
  */

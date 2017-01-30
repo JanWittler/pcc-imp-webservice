@@ -5,7 +5,6 @@ import edu.kit.informatik.pcc.service.videoprocessing.VideoProcessingManager;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.MultiPartWriter;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
@@ -18,10 +17,10 @@ import java.util.logging.*;
  * @author Josh Romanowski, Fabian Wenzel
  */
 public class Main{
-    private static Server server;
     private static final int PORT = 2222;
-    private static Logger LOGGER;
     private final static String REQUESTLOCATION = "edu.kit.informatik.pcc.service.server";
+    private static Server server;
+    private static Logger LOGGER;
 
     /**
      * @param args no args
@@ -57,8 +56,6 @@ public class Main{
             server.join();
         } catch (InterruptedException e) {
             Logger.getGlobal().warning("Server was interrupted during execution");
-            return false;
-        } catch (Exception e) {
             return false;
         } finally {
             server.destroy();

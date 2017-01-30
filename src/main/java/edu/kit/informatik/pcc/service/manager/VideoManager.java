@@ -3,10 +3,10 @@ package edu.kit.informatik.pcc.service.manager;
 import edu.kit.informatik.pcc.service.data.*;
 import edu.kit.informatik.pcc.service.videoprocessing.VideoProcessingManager;
 
+import javax.ws.rs.container.AsyncResponse;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import javax.ws.rs.container.AsyncResponse;
 
 /**
  * @author Fabian Wenzel, David Laubenstein
@@ -55,14 +55,13 @@ public class VideoManager {
 	 * @return file to download
 	 */
 	public File download(int videoId) {
-		//TODO: FIX PATH AFTER TESTING!
 		VideoInfo videoInfo = databaseManager.getVideoInfo(videoId);
 		if (videoInfo == null) {
 			return null;
 		}
 		String videoName = videoInfo.getName();
-		return new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + videoName + ".mp4");
-	}
+        return new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".mp4");
+    }
 
 	/**
 	 * @param videoId of video to delete
@@ -73,7 +72,6 @@ public class VideoManager {
 		if (videoInfo == null) {
 			return FAILURE;
 		}
-		//TODO: NOT SURE IF NEEDED
 //		Metadata metadata = databaseManager.getMetaData(videoId);
 //		if (metadata == null) {
 //			return FAILURE;
@@ -82,17 +80,15 @@ public class VideoManager {
 		String metaName = databaseManager.getMetaNameByVideoId(databaseManager.getVideoIdByName(videoName));
 		File videoFile = null;
 		try {
-			//TODO: Check Path (TESTING PATH)
-			videoFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + videoName + ".mp4");
-		} catch (NullPointerException e) {
+            videoFile = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".mp4");
+        } catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 		videoFile.delete();
 		File metaFile = null;
 		try {
-			//TODO: Check Path (TESTING PATH)
-			metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + metaName + ".json");
-		} catch (NullPointerException e) {
+            metaFile = new File(LocationConfig.META_DIR + File.separator + metaName + ".json");
+        } catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 		metaFile.delete();
