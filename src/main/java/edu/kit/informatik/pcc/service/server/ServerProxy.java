@@ -29,6 +29,7 @@ public class ServerProxy {
 	// attributes
 	private VideoManager videoManager;
 	private AccountManager accountManager;
+	private Account account;
 	private final String WRONGACCOUNT = "WRONG ACCOUNT";
 	private final String SUCCESS = "SUCCESS";
 	private final String FAILURE = "FAILURE";
@@ -213,19 +214,13 @@ public class ServerProxy {
     @Path("changeAccount")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String changeAccount (@FormParam("newData") String newAccountData, @FormParam("data") String accountData) {
+		Logger.getGlobal().info("AccountData Changing Request");
 		if (accountData == null || newAccountData == null) {
 			return FAILURE;
 		}
-		Logger.getGlobal().info("AccountData Changing Request");
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals(SUCCESS)) {
-			Account newAccount = new Account(newAccountData);
-			String status = accountManager.setMail(newAccount.getMail());
-			if (!(status.equals(SUCCESS))){
-				return status;
-			}
-			status = accountManager.setPassword(newAccount.getPasswordHash());
-			return status;
+			return accountManager.changeAccount(newAccountData);
 		}
 		return WRONGACCOUNT;
 	}
@@ -241,6 +236,7 @@ public class ServerProxy {
 		if (accountData == null) {
 			return FAILURE;
 		}
+		//TODO: STILL DELETE IF NOT VERIFIED
 		Logger.getGlobal().info("Account Deletion Request");
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals(SUCCESS)) {
@@ -275,14 +271,14 @@ public class ServerProxy {
 	 */
 	private String setUpForRequest(String accountData) {
     	//setup account and manager
-		Account account = new Account(accountData);
+		account = new Account(accountData);
 		videoManager = new VideoManager(account);
 		accountManager = new AccountManager(account);
 
 		//authentication process
 		int accountId = accountManager.getAccountId();
 		if (accountId < 1) {
-			return "NO ACCOUNTID";
+			return "NOT EXISTING";
 		}
 		account.setId(accountId);
 		boolean authenticate = accountManager.authenticate();

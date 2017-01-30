@@ -27,21 +27,21 @@ public class AccountManager {
 	}
 
 	// methods
-	/**
-	 * @param newMail string of new mail to set
-	 * @return string if success or failure
-	 */
-	public String setMail(String newMail) {
-		return databaseManager.setMail(newMail) ? SUCCESS : FAILURE;
+	public String changeAccount (String newAccountData) {
+		Account newAccount = new Account(newAccountData);
+		String status = "NOTHING CHANGED";
+		if(!newAccount.getMail().equals(account.getMail())){
+			status = setMail(newAccount.getMail());
+			if (!(status.equals(SUCCESS))){
+				return status;
+			}
+		}
+		if (!newAccount.getPasswordHash().equals(account.getPasswordHash())){
+			return setPassword(newAccount.getPasswordHash());
+		}
+		return status;
 	}
 
-	/**
-	 * @param passwordHash string of hashed password to set
-	 * @return string if success or failure
-	 */
-	public String setPassword(String passwordHash) {
-		return databaseManager.setPassword(passwordHash) ? SUCCESS : FAILURE;
-	}
 
 	/**
 	 * @return integer of accountid
@@ -96,5 +96,14 @@ public class AccountManager {
 	 */
 	public boolean isVerified() {
 		return databaseManager.isVerified();
+	}
+
+	//helper methods
+	private String setMail(String newMail) {
+		return databaseManager.setMail(newMail) ? SUCCESS : FAILURE;
+	}
+
+	private String setPassword(String passwordHash) {
+		return databaseManager.setPassword(passwordHash) ? SUCCESS : FAILURE;
 	}
 }

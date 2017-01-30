@@ -46,7 +46,7 @@ public class ServerProxyTest {
             "}";
     private String tempAccountJson = "{\n" +
             "  \"account\": {\n" +
-            "    \"mail\": \"fabiistbaba@squad.moneyflow\",\n" +
+            "    \"mail\": \"fabiistkrass@imperium.baba\",\n" +
             "    \"password\": \"ichbindershitfuckyooo\"\n" +
             "  }\n" +
             "}";
