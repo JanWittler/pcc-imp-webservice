@@ -34,17 +34,15 @@ import java.nio.file.StandardCopyOption;
 public class ServerProxyTest {
     private DatabaseManager databaseManager;
     private Account account;
-    private VideoInfo videoInfo;
     private final String SUCCESS = "SUCCESS";
-    private String uuid = "1234";
-    private String newUuid = "1235";
-    private String validJson = "{\n" +
+    private String tempUUID = "1235";
+    private String accountJson = "{\n" +
             "  \"account\": {\n" +
             "    \"mail\": \"fabiistkrass@imperium.baba\",\n" +
             "    \"password\": \"yochilldeinlife\"\n" +
             "  }\n" +
             "}";
-    private String newJson = "{\n" +
+    private String tempAccountJson = "{\n" +
             "  \"account\": {\n" +
             "    \"mail\": \"fabiistbaba@squad.moneyflow\",\n" +
             "    \"password\": \"ichbindershitfuckyooo\"\n" +
@@ -53,7 +51,20 @@ public class ServerProxyTest {
 
     @Before
     public void setUp() {
-        account = new Account(validJson);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Main.main(new String[0]);
+            }
+        });
+        t.start();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        String uuid = "1234";
+        account = new Account(accountJson);
         databaseManager = new DatabaseManager(account);
         databaseManager.register(uuid);
         account.setId(databaseManager.getAccountId());
@@ -67,7 +78,7 @@ public class ServerProxyTest {
     public void authenticateTest() {
         Client client = ClientBuilder.newClient();
         Form f = new Form();
-        f.param("data", validJson);
+        f.param("data", accountJson);
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("authenticate");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
@@ -76,14 +87,14 @@ public class ServerProxyTest {
     @org.junit.Test
     public void verifyTest() {
         //setup for test
-        Account tempAccount = new Account(newJson);
+        Account tempAccount = new Account(tempAccountJson);
         DatabaseManager tempDatabaseManager = new DatabaseManager(tempAccount);
-        tempDatabaseManager.register(newUuid);
+        tempDatabaseManager.register(tempUUID);
         tempAccount.setId(tempDatabaseManager.getAccountId());
 
         Form f = new Form();
-        f.param("data", newJson);
-        f.param("uuid", newUuid);
+        f.param("data", tempAccountJson);
+        f.param("uuid", tempUUID);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("verifyAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
@@ -96,7 +107,7 @@ public class ServerProxyTest {
     public void downloadTest() {
         String videoId = Integer.toString(databaseManager.getVideoIdByName("input"));
         Form f = new Form();
-        f.param("data", validJson);
+        f.param("data", accountJson);
         f.param("videoId", videoId);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoDownload");
@@ -116,7 +127,7 @@ public class ServerProxyTest {
     @org.junit.Test
     public void videosByAccountTest() {
         Form f = new Form();
-        f.param("data", validJson);
+        f.param("data", accountJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("getVideosByAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
@@ -129,10 +140,10 @@ public class ServerProxyTest {
 
     @org.junit.Test
     public void createAccountTest() {
-        Account account2 = new Account(newJson);
+        Account account2 = new Account(tempAccountJson);
         Form f = new Form();
-        f.param("data", newJson);
-        f.param("uuid", newUuid);
+        f.param("data", tempAccountJson);
+        f.param("uuid", tempUUID);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("createAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
@@ -145,8 +156,8 @@ public class ServerProxyTest {
     @org.junit.Test
     public void changeAccountTest() {
         Form f = new Form();
-        f.param("data", validJson);
-        f.param("newData", newJson);
+        f.param("data", accountJson);
+        f.param("newData", tempAccountJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("changeAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
@@ -156,35 +167,39 @@ public class ServerProxyTest {
     @org.junit.Test
     public void deleteAccountTest() {
         //setup for test
-        Account tempAccount = new Account(newJson);
+        Account tempAccount = new Account(tempAccountJson);
         DatabaseManager tempDatabaseManager = new DatabaseManager(tempAccount);
-        tempDatabaseManager.register(newUuid);
+        tempDatabaseManager.register(tempUUID);
         tempAccount.setId(tempDatabaseManager.getAccountId());
-        tempDatabaseManager.verifyAccount(newUuid);
+        tempDatabaseManager.verifyAccount(tempUUID);
         tempDatabaseManager.saveProcessedVideoAndMeta("deleteVideo1", "deleteMeta1");
         tempDatabaseManager.saveProcessedVideoAndMeta("deleteVideo2", "deleteMeta2");
 
         //create files for testing
+        boolean createFiles;
         File file1 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo1" + ".mp4");
         File file2 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo2" + ".mp4");
         File file3 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta1" + ".json");
         File file4 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta2" + ".json");
         try {
-            file1.createNewFile();
-            file2.createNewFile();
-            file3.createNewFile();
-            file4.createNewFile();
+            createFiles =  file1.createNewFile();
+            Assert.assertTrue(createFiles);
+            createFiles =  file2.createNewFile();
+            Assert.assertTrue(createFiles);
+            createFiles =  file3.createNewFile();
+            Assert.assertTrue(createFiles);
+            createFiles =  file4.createNewFile();
+            Assert.assertTrue(createFiles);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         Form f = new Form();
-        f.param("data", newJson);
+        f.param("data", tempAccountJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("deleteAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
-
         tempDatabaseManager.deleteAccount();
     }
 
@@ -202,7 +217,7 @@ public class ServerProxyTest {
         Assert.assertFalse(videoId.equals("-1"));
 
         Form f = new Form();
-        f.param("data", validJson);
+        f.param("data", accountJson);
         f.param("videoId", videoId);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoDelete");
@@ -223,7 +238,7 @@ public class ServerProxyTest {
         Assert.assertFalse(videoId.equals("-1"));
 
         Form f = new Form();
-        f.param("data", validJson);
+        f.param("data", accountJson);
         f.param("videoId", videoId);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoInfo");
@@ -234,42 +249,13 @@ public class ServerProxyTest {
         Assert.assertTrue(gForceY.equals("40.0"));
     }
 
-//    @org.junit.Test
-//    public void jsonTest() {
-//        VideoInfo vI1 = new VideoInfo(10, "v1");
-//        VideoInfo vI2 = new VideoInfo(11, "v2");
-//        VideoInfo vI3 = new VideoInfo(12, "v3");
-//        ArrayList<VideoInfo> videoInfoList = new ArrayList<>();
-//       videoInfoList.add(vI1);
-//       videoInfoList.add(vI2);
-//       videoInfoList.add(vI3);
-//       JSONArray videoInfoInArray = new JSONArray();
-//       int i = 0;
-//        for (VideoInfo videoInfo : videoInfoList) {
-//            String json = videoInfo.getAsJson();
-//            JSONObject jO = new JSONObject(json);
-//            videoInfoInArray.put(i,jO);
-//            i++;
-//        }
-//
-//        JSONObject objects = videoInfoInArray.getJSONObject(1);
-//        System.out.println(objects);
-//        System.out.println(videoInfoInArray.toString());
-//
-//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//        JSONObject object = new JSONObject();
-//
-//        object.put("",videoInfoInArray);
-//        String json = gson.toJson(object);
-//       // System.out.println(object.toString(2));
-//    }
-
     @After
     public void after() {
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input"));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input2"));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input3"));
         databaseManager.deleteAccount();
+        Main.stopServer();
     }
 
 }
