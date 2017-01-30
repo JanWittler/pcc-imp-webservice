@@ -22,6 +22,8 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
@@ -49,6 +51,15 @@ public class ServerProxyTest {
             "  }\n" +
             "}";
 
+    //mockup LocationConfig fields
+    static void setFinalStatic(Field field, Object newValue) throws Exception {
+        field.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        field.set(null, newValue);
+    }
+
     @Before
     public void setUp() {
         Thread t = new Thread(new Runnable() {
@@ -72,6 +83,15 @@ public class ServerProxyTest {
         databaseManager.saveProcessedVideoAndMeta("input2", "testMeta2");
         databaseManager.saveProcessedVideoAndMeta("input3", "metaTest");
         databaseManager.verifyAccount(uuid);
+
+        //set directories to TEST_RESOURCES_DIR
+        try {
+            setFinalStatic(LocationConfig.class.getDeclaredField("RESOURCES_DIR"), LocationConfig.TEST_RESOURCES_DIR);
+            setFinalStatic(LocationConfig.class.getDeclaredField("ANONYM_VID_DIR"), LocationConfig.TEST_RESOURCES_DIR);
+            setFinalStatic(LocationConfig.class.getDeclaredField("META_DIR"), LocationConfig.TEST_RESOURCES_DIR);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @org.junit.Test
