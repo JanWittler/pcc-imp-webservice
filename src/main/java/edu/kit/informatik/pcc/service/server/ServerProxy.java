@@ -29,7 +29,6 @@ public class ServerProxy {
 	// attributes
 	private VideoManager videoManager;
 	private AccountManager accountManager;
-	private Account account;
 	private final String WRONGACCOUNT = "WRONG ACCOUNT";
 	private final String SUCCESS = "SUCCESS";
 	private final String FAILURE = "FAILURE";
@@ -158,6 +157,7 @@ public class ServerProxy {
 		if (accountStatus.equals(SUCCESS)) {
 			//convert VideoInfos to JSONArray
 			//TODO:FAILURE MESSAGE, CHECK IF videoInfoList == null ?
+			//TODO:PRODUCE JSON IN VIDEOMANAGER
 			ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
 			JSONArray videoInfoArray = new JSONArray();
 			for (int i = 0; i < videoInfoList.size(); i++) {
@@ -199,7 +199,7 @@ public class ServerProxy {
 		}
 		Logger.getGlobal().info("Account Creation Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals("NO ACCOUNTID")) {
+		if (accountStatus.equals("NOT EXISTING")) {
 			return accountManager.registerAccount(uuid);
 		}
     	return "ACCOUNT EXISTS";
@@ -271,7 +271,7 @@ public class ServerProxy {
 	 */
 	private String setUpForRequest(String accountData) {
     	//setup account and manager
-		account = new Account(accountData);
+		Account account = new Account(accountData);
 		videoManager = new VideoManager(account);
 		accountManager = new AccountManager(account);
 
