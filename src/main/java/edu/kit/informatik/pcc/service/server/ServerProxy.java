@@ -238,7 +238,7 @@ public class ServerProxy {
 		//TODO: STILL DELETE IF NOT VERIFIED
 		Logger.getGlobal().info("Account Deletion Request");
 		String accountStatus = setUpForRequest(accountData);
-		if (accountStatus.equals(SUCCESS)) {
+		if (accountStatus.equals(SUCCESS) || accountStatus.equals("NOT VERIFIED")) {
 			return accountManager.deleteAccount(videoManager);
 		}
 		return WRONGACCOUNT;
