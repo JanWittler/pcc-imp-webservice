@@ -35,7 +35,7 @@ public class ServerProxyTest {
     private DatabaseManager databaseManager;
     private Account account;
     private final String SUCCESS = "SUCCESS";
-    private String tempUUID = "1235";
+    private String tempUUID = "3456qwe-qw234-2342f";
     private String accountJson = "{\n" +
             "  \"account\": {\n" +
             "    \"mail\": \"fabiistkrass@imperium.baba\",\n" +
@@ -76,7 +76,7 @@ public class ServerProxyTest {
         }
 
         //setup for various tests
-        String uuid = "1234";
+        String uuid = "456-sgdfgd3t5g-345fs";
         account = new Account(accountJson);
         databaseManager = new DatabaseManager(account);
         databaseManager.register(uuid);
