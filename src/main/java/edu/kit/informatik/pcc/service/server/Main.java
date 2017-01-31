@@ -16,16 +16,15 @@ import java.util.logging.*;
 /**
  * @author Josh Romanowski, Fabian Wenzel
  */
-public class Main{
+public class Main {
     private static final int PORT = 2222;
-    private final static String REQUESTLOCATION = "edu.kit.informatik.pcc.service.server";
+    private static final String REQUESTLOCATION = "edu.kit.informatik.pcc.service.server";
     private static Server server;
-    private static Logger LOGGER;
 
     /**
      * @param args no args
      */
-    public static void main(String[] args ) {
+    public static void main(String[] args) {
         startServer();
     }
 
@@ -96,17 +95,24 @@ public class Main{
     }
 
     private static boolean setupLogger() {
-        LOGGER = Logger.getGlobal();
+        Logger logger = Logger.getGlobal();
         try {
-            Handler fileHandler = new FileHandler("log.txt");
-            fileHandler.setFormatter(new SimpleFormatter());
-            fileHandler.setLevel(Level.WARNING);
+            // output file = "error.log", max size = 1 MByte, 1 single logfile
+            Handler fileErrorHandler = new FileHandler("log\\error.log", 1024000, 1);
+            fileErrorHandler.setFormatter(new SimpleFormatter());
+            fileErrorHandler.setLevel(Level.WARNING);
+
+            Handler fileInfoHandler = new FileHandler("log\\server.log", 1024000, 1);
+            fileInfoHandler.setFormatter(new SimpleFormatter());
+            fileInfoHandler.setLevel(Level.WARNING);
 
             Handler consoleHandler = new ConsoleHandler();
             consoleHandler.setFormatter(new SimpleFormatter());
             consoleHandler.setLevel(Level.INFO);
 
-            LOGGER.addHandler(fileHandler);
+            logger.addHandler(fileInfoHandler);
+            logger.addHandler(fileErrorHandler);
+            logger.addHandler(consoleHandler);
         } catch (SecurityException e) {
             return false;
         } catch (IOException e) {
@@ -118,25 +124,25 @@ public class Main{
     private static boolean setupDirectories() {
         boolean ret = true;
 
-        File vidDir = new File(LocationConfig.ANONYM_VID_DIR);
-        File metaDir = new File(LocationConfig.META_DIR);
-        File tempDir = new File(LocationConfig.TEMP_DIR);
+        File[] dirs = new File[]{
+                new File(LocationConfig.ANONYM_VID_DIR),
+                new File(LocationConfig.META_DIR),
+                new File(LocationConfig.TEMP_DIR),
+                new File(LocationConfig.LOG_DIR)
+        };
 
-        if (!vidDir.exists()) {
-            ret &= vidDir.mkdir();
-        }
-        if (!metaDir.exists()) {
-            ret &= metaDir.mkdir();
-        }
-        if (!tempDir.exists()) {
-            ret &= tempDir.mkdir();
-        } else {
-            //delete all temp files
-            File[] tempFiles = tempDir.listFiles();
-            for (File file : tempFiles) {
-                ret &= file.delete();
+        for (File dir : dirs) {
+            if (!dir.exists()) {
+                ret &= dir.mkdir();
             }
         }
+
+        //delete all temp files
+        File[] tempFiles = new File(LocationConfig.TEMP_DIR).listFiles();
+        for (File file : tempFiles) {
+            ret &= file.delete();
+        }
+
         Logger.getGlobal().info("Setup directories");
         return ret;
     }

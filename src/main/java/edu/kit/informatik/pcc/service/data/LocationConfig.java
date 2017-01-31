@@ -28,6 +28,8 @@ public class LocationConfig {
      * Directory for all temporary data.
      */
     public static final String TEMP_DIR = PROJECT_DIR + File.separator + "tmp";
+
+    public static final String LOG_DIR = PROJECT_DIR + File.separator + "log";
     /**
      * Directory for project resources.
      */
