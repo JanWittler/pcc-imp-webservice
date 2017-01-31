@@ -62,7 +62,7 @@ public class Persistor implements IStage {
             Files.copy(
                     metadata.toPath(),
                     new File(LocationConfig.META_DIR + "\\" +
-                            account.getId() + "_" + videoName + "_" + "meta.txt").toPath(),
+                            account.getId() + "_" + videoName + "_" + "meta.json").toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
 
 

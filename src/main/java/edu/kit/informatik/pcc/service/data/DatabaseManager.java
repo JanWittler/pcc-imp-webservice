@@ -381,7 +381,7 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("Account registration has occurred a problem. check uuid, " +
+            Logger.getGlobal().warning("Account registration has occurred a problem. check uuid, " +
                     "mail and passwordHash! ");
             return false;
         }

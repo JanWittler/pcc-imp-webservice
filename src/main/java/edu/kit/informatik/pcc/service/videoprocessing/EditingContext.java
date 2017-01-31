@@ -76,7 +76,7 @@ public class EditingContext {
         this.decVid = new File(LocationConfig.TEMP_DIR
                 + "\\" + account.getId() + "_" + videoName + "_" + "decVid.mp4");
         this.decMetadata = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + ".json");
+                + "\\" + account.getId() + "_" + videoName + "_" + "meta.json");
         this.anonymizedVid = new File(LocationConfig.TEMP_DIR
                 + "\\" + account.getId() + "_" + videoName + "_" + "anonym.avi");
         this.vidWithMeta = new File(LocationConfig.TEMP_DIR
