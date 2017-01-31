@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -32,7 +31,6 @@ import java.nio.file.StandardCopyOption;
  * @author Fabian Wenzel
  * Created by Fabi on 20.01.2017.
  */
-@Ignore
 public class ServerProxyTest {
     private DatabaseManager databaseManager;
     private Account account;
@@ -52,6 +50,7 @@ public class ServerProxyTest {
             "}";
 
     //mockup LocationConfig fields
+    //public because of DatabaseManagerTest
     public static void setFinalStatic(Field field, Object newValue) throws Exception {
         field.setAccessible(true);
         Field modifiersField = Field.class.getDeclaredField("modifiers");
@@ -62,6 +61,7 @@ public class ServerProxyTest {
 
     @Before
     public void setUp() {
+        //start server in different thread
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -74,6 +74,8 @@ public class ServerProxyTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        //setup for various tests
         String uuid = "1234";
         account = new Account(accountJson);
         databaseManager = new DatabaseManager(account);
@@ -263,10 +265,15 @@ public class ServerProxyTest {
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoInfo");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
-        JSONObject jsonObject = new JSONObject(response.readEntity(String.class));
-        JSONObject metadata = jsonObject.getJSONObject("metadata");
-        String gForceY = metadata.getString("gForceY");
-        Assert.assertTrue(gForceY.equals("40.0"));
+        String entity = response.readEntity(String.class);
+        if(!entity.equals("FAILURE")) {
+            JSONObject jsonObject = new JSONObject(entity);
+            JSONObject metadata = jsonObject.getJSONObject("metadata");
+            String gForceY = metadata.getString("gForceY");
+            Assert.assertTrue(gForceY.equals("40.0"));
+        } else {
+            Assert.fail();
+        }
     }
 
     @After

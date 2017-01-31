@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 @Path("webservice")
 public class ServerProxy {
-
+	//TODO: JAVADOC
 	// attributes
 	private VideoManager videoManager;
 	private AccountManager accountManager;
@@ -67,7 +67,6 @@ public class ServerProxy {
     @Path("videoDownload")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response videoDownload (@FormParam("videoId") int videoId, @FormParam("data") String accountData) {
-		//TODO: Check videoID value if not sended!
 		Response.ResponseBuilder response = null;
 		if (accountData == null || videoId == 0) {
 			return response.status(400).build();
@@ -275,6 +274,7 @@ public class ServerProxy {
 		videoManager = new VideoManager(account);
 		accountManager = new AccountManager(account);
 
+		//TODO: do things with "?"
 		//authentication process
 		int accountId = accountManager.getAccountId();
 		if (accountId < 1) {
@@ -285,8 +285,8 @@ public class ServerProxy {
 		if (!authenticate) {
 			return "WRONG PASSWORD";
 		}
-		boolean verfied = accountManager.isVerified();
-		if (!verfied) {
+		boolean verified = accountManager.isVerified();
+		if (!verified) {
 			return "NOT VERIFIED";
 		}
     	return SUCCESS;

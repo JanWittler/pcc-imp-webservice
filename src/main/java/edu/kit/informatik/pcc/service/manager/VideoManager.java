@@ -13,6 +13,7 @@ import java.util.ArrayList;
  * Created by David Laubenstein on 01/18/2017
  */
 public class VideoManager {
+	//TODO: JAVADOC
 	// attributes
 	private final String SUCCESS = "SUCCESS";
 	private final String FAILURE = "FAILURE";

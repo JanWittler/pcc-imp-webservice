@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * Created by David Laubenstein on 01/18/2017
  */
 public class AccountManager {
+	//TODO: JAVADOC
 	// attributes
 	private final String SUCCESS = "SUCCESS";
 	private final String FAILURE = "FAILURE";
@@ -63,7 +64,6 @@ public class AccountManager {
 	 * @return string if deletion worked successfully
 	 */
 	public String deleteAccount(VideoManager videoManager) {
-		//TODO: right path
 		ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
 		if (videoInfoList != null) {
 			for (VideoInfo videoInfo: videoInfoList){
