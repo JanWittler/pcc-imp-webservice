@@ -4,6 +4,7 @@ import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
 import edu.kit.informatik.pcc.service.manager.VideoManager;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,17 +40,18 @@ public class ServerProxy {
 	 * @param metadata inputstream of metadatafile to upload
 	 * @param encryptedSymmetricKey inputstream of keyfile to upload
 	 * @param accountData json string of accountdata
-	 * @param videoName string of videoname
+	 * @param fileDetail
 	 * @param response create async response
 	 * @return string if task started successfully
 	 */
 	@POST
 	@Path("videoUpload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public String videoUpload (@FormDataParam("video") InputStream video, @FormDataParam("metadata") InputStream metadata, @FormDataParam("key") InputStream encryptedSymmetricKey, @FormDataParam("data") String accountData, @FormDataParam("videoName") String videoName, @Suspended AsyncResponse response) {
-		if(video == null || metadata == null || encryptedSymmetricKey == null || accountData == null || videoName == null) {
+	public String videoUpload (@FormDataParam("video") InputStream video, @FormDataParam("metadata") InputStream metadata, @FormDataParam("key") InputStream encryptedSymmetricKey, @FormDataParam("data") String accountData, @FormDataParam("video") FormDataContentDisposition fileDetail, @Suspended AsyncResponse response) {
+		if(video == null || metadata == null || encryptedSymmetricKey == null || accountData == null || fileDetail == null) {
 			return FAILURE;
 		}
+		String videoName = fileDetail.getName();
 		Logger.getGlobal().info("Upload Request");
 		String accountStatus = setUpForRequest(accountData);
 		if (accountStatus.equals(SUCCESS)) {
@@ -67,6 +69,7 @@ public class ServerProxy {
     @Path("videoDownload")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response videoDownload (@FormParam("videoId") int videoId, @FormParam("data") String accountData) {
+		//TODO:PUT IN VIDEOMANAGER
 		Response.ResponseBuilder response = null;
 		if (accountData == null || videoId == 0) {
 			return response.status(400).build();

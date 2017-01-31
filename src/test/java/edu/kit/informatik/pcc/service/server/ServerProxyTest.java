@@ -5,11 +5,16 @@ import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 import edu.kit.informatik.pcc.service.manager.VideoManager;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -88,7 +93,7 @@ public class ServerProxyTest {
 
         //set directories to TEST_RESOURCES_DIR
         try {
-            setFinalStatic(LocationConfig.class.getDeclaredField("RESOURCES_DIR"), LocationConfig.TEST_RESOURCES_DIR);
+            //setFinalStatic(LocationConfig.class.getDeclaredField("RESOURCES_DIR"), LocationConfig.TEST_RESOURCES_DIR);
             setFinalStatic(LocationConfig.class.getDeclaredField("ANONYM_VID_DIR"), LocationConfig.TEST_RESOURCES_DIR);
             setFinalStatic(LocationConfig.class.getDeclaredField("META_DIR"), LocationConfig.TEST_RESOURCES_DIR);
         } catch (Exception e) {
@@ -275,9 +280,27 @@ public class ServerProxyTest {
             Assert.fail();
         }
     }
+    @Ignore
+    @org.junit.Test
+    public void uploadTest() {
+        Client client = ClientBuilder.newClient();
+        WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoUpload").register(MultiPartFeature.class);
+        MultiPart multiPart = new MultiPart();
+        multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+        FileDataBodyPart video = new FileDataBodyPart("video", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        FileDataBodyPart metadata = new FileDataBodyPart("metadata", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta.json"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        FileDataBodyPart key = new FileDataBodyPart("key", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encKey.txt"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        FormDataBodyPart data = new FormDataBodyPart("data", accountJson);
+        multiPart.bodyPart(video);
+        multiPart.bodyPart(metadata);
+        multiPart.bodyPart(key);
+        multiPart.bodyPart(data);
+        Response response = webTarget.request().post(Entity.entity(multiPart, multiPart.getMediaType()),Response.class);
+        System.out.println(response.readEntity(String.class));
+    }
 
     @After
-    public void after() {
+    public void afterElse() {
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input"));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input2"));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input3"));
