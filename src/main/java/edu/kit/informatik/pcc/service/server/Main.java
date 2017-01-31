@@ -30,7 +30,7 @@ public class Main {
 
     private static boolean startServer() {
 
-        if (!setupLogger() || !setupDirectories()) {
+        if (!setupDirectories() || !setupLogger()) {
             System.out.println("Setup failed");
             return false;
         }
@@ -143,7 +143,6 @@ public class Main {
             ret &= file.delete();
         }
 
-        Logger.getGlobal().info("Setup directories");
         return ret;
     }
 }
