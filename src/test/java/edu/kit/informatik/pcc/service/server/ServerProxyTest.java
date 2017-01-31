@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -33,10 +32,10 @@ import java.nio.file.StandardCopyOption;
  * Created by Fabi on 20.01.2017.
  */
 public class ServerProxyTest {
-    private final String SUCCESS = "SUCCESS";
     private DatabaseManager databaseManager;
     private Account account;
-    private String tempUUID = "1235";
+    private final String SUCCESS = "SUCCESS";
+    private String tempUUID = "3456qwe-qw234-2342f";
     private String accountJson = "{\n" +
             "  \"account\": {\n" +
             "    \"mail\": \"fabiistkrass@imperium.baba\",\n" +
@@ -45,7 +44,7 @@ public class ServerProxyTest {
             "}";
     private String tempAccountJson = "{\n" +
             "  \"account\": {\n" +
-            "    \"mail\": \"lol@imperium.baba\",\n" +
+            "    \"mail\": \"fabiistababa@baba.de\",\n" +
             "    \"password\": \"ichbindershitfuckyooo\"\n" +
             "  }\n" +
             "}";
@@ -71,13 +70,13 @@ public class ServerProxyTest {
         });
         t.start();
         try {
-            Thread.sleep(500);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         //setup for various tests
-        String uuid = "1234";
+        String uuid = "456-sgdfgd3t5g-345fs";
         account = new Account(accountJson);
         databaseManager = new DatabaseManager(account);
         databaseManager.register(uuid);
@@ -97,7 +96,7 @@ public class ServerProxyTest {
         }
     }
 
-    @Test
+    @org.junit.Test
     public void authenticateTest() {
         Client client = ClientBuilder.newClient();
         Form f = new Form();
@@ -107,7 +106,7 @@ public class ServerProxyTest {
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
     }
 
-    @Test
+    @org.junit.Test
     public void verifyTest() {
         //setup for test
         Account tempAccount = new Account(tempAccountJson);
@@ -126,7 +125,7 @@ public class ServerProxyTest {
         tempDatabaseManager.deleteAccount();
     }
 
-    @Test
+    @org.junit.Test
     public void downloadTest() {
         String videoId = Integer.toString(databaseManager.getVideoIdByName("input"));
         Form f = new Form();
@@ -147,7 +146,7 @@ public class ServerProxyTest {
         Assert.assertTrue(response.getStatus() == 200);
     }
 
-    @Test
+    @org.junit.Test
     public void videosByAccountTest() {
         Form f = new Form();
         f.param("data", accountJson);
@@ -176,7 +175,7 @@ public class ServerProxyTest {
         tempDM.deleteAccount();
     }
 
-    @Test
+    @org.junit.Test
     public void changeAccountTest() {
         Form f = new Form();
         f.param("data", accountJson);
@@ -187,7 +186,7 @@ public class ServerProxyTest {
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
     }
 
-    @Test
+    @org.junit.Test
     public void deleteAccountTest() {
         //setup for test
         Account tempAccount = new Account(tempAccountJson);
@@ -227,7 +226,7 @@ public class ServerProxyTest {
     }
 
 
-    @Test
+    @org.junit.Test
     public void videoDeleteTest() {
         String videoId = "-1";
         databaseManager.saveProcessedVideoAndMeta("input4", "blaa");
