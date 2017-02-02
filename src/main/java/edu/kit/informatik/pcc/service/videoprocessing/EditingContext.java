@@ -68,19 +68,19 @@ public class EditingContext {
         this.videoName = videoName;
 
         this.encVid = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + "encVid.mp4");
+                + File.separator + account.getId() + "_" + videoName + "_" + "encVid.mp4");
         this.encKey = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + "encKey.txt");
+                + File.separator + account.getId() + "_" + videoName + "_" + "encKey.txt");
         this.encMetadata = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + "encMetadata.json");
+                + File.separator + account.getId() + "_" + videoName + "_" + "encMetadata.json");
         this.decVid = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + "decVid.mp4");
+                + File.separator + account.getId() + "_" + videoName + "_" + "decVid.mp4");
         this.decMetadata = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + "meta.json");
+                + File.separator + account.getId() + "_" + videoName + "_" + "meta.json");
         this.anonymizedVid = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + "anonym.avi");
+                + File.separator + account.getId() + "_" + videoName + "_" + "anonym.avi");
         this.vidWithMeta = new File(LocationConfig.TEMP_DIR
-                + "\\" + account.getId() + "_" + videoName + "_" + "videoWithMeta.avi");
+                + File.separator + account.getId() + "_" + videoName + "_" + "videoWithMeta.avi");
 
     }
 

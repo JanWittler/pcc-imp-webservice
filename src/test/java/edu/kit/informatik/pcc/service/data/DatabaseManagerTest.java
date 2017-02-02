@@ -1,11 +1,7 @@
 package edu.kit.informatik.pcc.service.data;
 
-import edu.kit.informatik.pcc.service.server.ServerProxy;
 import org.junit.*;
 
-import javax.validation.constraints.AssertTrue;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import static edu.kit.informatik.pcc.service.server.ServerProxyTest.setFinalStatic;
@@ -15,14 +11,19 @@ import static edu.kit.informatik.pcc.service.server.ServerProxyTest.setFinalStat
  * Created by David Laubenstein on 1/18/17.
  */
 public class DatabaseManagerTest {
+    private final String OWN_UUID = "102394871234";
     private Account account;
     private DatabaseManager dm;
-    private final String OWN_UUID = "102394871234";
     private boolean registered = false;
 
 
     @BeforeClass
     public static void setUpBeforeClass() {
+    }
+
+    @AfterClass
+    public static void cleanUpAfterClass() {
+
     }
 
     @Before
@@ -178,7 +179,7 @@ public class DatabaseManagerTest {
         // save Strings in account object to class attributes
 
         Metadata md = dm.getMetaData(dm.getVideoIdByName(videoName));
-        Assert.assertTrue(md.getDate().equals("123") && md.getTriggerType().equals("23"));
+        Assert.assertTrue(md.getDate() == 123 && md.getTriggerType().equals("23"));
         dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
         Assert.assertTrue(md.getGForce()[0] == (float) 30.33333
                 && md.getGForce()[1] == (float) 40
@@ -234,10 +235,5 @@ public class DatabaseManagerTest {
     public void cleanUpAfter() {
         dm.deleteAccount();
         dm = null;
-    }
-
-    @AfterClass
-    public static void cleanUpAfterClass() {
-
     }
 }

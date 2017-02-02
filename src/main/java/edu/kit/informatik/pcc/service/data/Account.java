@@ -2,41 +2,33 @@ package edu.kit.informatik.pcc.service.data;
 
 import org.json.JSONObject;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-
 /**
- * @author Fabian Wenzel, David Laubenstein
- *         Created by David Laubenstein at 17.01.2017
+ * @author Fabian Wenzel, David Laubenstein, Josh Romanowski
  */
 public class Account {
+
+    // JSON keys
+    private static final String JSON_KEY_MAIL = "mail";
+    private static final String JSON_KEY_PASSWORD = "password";
+
     // attributes
+
     private String mail;
     private String passwordHash;
     private int id;
+
     // constructors
 
     /**
-     * constructor, which relates the json string to the class variables
+     * Takes the json string and parses the attributes from it.
      *
      * @param json which includes account information
      */
     public Account(String json) {
-    	//TODO: PARSE JSON CORRECTLY ?
-        // convert json String to class attributes
-        // create JSON Object
-        JSONObject obj = new JSONObject(json);
-        // go into account object
-        JSONObject account = obj.getJSONObject("account");
-        // save Strings in account object to class attributes
-
-        this.mail = account.getString("mail");
-		this.passwordHash = hashPassword(account.getString("password"));
-	}
+        JSONObject account = new JSONObject(json);
+        this.mail = account.getString(JSON_KEY_MAIL);
+        this.passwordHash = hashPassword(account.getString(JSON_KEY_PASSWORD));
+    }
 
     // methods
 
@@ -57,15 +49,15 @@ public class Account {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getPasswordHash() {
         return passwordHash;
     }
 
     public String getMail() {
         return mail;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }
