@@ -1,9 +1,9 @@
-package edu.kit.informatik.pcc.service.videoprocessing.chain;
+package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 /**
@@ -11,14 +11,14 @@ import org.opencv.imgproc.Imgproc;
  *
  * @author Josh Romanowski
  */
-public class OpenCVBoxfilter implements IFilter {
+public class OpenCVFilter implements IFilter {
 
     //methods
 
     @Override
     public Mat applyFilter(Mat frame, MatOfRect detections) {
         for (Rect rect : detections.toArray()) {
-            Imgproc.rectangle(frame, rect.tl(), rect.br(), new Scalar(0, 0, 0), -1);
+            Imgproc.blur(frame.submat(rect), frame.submat(rect), new Size(55, 55));
         }
         return frame;
     }

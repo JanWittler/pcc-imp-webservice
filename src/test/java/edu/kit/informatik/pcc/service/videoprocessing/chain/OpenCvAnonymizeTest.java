@@ -1,6 +1,8 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain;
 
 import edu.kit.informatik.pcc.service.data.LocationConfig;
+import edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization.AAnonymizer;
+import edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization.OpenCVAnonymizer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;

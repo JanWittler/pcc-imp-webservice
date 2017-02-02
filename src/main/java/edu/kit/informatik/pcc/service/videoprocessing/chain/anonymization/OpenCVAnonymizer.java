@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.videoprocessing.chain;
+package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
 import edu.kit.informatik.pcc.service.server.Main;
 import org.opencv.core.Core;
@@ -75,7 +75,7 @@ public class OpenCVAnonymizer extends AAnonymizer {
         //start capture
         Mat frame = new Mat();
 
-        Logger.getGlobal().info("Start anonymizing video " + input.getName());
+        Logger.getGlobal().info("Start anonymization video " + input.getName());
         while (capture.read(frame)) {
             if (!frame.empty()) {
                 // detect faces
@@ -89,7 +89,7 @@ public class OpenCVAnonymizer extends AAnonymizer {
         }
         capture.release();
         videoWriter.release();
-        Logger.getGlobal().info("Finished anonymizing video " + input.getName());
+        Logger.getGlobal().info("Finished anonymization video " + input.getName());
         return true;
     }
 }

@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.videoprocessing.chain;
+package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;

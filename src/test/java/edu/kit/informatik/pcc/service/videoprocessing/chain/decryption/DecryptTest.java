@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.videoprocessing.chain;
+package edu.kit.informatik.pcc.service.videoprocessing.chain.decryption;
 
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import org.junit.Assert;

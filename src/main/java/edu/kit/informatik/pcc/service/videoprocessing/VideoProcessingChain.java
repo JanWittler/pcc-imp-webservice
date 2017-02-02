@@ -1,10 +1,10 @@
 package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.service.data.Account;
-import edu.kit.informatik.pcc.service.videoprocessing.chain.Decryptor;
-import edu.kit.informatik.pcc.service.videoprocessing.chain.FileForwarder;
-import edu.kit.informatik.pcc.service.videoprocessing.chain.OpenCVAnonymizer;
-import edu.kit.informatik.pcc.service.videoprocessing.chain.Persistor;
+import edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization.OpenCVAnonymizer;
+import edu.kit.informatik.pcc.service.videoprocessing.chain.decryption.Decryptor;
+import edu.kit.informatik.pcc.service.videoprocessing.chain.persistation.FileForwarder;
+import edu.kit.informatik.pcc.service.videoprocessing.chain.persistation.Persistor;
 
 import javax.ws.rs.container.AsyncResponse;
 import java.io.*;
@@ -17,6 +17,8 @@ import java.util.logging.Logger;
  * @author Josh Romanowski
  */
 public class VideoProcessingChain implements Runnable {
+
+    // TODO: jdoc
 
     // attributes
 

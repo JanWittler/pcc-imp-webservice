@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.videoprocessing.chain;
+package edu.kit.informatik.pcc.service.videoprocessing.chain.decryption;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;

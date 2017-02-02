@@ -1,10 +1,10 @@
-package edu.kit.informatik.pcc.service.videoprocessing.chain;
+package edu.kit.informatik.pcc.service.videoprocessing.chain.persistation;
 
 import edu.kit.informatik.pcc.service.videoprocessing.EditingContext;
 import edu.kit.informatik.pcc.service.videoprocessing.IStage;
 
 /**
- * Stage used to forward files when the simple chain gets used and anonymizing gets skipped.
+ * Stage used to forward files when the simple chain gets used and anonymization gets skipped.
  *
  * @author Josh Romanowski
  */

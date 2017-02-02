@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.videoprocessing.chain;
+package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
 import edu.kit.informatik.pcc.service.videoprocessing.EditingContext;
 import edu.kit.informatik.pcc.service.videoprocessing.IStage;
@@ -6,7 +6,7 @@ import edu.kit.informatik.pcc.service.videoprocessing.IStage;
 import java.io.File;
 
 /**
- * Interface for single video anonymizing classes.
+ * Interface for single video anonymization classes.
  * Takes a video file analyzes it for personal content and
  * makes it unrecognizable. Puts the anonymized video to
  * the desired output file.
@@ -33,7 +33,7 @@ public abstract class AAnonymizer implements IStage {
      *
      * @param input  Input video file.
      * @param output Output video file.
-     * @return Returns whether the anonymizing was successful or not.
+     * @return Returns whether the anonymization was successful or not.
      */
     public abstract boolean anonymize(File input, File output);
 }
