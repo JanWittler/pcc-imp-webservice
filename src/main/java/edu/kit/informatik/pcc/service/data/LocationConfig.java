@@ -6,7 +6,7 @@ import java.io.File;
  * Config class that holds all directories used.
  *
  * @author Josh Romanowski and David Laubenstein
- * Created by David Laubenstein on 01/18/2017
+ *         Created by David Laubenstein on 01/18/2017
  */
 public class LocationConfig {
 
@@ -28,7 +28,9 @@ public class LocationConfig {
      * Directory for all temporary data.
      */
     public static final String TEMP_DIR = PROJECT_DIR + File.separator + "tmp";
-
+    /**
+     * Directory for log files.
+     */
     public static final String LOG_DIR = PROJECT_DIR + File.separator + "log";
     /**
      * Directory for project resources.

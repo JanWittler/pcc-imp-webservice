@@ -32,26 +32,21 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 /**
- *
  * @author Fabian Wenzel
- * Created by Fabi on 20.01.2017.
+ *         Created by Fabi on 20.01.2017.
  */
 public class ServerProxyTest {
+    private final String SUCCESS = "SUCCESS";
     private DatabaseManager databaseManager;
     private Account account;
-    private final String SUCCESS = "SUCCESS";
     private String tempUUID = "3456qwe-qw234-2342f";
     private String accountJson = "{\n" +
-            "  \"account\": {\n" +
-            "    \"mail\": \"fabiistkrass@imperium.baba\",\n" +
-            "    \"password\": \"yochilldeinlife\"\n" +
-            "  }\n" +
+            "  \"mail\": \"fabiistkrass@imperium.baba\",\n" +
+            "  \"password\": \"yochilldeinlife\"\n" +
             "}";
     private String tempAccountJson = "{\n" +
-            "  \"account\": {\n" +
-            "    \"mail\": \"fabiistababa@baba.de\",\n" +
-            "    \"password\": \"ichbindershitfuckyooo\"\n" +
-            "  }\n" +
+            "  \"mail\": \"fabiistababa@baba.de\",\n" +
+            "  \"password\": \"ichbindershitfuckyooo\"\n" +
             "}";
 
     //mockup LocationConfig fields
@@ -107,7 +102,7 @@ public class ServerProxyTest {
         Form f = new Form();
         f.param("data", accountJson);
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("authenticate");
-        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
     }
 
@@ -124,7 +119,7 @@ public class ServerProxyTest {
         f.param("uuid", tempUUID);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("verifyAccount");
-        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
 
         tempDatabaseManager.deleteAccount();
@@ -138,7 +133,7 @@ public class ServerProxyTest {
         f.param("videoId", videoId);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoDownload");
-        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         InputStream inputStream = response.readEntity(InputStream.class);
         if (response.getStatus() == 200) {
             File downloadfile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTestFail.mp4");
@@ -157,7 +152,7 @@ public class ServerProxyTest {
         f.param("data", accountJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("getVideosByAccount");
-        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         JSONArray jsonArray = new JSONArray(response.readEntity(String.class));
         JSONObject outerObjects = jsonArray.getJSONObject(0);
         JSONObject innerObject = outerObjects.getJSONObject("videoInfo");
@@ -173,7 +168,7 @@ public class ServerProxyTest {
         f.param("uuid", tempUUID);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("createAccount");
-        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
         DatabaseManager tempDM = new DatabaseManager(account2);
         account2.setId(tempDM.getAccountId());
@@ -187,7 +182,7 @@ public class ServerProxyTest {
         f.param("newData", tempAccountJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("changeAccount");
-        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
     }
 
@@ -209,13 +204,13 @@ public class ServerProxyTest {
         File file3 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta1" + ".json");
         File file4 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta2" + ".json");
         try {
-            createFiles =  file1.createNewFile();
+            createFiles = file1.createNewFile();
             Assert.assertTrue(createFiles);
-            createFiles =  file2.createNewFile();
+            createFiles = file2.createNewFile();
             Assert.assertTrue(createFiles);
-            createFiles =  file3.createNewFile();
+            createFiles = file3.createNewFile();
             Assert.assertTrue(createFiles);
-            createFiles =  file4.createNewFile();
+            createFiles = file4.createNewFile();
             Assert.assertTrue(createFiles);
         } catch (IOException e) {
             e.printStackTrace();
@@ -225,7 +220,7 @@ public class ServerProxyTest {
         f.param("data", tempAccountJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("deleteAccount");
-        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
         tempDatabaseManager.deleteAccount();
     }
@@ -236,7 +231,7 @@ public class ServerProxyTest {
         String videoId = "-1";
         databaseManager.saveProcessedVideoAndMeta("input4", "blaa");
         VideoManager videoManager = new VideoManager(account);
-        for (VideoInfo videoInfo: videoManager.getVideoInfoList()) {
+        for (VideoInfo videoInfo : videoManager.getVideoInfoList()) {
             if (videoInfo.getName().equals("input4")) {
                 videoId = Integer.toString(videoInfo.getVideoId());
             }
@@ -248,7 +243,7 @@ public class ServerProxyTest {
         f.param("videoId", videoId);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoDelete");
-        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input4"));
     }
@@ -257,7 +252,7 @@ public class ServerProxyTest {
     public void videoInfoTest() {
         String videoId = "-1";
         VideoManager videoManager = new VideoManager(account);
-        for (VideoInfo videoInfo: videoManager.getVideoInfoList()) {
+        for (VideoInfo videoInfo : videoManager.getVideoInfoList()) {
             if (videoInfo.getName().equals("input3")) {
                 videoId = Integer.toString(videoInfo.getVideoId());
             }
@@ -269,9 +264,9 @@ public class ServerProxyTest {
         f.param("videoId", videoId);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoInfo");
-        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE),Response.class);
+        Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         String entity = response.readEntity(String.class);
-        if(!entity.equals("FAILURE")) {
+        if (!entity.equals("FAILURE")) {
             JSONObject jsonObject = new JSONObject(entity);
             JSONObject metadata = jsonObject.getJSONObject("metadata");
             String gForceY = metadata.getString("gForceY");
@@ -280,6 +275,7 @@ public class ServerProxyTest {
             Assert.fail();
         }
     }
+
     @Ignore
     @org.junit.Test
     public void uploadTest() {
@@ -295,7 +291,7 @@ public class ServerProxyTest {
         multiPart.bodyPart(metadata);
         multiPart.bodyPart(key);
         multiPart.bodyPart(data);
-        Response response = webTarget.request().post(Entity.entity(multiPart, multiPart.getMediaType()),Response.class);
+        Response response = webTarget.request().post(Entity.entity(multiPart, multiPart.getMediaType()), Response.class);
         System.out.println(response.readEntity(String.class));
     }
 

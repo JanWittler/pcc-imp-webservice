@@ -29,8 +29,8 @@ public class VideoProcessingChain implements Runnable {
 
     // constructors
 
-    protected VideoProcessingChain(InputStream video, InputStream metadata,
-                                   InputStream key, Account account, String videoName, AsyncResponse response, Chain chain)
+    protected VideoProcessingChain(InputStream video, InputStream metadata, InputStream key, Account account,
+                                   String videoName, AsyncResponse response, Chain chain)
             throws IllegalArgumentException {
 
         // save response

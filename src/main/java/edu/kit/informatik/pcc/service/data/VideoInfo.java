@@ -38,7 +38,6 @@ public class VideoInfo {
      */
     public String getAsJson() {
         JSONObject json = new JSONObject();
-
         try {
             json.put(JSON_KEY_NAME, this.videoName);
             json.put(JSON_KEY_ID, this.videoId);
