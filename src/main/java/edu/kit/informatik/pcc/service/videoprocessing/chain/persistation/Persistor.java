@@ -1,8 +1,6 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain.persistation;
 
-import edu.kit.informatik.pcc.service.data.Account;
-import edu.kit.informatik.pcc.service.data.DatabaseManager;
-import edu.kit.informatik.pcc.service.data.LocationConfig;
+import edu.kit.informatik.pcc.service.data.*;
 import edu.kit.informatik.pcc.service.videoprocessing.EditingContext;
 import edu.kit.informatik.pcc.service.videoprocessing.IStage;
 
@@ -57,7 +55,7 @@ public class Persistor implements IStage {
      * @param metadata  Final processed metadata.
      * @param account   The user's account.
      * @param videoName The name of the video.
-     * @return Returns whether persisting was successfull or not.
+     * @return Returns whether persisting was successful or not.
      */
     private boolean persist(File video, File metadata, Account account, String videoName) {
 
@@ -69,19 +67,19 @@ public class Persistor implements IStage {
             Files.copy(
                     video.toPath(),
                     new File(LocationConfig.ANONYM_VID_DIR + File.separator +
-                            account.getId() + "_" + videoName + ".avi").toPath(),
+                            account.getId() + "_" + videoName + VideoInfo.FILE_EXTENTION).toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
 
             //Save metadata to final destination.
             Files.copy(
                     metadata.toPath(),
                     new File(LocationConfig.META_DIR + File.separator +
-                            account.getId() + "_" + metaName + ".json").toPath(),
+                            account.getId() + "_" + metaName + Metadata.FILE_EXTENTION).toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
 
 
             //Add database entry.
-            databaseManager.saveProcessedVideoAndMeta(videoName, videoName + "_" + "meta");
+            databaseManager.saveProcessedVideoAndMeta(videoName, metaName);
         } catch (IOException e) {
             Logger.getGlobal().warning("Persisting video " + videoName + " failed");
             return false;

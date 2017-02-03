@@ -12,6 +12,11 @@ import java.util.logging.Logger;
  */
 public class VideoInfo {
 
+    /**
+     * File extension of video files.
+     */
+    public static final String FILE_EXTENTION = ".avi";
+
     // JSON keys
     private static final String JSON_KEY_NAME = "name";
     private static final String JSON_KEY_ID = "id";

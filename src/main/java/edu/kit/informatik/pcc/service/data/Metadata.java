@@ -12,6 +12,11 @@ import java.util.logging.Logger;
  */
 public class Metadata {
 
+    /**
+     * File extension of metadata files.
+     */
+    public final static String FILE_EXTENTION = ".json";
+
     // JSON keys
     private final static String JSON_KEY_DATE = "date";
     private final static String JSON_KEY_TRIGGER_TYPE = "triggerType";

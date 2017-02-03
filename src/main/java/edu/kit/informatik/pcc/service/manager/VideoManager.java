@@ -114,7 +114,8 @@ public class VideoManager {
         }
 
         String videoName = videoInfo.getName();
-        File video = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".avi");
+        File video = new File(
+                LocationConfig.ANONYM_VID_DIR + File.separator + videoName + VideoInfo.FILE_EXTENTION);
 
         InputStream inputStream;
         try {
@@ -140,13 +141,13 @@ public class VideoManager {
 
         // delete video file
         File videoFile = new File(
-                LocationConfig.ANONYM_VID_DIR + File.separator + videoInfo.getName() + ".mp4");
+                LocationConfig.ANONYM_VID_DIR + File.separator + videoInfo.getName() + VideoInfo.FILE_EXTENTION);
         if (videoFile.exists())
             videoFile.delete();
 
         //delete metadata file.
         String metaName = databaseManager.getMetaName(videoId);
-        File metaFile = new File(LocationConfig.META_DIR + File.separator + metaName + ".json");
+        File metaFile = new File(LocationConfig.META_DIR + File.separator + metaName + Metadata.FILE_EXTENTION);
         if (metaFile.exists())
             metaFile.delete();
 
