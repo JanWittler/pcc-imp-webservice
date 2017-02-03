@@ -90,7 +90,7 @@ public class DatabaseManagerTest {
         Assert.assertTrue(vI.getName().equals(videoName));
         // getMetaInfo
         //TODO: if metadata is working, outcomment following two lines
-        Assert.assertTrue((dm.getMetaNameByVideoId(dm.getVideoIdByName(videoName))).equals(metaName));
+        Assert.assertTrue((dm.getMetaName(dm.getVideoIdByName(videoName))).equals(metaName));
         // delete Video
         dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
     }
@@ -188,7 +188,7 @@ public class DatabaseManagerTest {
         // save video in database
         dm.saveProcessedVideoAndMeta(videoName, metaName);
         // if metaName equals the info in database, test passes
-        Assert.assertTrue(dm.getMetaNameByVideoId(dm.getVideoIdByName(videoName)).equals(metaName));
+        Assert.assertTrue(dm.getMetaName(dm.getVideoIdByName(videoName)).equals(metaName));
         // delete Video, so that the account can be deleted
         dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
     }
