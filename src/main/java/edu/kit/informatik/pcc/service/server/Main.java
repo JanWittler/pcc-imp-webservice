@@ -69,6 +69,11 @@ public class Main {
         } catch (Exception e) {
             Logger.getGlobal().warning("Stopping the server failed.");
         }
+
+        // finish log
+        for (Handler handler : Logger.getGlobal().getHandlers()) {
+            handler.close();
+        }
     }
 
     /* #############################################################################################
@@ -111,7 +116,7 @@ public class Main {
             return false;
         } catch (Exception e) {
             Logger.getGlobal().severe("Error in server");
-            restartServer();
+            stopServer();
             return false;
         }
         return true;
