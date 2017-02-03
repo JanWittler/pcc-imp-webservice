@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -142,6 +141,7 @@ public class ServerProxyTest {
             File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTestFail.mp4");
             try {
                 Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                downloadFile.delete();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -200,16 +200,15 @@ public class ServerProxyTest {
         tempDatabaseManager.saveProcessedVideoAndMeta("deleteVideo2", "deleteMeta2");
 
         //create files for testing
-        boolean createFiles;
         File file1 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo1" + ".mp4");
         File file2 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo2" + ".mp4");
         File file3 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta1" + ".json");
         File file4 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta2" + ".json");
         try {
-            createFiles = file1.createNewFile();
-            createFiles = file2.createNewFile();
-            createFiles = file3.createNewFile();
-            createFiles = file4.createNewFile();
+            file1.createNewFile();
+            file2.createNewFile();
+            file3.createNewFile();
+            file4.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
