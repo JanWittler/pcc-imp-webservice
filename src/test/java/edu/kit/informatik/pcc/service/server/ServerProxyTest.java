@@ -4,7 +4,6 @@ import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
-import edu.kit.informatik.pcc.service.manager.VideoManager;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -39,14 +38,9 @@ public class ServerProxyTest {
     private final String SUCCESS = "SUCCESS";
     private DatabaseManager databaseManager;
     private String tempUUID = "3456qwe-qw234-2342f";
-    private String accountJson = "{\n" +
-            "  \"mail\": \"fabiistkrass@imperium.baba\",\n" +
-            "  \"password\": \"yochilldeinlife\"\n" +
-            "}";
-    private String tempAccountJson = "{\n" +
-            "  \"mail\": \"fabiistababa@baba.de\",\n" +
-            "  \"password\": \"ichbindershitfuckyooo\"\n" +
-            "}";
+
+    private String accountJson;
+    private String tempAccountJson;
 
     //mockup LocationConfig fields
     //public because of DatabaseManagerTest
@@ -69,10 +63,20 @@ public class ServerProxyTest {
         });
         t.start();
         try {
-            Thread.sleep(2000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("mail", "fabiistkrass@imperium.baba");
+        jsonObject.put("password", "yochilldeinlife");
+        accountJson = jsonObject.toString();
+
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put("mail", "fabiistababa@baba.de");
+        jsonObject2.put("password", "ichbindershitfuckyooo");
+        tempAccountJson = jsonObject2.toString();
 
         //setup for various tests
         Account account;
@@ -153,9 +157,8 @@ public class ServerProxyTest {
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("getVideosByAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         JSONArray jsonArray = new JSONArray(response.readEntity(String.class));
-        JSONObject outerObjects = jsonArray.getJSONObject(0);
-        JSONObject innerObject = outerObjects.getJSONObject("videoInfo");
-        String jsonName = innerObject.getString("name");
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        String jsonName = jsonObject.getString("name");
         Assert.assertTrue(jsonName.equals("input"));
     }
 
@@ -261,9 +264,8 @@ public class ServerProxyTest {
         String entity = response.readEntity(String.class);
         if (!entity.equals("FAILURE")) {
             JSONObject jsonObject = new JSONObject(entity);
-            JSONObject metadata = jsonObject.getJSONObject("metadata");
-            String gForceY = metadata.getString("gForceY");
-            Assert.assertTrue(gForceY.equals("40.0"));
+            float gForceY = (float) jsonObject.getDouble("triggerForceY");
+            Assert.assertTrue(gForceY == 40.0f);
         } else {
             Assert.fail();
         }

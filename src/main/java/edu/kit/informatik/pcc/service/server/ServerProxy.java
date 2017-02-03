@@ -14,11 +14,7 @@ import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
@@ -78,7 +74,7 @@ public class ServerProxy {
     /**
      * @param videoId     integer of specific video to download from webinterface
      * @param accountData string as json with account specifications (mail and password)
-     * @return            returning video as inputstream by success or corresponding failure message
+     * @return returning video as inputstream by success or corresponding failure messagech
      */
     @POST
     @Path("videoDownload")

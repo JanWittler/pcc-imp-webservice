@@ -29,6 +29,7 @@ public class Metadata {
         // retrieve json data
         this.date = metadata.getLong(JSON_KEY_DATE);
         this.triggerType = metadata.getString(JSON_KEY_TRIGGER_TYPE);
+        this.gForce = new float[3];
         this.gForce[0] = (float) metadata.getDouble(JSON_KEY_TRIGGER_FORCE_X);
         this.gForce[1] = (float) metadata.getDouble(JSON_KEY_TRIGGER_FORCE_Y);
         this.gForce[2] = (float) metadata.getDouble(JSON_KEY_TRIGGER_FORCE_Z);
@@ -48,7 +49,7 @@ public class Metadata {
     }
 
     // methods
-    public String getAsJson() {
+    public String getAsJSON() {
         JSONObject json = new JSONObject();
         try {
             json.put(JSON_KEY_DATE, this.date);

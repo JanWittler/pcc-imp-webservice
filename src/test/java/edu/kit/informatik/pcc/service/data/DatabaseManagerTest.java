@@ -1,5 +1,6 @@
 package edu.kit.informatik.pcc.service.data;
 
+import org.json.JSONObject;
 import org.junit.*;
 
 import java.util.ArrayList;
@@ -36,19 +37,10 @@ public class DatabaseManagerTest {
         String G_FORCE_X = "30.33333";
         String G_FORCE_Y = "40";
         String G_FORCE_Z = "50";
-        json = "{\n" +
-                "  \"account\": {\n" +
-                "    \"mail\": " + MAIL + ",\n" +
-                "    \"password\": " + PASSWORD + "\n" +
-                "  },\n" +
-                "  \"metadata\": {\n" +
-                "    \"date\": " + DATE + ",\n" +
-                "    \"triggerType\": " + TRIGGER_TYPE + ",\n" +
-                "    \"gForceX\": " + G_FORCE_X + ",\n" +
-                "    \"gForceY\": " + G_FORCE_Y + ",\n" +
-                "    \"gForceZ\": " + G_FORCE_Z + "\n" +
-                "  }\n" +
-                "}";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("mail", MAIL);
+        jsonObject.put("password", PASSWORD);
+        json = jsonObject.toString();
         account = new Account(json);
 
         dm = new DatabaseManager(account);
