@@ -2,11 +2,17 @@ package edu.kit.informatik.pcc.service.manager;
 
 import edu.kit.informatik.pcc.service.data.*;
 import edu.kit.informatik.pcc.service.videoprocessing.VideoProcessingManager;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * @author Fabian Wenzel, David Laubenstein
@@ -21,7 +27,6 @@ public class VideoManager {
     private DatabaseManager databaseManager;
 
     // constructor
-
     /**
      * @param account account for videomanager
      */
@@ -31,12 +36,23 @@ public class VideoManager {
     }
 
     // methods
-
     /**
      * @return arraylist of videoinfos of account
      */
-    public ArrayList<VideoInfo> getVideoInfoList() {
-        return databaseManager.getVideoInfoList();
+    public String getVideoInfoList() {
+        //convert VideoInfos to JSONArray
+        ArrayList<VideoInfo> videoInfoList = databaseManager.getVideoInfoList();
+        if (videoInfoList == null) {
+            Logger.getGlobal().warning("An error occurred fetching the videoInfoList!");
+            return FAILURE;
+        }
+        JSONArray videoInfoArray = new JSONArray();
+        for (int i = 0; i < videoInfoList.size(); i++) {
+            String json = videoInfoList.get(i).getAsJson();
+            JSONObject jsonObject = new JSONObject(json);
+            videoInfoArray.put(i, jsonObject);
+        }
+        return videoInfoArray.toString();
     }
 
     /**
@@ -57,13 +73,30 @@ public class VideoManager {
      * @param videoId of video to download
      * @return file to download
      */
-    public File download(int videoId) {
+    public Response download(int videoId) {
         VideoInfo videoInfo = databaseManager.getVideoInfo(videoId);
+        Response.ResponseBuilder response = null;
         if (videoInfo == null) {
-            return null;
+            return response.status(404).build();
         }
         String videoName = videoInfo.getName();
-        return new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".mp4");
+        File video = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".mp4");
+        if (video == null) {
+            //you cannot catch the status exception correctly
+            try {
+                return response.status(404).build();
+            } catch (NullPointerException e) {
+                Logger.getGlobal().warning("An error has occurred while building the response!");
+            }
+        }
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(video.getPath());
+        } catch (FileNotFoundException e) {
+            Logger.getGlobal().warning("An error has occurred finding file to download!");
+        }
+        response = Response.ok();
+        return response.status(200).entity(inputStream).build();
     }
 
     /**
@@ -75,6 +108,7 @@ public class VideoManager {
         if (videoInfo == null) {
             return FAILURE;
         }
+        //TODO: CHECK IF NEEDED
 //		Metadata metadata = databaseManager.getMetaData(videoId);
 //		if (metadata == null) {
 //			return FAILURE;

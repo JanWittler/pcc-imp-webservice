@@ -38,7 +38,6 @@ import java.nio.file.StandardCopyOption;
 public class ServerProxyTest {
     private final String SUCCESS = "SUCCESS";
     private DatabaseManager databaseManager;
-    private Account account;
     private String tempUUID = "3456qwe-qw234-2342f";
     private String accountJson = "{\n" +
             "  \"mail\": \"fabiistkrass@imperium.baba\",\n" +
@@ -76,6 +75,7 @@ public class ServerProxyTest {
         }
 
         //setup for various tests
+        Account account;
         String uuid = "456-sgdfgd3t5g-345fs";
         account = new Account(accountJson);
         databaseManager = new DatabaseManager(account);
@@ -88,7 +88,6 @@ public class ServerProxyTest {
 
         //set directories to TEST_RESOURCES_DIR
         try {
-            //setFinalStatic(LocationConfig.class.getDeclaredField("RESOURCES_DIR"), LocationConfig.TEST_RESOURCES_DIR);
             setFinalStatic(LocationConfig.class.getDeclaredField("ANONYM_VID_DIR"), LocationConfig.TEST_RESOURCES_DIR);
             setFinalStatic(LocationConfig.class.getDeclaredField("META_DIR"), LocationConfig.TEST_RESOURCES_DIR);
         } catch (Exception e) {
@@ -230,8 +229,7 @@ public class ServerProxyTest {
     public void videoDeleteTest() {
         String videoId = "-1";
         databaseManager.saveProcessedVideoAndMeta("input4", "blaa");
-        VideoManager videoManager = new VideoManager(account);
-        for (VideoInfo videoInfo : videoManager.getVideoInfoList()) {
+        for (VideoInfo videoInfo : databaseManager.getVideoInfoList()) {
             if (videoInfo.getName().equals("input4")) {
                 videoId = Integer.toString(videoInfo.getVideoId());
             }
@@ -251,8 +249,7 @@ public class ServerProxyTest {
     @org.junit.Test
     public void videoInfoTest() {
         String videoId = "-1";
-        VideoManager videoManager = new VideoManager(account);
-        for (VideoInfo videoInfo : videoManager.getVideoInfoList()) {
+        for (VideoInfo videoInfo : databaseManager.getVideoInfoList()) {
             if (videoInfo.getName().equals("input3")) {
                 videoId = Integer.toString(videoInfo.getVideoId());
             }

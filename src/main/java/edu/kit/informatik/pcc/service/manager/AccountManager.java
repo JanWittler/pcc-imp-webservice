@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 public class AccountManager {
     //TODO: JAVADOC
+
     // attributes
     private final String SUCCESS = "SUCCESS";
     private final String FAILURE = "FAILURE";
@@ -19,9 +20,8 @@ public class AccountManager {
     private DatabaseManager databaseManager;
 
     // constructor
-
     /**
-     * @param account account for accountmanager
+     * @param account account for accountManager
      */
     public AccountManager(Account account) {
         this.account = account;
@@ -44,7 +44,6 @@ public class AccountManager {
         return status;
     }
 
-
     /**
      * @return integer of accountid
      */
@@ -61,11 +60,11 @@ public class AccountManager {
     }
 
     /**
-     * @param videoManager videomanager instance to delete videos of account
+     * @param videoManager videoManager instance to delete videos of account
      * @return string if deletion worked successfully
      */
     public String deleteAccount(VideoManager videoManager) {
-        ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
+        ArrayList<VideoInfo> videoInfoList = databaseManager.getVideoInfoList();
         if (videoInfoList != null) {
             for (VideoInfo videoInfo : videoInfoList) {
                 String status = videoManager.videoDelete(videoInfo.getVideoId());

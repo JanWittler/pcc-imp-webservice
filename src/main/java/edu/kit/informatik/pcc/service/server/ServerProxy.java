@@ -1,13 +1,10 @@
 package edu.kit.informatik.pcc.service.server;
 
 import edu.kit.informatik.pcc.service.data.Account;
-import edu.kit.informatik.pcc.service.data.VideoInfo;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
 import edu.kit.informatik.pcc.service.manager.VideoManager;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -29,32 +26,45 @@ import java.util.logging.Logger;
  */
 @Path("webservice")
 public class ServerProxy {
-    //TODO: JAVADOC
-    //TODO: Extract param strings as constants
-
-    private final String WRONG_ACCOUNT = "WRONG ACCOUNT";
-    private final String SUCCESS = "SUCCESS";
-    private final String FAILURE = "FAILURE";
-
+    //TODO: EXPLAIN METHODS IN JAVADOC
     // attributes
-    private VideoManager videoManager;
+    private final String WRONG_ACCOUNT    = "WRONG ACCOUNT";
+    private final String SUCCESS          = "SUCCESS";
+    private final String FAILURE          = "FAILURE";
+    private final String NOT_EXISTING     = "NOT EXISTING";
+    private final String NOT_VERIFIED     = "NOT VERIFIED";
+    private final String WRONG_PASSWORD   = "WRONG PASSWORD";
+    private final String ALREADY_VERIFIED = "ALREADY VERIFIED";
+    private final String ACCOUNT_EXISTS   = "ACCOUNT EXISTS";
+
+    //param strings
+    private final String VIDEOID = "videoId";
+    private final String ACCOUNT = "account";
+    private final String NEWACCOUNT = "newAccount";
+    private final String VIDEO = "video";
+    private final String METADATA = "metadata";
+    private final String KEY = "key";
+    private final String UUID = "uuid";
+
+
     private AccountManager accountManager;
+    private VideoManager videoManager;
 
     // methods
-
     /**
-     * @param video                 inputstream of videofile to upload
-     * @param metadata              inputstream of metadatafile to upload
-     * @param encryptedSymmetricKey inputstream of keyfile to upload
-     * @param accountData           json string of accountdata
-     * @param fileDetail
-     * @param response              create async response
-     * @return string if task started successfully
+     * @param video                 uploaded video file recorded by android app
+     * @param metadata              metadata of uploaded video as file
+     * @param encryptedSymmetricKey key to decode symmetric encoded parts in service (metadata/video)
+     * @param accountData           string as json with account specifications (mail and password)
+     * @param fileDetail            extracting the file details to get name of file
+     * @param response              mark response as async response
+     * @return                      message in form of string is send back to the app whether uploading task has
+     *                              started successfully or corresponding failure message
      */
     @POST
     @Path("videoUpload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public String videoUpload(@FormDataParam("video") InputStream video, @FormDataParam("metadata") InputStream metadata, @FormDataParam("key") InputStream encryptedSymmetricKey, @FormDataParam("data") String accountData, @FormDataParam("video") FormDataContentDisposition fileDetail, @Suspended AsyncResponse response) {
+    public String videoUpload(@FormDataParam(VIDEO) InputStream video, @FormDataParam(METADATA) InputStream metadata, @FormDataParam(KEY) InputStream encryptedSymmetricKey, @FormDataParam(ACCOUNT) String accountData, @FormDataParam(VIDEO) FormDataContentDisposition fileDetail, @Suspended AsyncResponse response) {
         if (video == null || metadata == null || encryptedSymmetricKey == null || accountData == null || fileDetail == null) {
             return FAILURE;
         }
@@ -66,16 +76,14 @@ public class ServerProxy {
     }
 
     /**
-     * @param videoId     integer of videoid to download
-     * @param accountData json string of accountdata
-     * @return response with video or failure message
+     * @param videoId     integer of specific video to download from webinterface
+     * @param accountData string as json with account specifications (mail and password)
+     * @return            returning video as inputstream by success or corresponding failure message
      */
     @POST
     @Path("videoDownload")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response videoDownload(@FormParam("videoId") int videoId, @FormParam("data") String accountData) {
-        //TODO:PUT IN VIDEOMANAGER
-        //TODO: e.printstacktrace() -> Fehler loggen
+    public Response videoDownload(@FormParam(VIDEOID) int videoId, @FormParam(ACCOUNT) String accountData) {
         Response.ResponseBuilder response = null;
         if (accountData == null || videoId == 0) {
             return response.status(400).build();
@@ -83,41 +91,25 @@ public class ServerProxy {
         Logger.getGlobal().info("Download Request");
         setUpForRequest(accountData);
         String accountStatus = setUpForRequest(accountData);
-        if (accountStatus == null) {
-            return null;
-        }
         if (accountStatus.equals(SUCCESS)) {
-            File video = videoManager.download(videoId);
-            if (video == null) {
-                try {
-                    return response.status(404).build();
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                InputStream inputStream = null;
-                try {
-                    inputStream = new FileInputStream(video.getPath());
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                response = Response.ok();
-                return response.status(200).entity(inputStream).build();
-            }
+            return videoManager.download(videoId);
         }
         return response.status(401).build();
     }
 
 
     /**
-     * @param videoId     integer of videoid of associated metadata
-     * @param accountData json string of accountdata
-     * @return json string with metadata
+     * <p>
+     *
+     * </p>
+     * @param videoId     integer of videoId of associated metadata
+     * @param accountData string as json with account specifications (mail and password)
+     * @return            string as json with video specific information (name and id) by success or corresponding failure message
      */
     @POST
     @Path("videoInfo")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String videoInfo(@FormParam("videoId") int videoId, @FormParam("data") String accountData) {
+    public String videoInfo(@FormParam(VIDEOID) int videoId, @FormParam(ACCOUNT) String accountData) {
         if (accountData == null || videoId == 0) {
             return FAILURE;
         }
@@ -130,14 +122,14 @@ public class ServerProxy {
     }
 
     /**
-     * @param videoId     integer of videoid
-     * @param accountData json string of accountdata
-     * @return string if deletion successfully accomplished
+     * @param videoId     integer of videoId to delete from service because user deleted file in webinterface
+     * @param accountData string as json with account specifications (mail and password)
+     * @return            message as string whether deletion was successfully or or corresponding failure message
      */
     @POST
     @Path("videoDelete")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String videoDelete(@FormParam("videoId") int videoId, @FormParam("data") String accountData) {
+    public String videoDelete(@FormParam(VIDEOID) int videoId, @FormParam(ACCOUNT) String accountData) {
         if (accountData == null || videoId == 0) {
             return FAILURE;
         }
@@ -150,42 +142,32 @@ public class ServerProxy {
     }
 
     /**
-     * @param accountData json string of accountdata
-     * @return json array with all videoinfos of account
+     * @param accountData string as json with account specifications (mail and password)
+     * @return            all videoInfo of user (by accountData) by success or variant failure message
      */
     @POST
     @Path("getVideosByAccount")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String getVideosByAccount(@FormParam("data") String accountData) {
+    public String getVideosByAccount(@FormParam(ACCOUNT) String accountData) {
         if (accountData == null) {
-            return "FAILRUE";
+            return FAILURE;
         }
         Logger.getGlobal().info("GetVideosByAccount Request");
         String accountStatus = setUpForRequest(accountData);
         if (accountStatus.equals(SUCCESS)) {
-            //convert VideoInfos to JSONArray
-            //TODO:FAILURE MESSAGE, CHECK IF videoInfoList == null ?
-            //TODO:PRODUCE JSON IN VIDEOMANAGER
-            ArrayList<VideoInfo> videoInfoList = videoManager.getVideoInfoList();
-            JSONArray videoInfoArray = new JSONArray();
-            for (int i = 0; i < videoInfoList.size(); i++) {
-                String json = videoInfoList.get(i).getAsJson();
-                JSONObject jsonObject = new JSONObject(json);
-                videoInfoArray.put(i, jsonObject);
-            }
-            return videoInfoArray.toString();
+           return videoManager.getVideoInfoList();
         }
         return WRONG_ACCOUNT;
     }
 
     /**
-     * @param accountData json string of accountdata
-     * @return string if authentication successfully accomplished
+     * @param accountData string as json with account specifications (mail and password)
+     * @return            account status in service (specified by setUpForRequest)
      */
     @POST
     @Path("authenticate")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String authenticateAccount(@FormParam("data") String accountData) {
+    public String authenticateAccount(@FormParam(ACCOUNT) String accountData) {
         if (accountData == null) {
             return FAILURE;
         }
@@ -194,109 +176,101 @@ public class ServerProxy {
     }
 
     /**
-     * @param accountData json string of accountdata
-     * @param uuid        strinf of uuid to set in database
-     * @return string if account creation successfully accomplished
+     * @param accountData string as json with account specifications (mail and password)
+     * @param uuid        uuid of account to set in database to fulfill verification later
+     * @return            message as string whether creation was successfully or not
      */
     @POST
     @Path("createAccount")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String createAccount(@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
+    public String createAccount(@FormParam(ACCOUNT) String accountData, @FormParam(UUID) String uuid) {
         if (accountData == null || uuid == null) {
             return FAILURE;
         }
         Logger.getGlobal().info("Account Creation Request");
         String accountStatus = setUpForRequest(accountData);
-
-        return (accountStatus.equals("NOT EXISTING")) ?
-                accountManager.registerAccount(uuid) : "ACCOUNT EXISTS";
+        return (accountStatus.equals(NOT_EXISTING)) ?
+                accountManager.registerAccount(uuid) : ACCOUNT_EXISTS;
     }
 
     /**
-     * @param newAccountData json string of new accountdata
-     * @param accountData    json string of accountdata
-     * @return string if accountdata change successfully accomplished
+     * @param newAccountData string as json with  new set account specifications (mail and password)
+     * @param accountData    string as json with account specifications (mail and password)
+     * @return               message as string whether changing was successfully or not
      */
     @POST
     @Path("changeAccount")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String changeAccount(@FormParam("newData") String newAccountData, @FormParam("data") String accountData) {
+    public String changeAccount(@FormParam(NEWACCOUNT) String newAccountData, @FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("AccountData Changing Request");
         if (accountData == null || newAccountData == null) {
             return FAILURE;
         }
-
         return (setUpForRequest(accountData).equals(SUCCESS)) ?
                 accountManager.changeAccount(newAccountData) : WRONG_ACCOUNT;
     }
 
     /**
-     * @param accountData json string of accountdata
-     * @return string if account deletion successfully accomplished
+     * @param accountData string as json with account specifications (mail and password)
+     * @return            message as string whether deletion was successfully or not
      */
     @POST
     @Path("deleteAccount")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String deleteAccount(@FormParam("data") String accountData) {
+    public String deleteAccount(@FormParam(ACCOUNT) String accountData) {
         if (accountData == null) {
             return FAILURE;
         }
-        //TODO: STILL DELETE IF NOT VERIFIED
         Logger.getGlobal().info("Account Deletion Request");
         String accountStatus = setUpForRequest(accountData);
-        return (accountStatus.equals(SUCCESS) || accountStatus.equals("NOT VERIFIED")) ?
+        return (accountStatus.equals(SUCCESS) || accountStatus.equals(NOT_VERIFIED)) ?
                 accountManager.deleteAccount(videoManager) : WRONG_ACCOUNT;
     }
 
-    //TODO: Returns WRONG_ACCOUNT if already verified account gets verified. Change message?
-
     /**
-     * @param accountData json string of accountdata
-     * @param uuid        string of uuid to compare with database uuid
-     * @return string if verification successfully accomplished
+     * @param accountData string as json with account specifications (mail and password)
+     * @param uuid        uuid from user to compare with corresponding uuid in database
+     * @return            message as string whether verification was successfully or not (or already verified)
      */
     @POST
     @Path("verifyAccount")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String verifyAccount(@FormParam("data") String accountData, @FormParam("uuid") String uuid) {
+    public String verifyAccount(@FormParam(ACCOUNT) String accountData, @FormParam(UUID) String uuid) {
         if (accountData == null || uuid == null) {
             return FAILURE;
         }
         Logger.getGlobal().info("Account Verification Request");
         String accountStatus = setUpForRequest(accountData);
-        return (accountStatus.equals("NOT VERIFIED")) ?
+        if (accountStatus.equals(SUCCESS)) {
+            return ALREADY_VERIFIED;
+        }
+        return (accountStatus.equals(NOT_VERIFIED)) ?
                 accountManager.verifyAccount(uuid) : WRONG_ACCOUNT;
     }
 
     /**
-     * @param accountData json string of accountdata
-     * @return string if authentication accomplished or error message
+     * @param accountData string as json with account specifications (mail and password)
+     * @return            account specific status (3 different variants) as string
      */
     private String setUpForRequest(String accountData) {
         //setup account and manager
         Account account = new Account(accountData);
-        videoManager = new VideoManager(account);
-        accountManager = new AccountManager(account);
+        videoManager    = new VideoManager(account);
+        accountManager  = new AccountManager(account);
 
         //TODO: do things with "?"
-        //TODO: extract strings as constants (?)
         //authentication process
         int accountId = accountManager.getAccountId();
         if (accountId < 1) {
-            return "NOT EXISTING";
+            return NOT_EXISTING;
         }
 
         account.setId(accountId);
 
         if (!accountManager.authenticate()) {
-            return "WRONG PASSWORD";
+            return WRONG_PASSWORD;
         }
 
-        if (!accountManager.isVerified()) {
-            return "NOT VERIFIED";
-        }
-        return SUCCESS;
+        return (!accountManager.isVerified()) ? NOT_VERIFIED : SUCCESS;
     }
-
-
 }
