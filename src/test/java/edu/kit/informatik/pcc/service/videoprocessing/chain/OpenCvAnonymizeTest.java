@@ -25,8 +25,8 @@ public class OpenCvAnonymizeTest {
     @Before
     public void setUp() {
         anonymizer = new OpenCVAnonymizer();
-        input = new File(LocationConfig.TEST_RESOURCES_DIR + "\\input2.mp4");
-        output = new File(LocationConfig.OUTPUT_DIR + "\\output.avi");
+        input = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "input2.mp4");
+        output = new File(LocationConfig.OUTPUT_DIR + File.separator + "output.avi");
     }
 
     @Test

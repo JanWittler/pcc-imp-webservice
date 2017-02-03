@@ -24,11 +24,11 @@ public class DecryptTest {
 
     @Before
     public void setUp() {
-        encKey = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encKey.txt");
-        encVid = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encVid.mp4");
-        decVid = new File(LocationConfig.OUTPUT_DIR + "\\decVid.mp4");
-        encMeta = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encMeta.json");
-        decMeta = new File(LocationConfig.OUTPUT_DIR + "\\decMeta.json");
+        encKey = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encKey.txt");
+        encVid = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4");
+        decVid = new File(LocationConfig.OUTPUT_DIR + File.separator + "decVid.mp4");
+        encMeta = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta.json");
+        decMeta = new File(LocationConfig.OUTPUT_DIR + File.separator + "decMeta.json");
         decryptor = new Decryptor();
     }
 

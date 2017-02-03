@@ -50,9 +50,9 @@ public class VideoProcessingChainTest {
     public void setUp() {
         response = setupResponse();
 
-        vidFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encVid.mp4");
-        metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encMeta.json");
-        keyFile = new File(LocationConfig.TEST_RESOURCES_DIR + "\\encKey.txt");
+        vidFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4");
+        metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta.json");
+        keyFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encKey.txt");
 
         videoName = "testVideo";
         account = Mockito.mock(Account.class);
