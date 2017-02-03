@@ -6,9 +6,12 @@ import org.json.JSONObject;
 import java.util.logging.Logger;
 
 /**
+ * Datacontainer for video metadata.
+ *
  * @author David Laubenstein, Fabian Wenzel, Josh Romanowski
  */
 public class Metadata {
+
     // JSON keys
     private final static String JSON_KEY_DATE = "date";
     private final static String JSON_KEY_TRIGGER_TYPE = "triggerType";
@@ -16,13 +19,32 @@ public class Metadata {
     private final static String JSON_KEY_TRIGGER_FORCE_Y = "triggerForceY";
     private final static String JSON_KEY_TRIGGER_FORCE_Z = "triggerForceZ";
 
-    // attributes
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
+
+    /**
+     * Data of the video recording.
+     */
     private long date;
+    /**
+     * Trigger type of the recording.
+     */
     private String triggerType;
+    /**
+     * G-Force values at the moment of recording.
+     */
     private float[] gForce;
 
-    // constructors
+    /* #############################################################################################
+     *                                  constructor
+     * ###########################################################################################*/
 
+    /**
+     * Creates a metadata container from a JSON string.
+     *
+     * @param json JSON string to fetch data from.
+     */
     public Metadata(String json) {
         JSONObject metadata = new JSONObject(json);
 
@@ -36,11 +58,11 @@ public class Metadata {
     }
 
     /**
-     * constructor
+     * Creates new metadata from given values.
      *
-     * @param date        date of metadata file creation
-     * @param triggerType if trigger type is manually of automatically
-     * @param gForce      the gps data
+     * @param date        Date of the recording.
+     * @param triggerType Trigger type of the recording.
+     * @param gForce      G-force values in the moment of the recording.
      */
     public Metadata(long date, String triggerType, float[] gForce) {
         this.date = date;
@@ -48,7 +70,10 @@ public class Metadata {
         this.gForce = gForce;
     }
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
+
     public String getAsJSON() {
         JSONObject json = new JSONObject();
         try {
@@ -63,7 +88,10 @@ public class Metadata {
         return json.toString();
     }
 
-    // getter/setter
+    /* #############################################################################################
+     *                                  getter/setter
+     * ###########################################################################################*/
+
     public long getDate() {
         return date;
     }

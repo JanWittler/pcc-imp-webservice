@@ -6,17 +6,32 @@ import org.json.JSONObject;
 import java.util.logging.Logger;
 
 /**
+ * Datacontainer for video information
+ *
  * @author David Laubenstein, Fabian Wenzel
- *         Created by David Laubenstein on 01/18/2017
  */
 public class VideoInfo {
+
     // JSON keys
     private static final String JSON_KEY_NAME = "name";
     private static final String JSON_KEY_ID = "id";
 
-    // attributes
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
+
+    /**
+     * Unique video identifier that maps the one in the database.
+     */
     private int videoId;
+    /**
+     * Name of a video.
+     */
     private String videoName;
+
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
 
     /**
      * constructor
@@ -29,12 +44,14 @@ public class VideoInfo {
         this.videoName = videoName;
     }
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     /**
-     * return VideoInfo-Object as json String
+     * Creates a JSON string from a account
      *
-     * @return json String of videoInfo object
+     * @return JSON String of videoInfo object
      */
     public String getAsJson() {
         JSONObject json = new JSONObject();
@@ -47,7 +64,10 @@ public class VideoInfo {
         return json.toString();
     }
 
-    // getter/setter
+    /* #############################################################################################
+     *                                  getter/setter
+     * ###########################################################################################*/
+
     public String getName() {
         return videoName;
     }

@@ -14,19 +14,32 @@ import java.util.logging.Logger;
  * This class handles all low-level database queries
  *
  * @author David Laubenstein
- *         Created by David Laubenstein at 1/18/17
  */
 public class DatabaseManager {
 
+    // database constants
     private static final String PORT = "5432";
     private static final String HOST = "localhost";
     private static final String DB_NAME = "PrivacyCrashCam";
     private static final String USER = "postgres";
     private static final String PASSWORD = "";
-    // attributes
+
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
+
+    /**
+     * User account of the active user.
+     */
     private Account account;
+    /**
+     * Connection to the postgres database.
+     */
     private Connection c = null;
-    // constructors
+
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
 
     /**
      * Constructor, which includes the {@link Account} object in the {@link DatabaseManager}.
@@ -38,12 +51,14 @@ public class DatabaseManager {
         // create access to account
         this.account = account;
     }
-    // methods
+
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     /**
      * This method is used to open a connection to the database with the class attributes.
      * If the connection fails, the
-     * <p>
      * <p>
      * IMPORTANT: A Connection c will be opened, but not closed. After calling this method,
      * you have to close the connection with <b>this.c.close()</b>
@@ -158,7 +173,6 @@ public class DatabaseManager {
     /**
      * Delete the row with all information for the video in the table <b>video</b>
      * But the deletion is just in the database, the files are already existing.
-     * <p>
      * <p><b>
      * You have to delete the videos before you call this method,
      * so you are not able to find the video anymore
@@ -216,7 +230,6 @@ public class DatabaseManager {
     /**
      * Changes the mail address of an account
      * <p>
-     * <p>
      * Check, if the mail is not given to another user, because the column "mail" is unique.
      * If the mail is not assigned to another account, the new mail will be set
      * </p>
@@ -273,9 +286,10 @@ public class DatabaseManager {
     }
 
     /**
-     * Authenticate account (check, if password and mail are correct)
+     * Authenticates user account by checking if mail and password match the entries in the
+     * database match the passed ones.
      *
-     * @return if the account information (mail, password) are the same as in the database
+     * @return Whether the entries match each other.
      */
     public boolean authenticate() {
         String mail = "";
@@ -305,9 +319,9 @@ public class DatabaseManager {
     }
 
     /**
-     * Deletes account of the user
+     * Deletes user account.
      *
-     * @return success of user deletion
+     * @return Whether deleting was successful or not.
      */
     public boolean deleteAccount() {
         if (!connectDatabase()) return false;
@@ -325,9 +339,9 @@ public class DatabaseManager {
     }
 
     /**
-     * Get the account id, which is saved in the database
+     * Get the account id of the active account which is saved in the database.
      *
-     * @return account id as integer from the database
+     * @return account id from the database.
      */
     public int getAccountId() {
         int accountId = -1;
@@ -354,7 +368,7 @@ public class DatabaseManager {
      * Necessary data is fetched in the account object and the uuid
      *
      * @param uuid is unique and is for verification process
-     * @return success of registration
+     * @return Returns whether registering was successful or not.
      */
     public boolean register(String uuid) {
         if (!connectDatabase()) return false;
@@ -379,7 +393,7 @@ public class DatabaseManager {
      * Verifies an account, compares uuid of database and uuid of url
      *
      * @param uuid is the uuid, which is in the link of the verification mail
-     * @return String of success
+     * @return Returns verification status.
      */
     public boolean verifyAccount(String uuid) {
         //connect to Database
@@ -426,9 +440,9 @@ public class DatabaseManager {
     }
 
     /**
-     * check, if the value "verified" in table "user" is true or false
+     * Checks if the verified status of a user is true.
      *
-     * @return value "verified" in table "user"
+     * @return Returns the verification status of the user.
      */
     public boolean isVerified() {
         // connect to Database
@@ -452,8 +466,12 @@ public class DatabaseManager {
         return verified;
     }
 
-    // getter/setter
-
+    /**
+     * Gets the video id of a video by using the video name to find it.
+     *
+     * @param videoName Video name to look id up for.
+     * @return Returns the unique id of the video.
+     */
     public int getVideoIdByName(String videoName) {
         if (!connectDatabase()) return -1;
         int id = -1;
@@ -527,10 +545,6 @@ public class DatabaseManager {
         } catch (NullPointerException | SQLException e) {
             Logger.getGlobal().warning("Checking for mail existance in databse failed");
         }
-        if (count_mail == 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return count_mail != 0;
     }
 }
