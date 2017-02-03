@@ -41,6 +41,8 @@ public class ServerProxyTest {
     private String tempUUID = "3456qwe-qw234-2342f";
     private String accountJson;
     private String tempAccountJson;
+    private String anonym_dir = LocationConfig.ANONYM_VID_DIR;
+    private String meta_dir   = LocationConfig.META_DIR;
 
     //mockup LocationConfig fields
     //public because of DatabaseManagerTest
@@ -63,7 +65,7 @@ public class ServerProxyTest {
         });
         t.start();
         try {
-            Thread.sleep(500);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -276,6 +278,12 @@ public class ServerProxyTest {
 
     @org.junit.Test
     public void uploadTest() {
+        try {
+            setFinalStatic(LocationConfig.class.getDeclaredField("ANONYM_VID_DIR"), anonym_dir);
+            setFinalStatic(LocationConfig.class.getDeclaredField("META_DIR"), meta_dir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoUpload").register(MultiPartFeature.class);
         MultiPart multiPart = new MultiPart();
@@ -300,6 +308,12 @@ public class ServerProxyTest {
 
     @After
     public void afterElse() {
+        try {
+            setFinalStatic(LocationConfig.class.getDeclaredField("ANONYM_VID_DIR"), anonym_dir);
+            setFinalStatic(LocationConfig.class.getDeclaredField("META_DIR"), meta_dir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input"));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input2"));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input3"));

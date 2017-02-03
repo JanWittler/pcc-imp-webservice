@@ -24,7 +24,11 @@ import java.util.logging.Logger;
 @Path("webservice")
 public class ServerProxy {
     //TODO: EXPLAIN METHODS IN JAVADOC
-    // attributes
+
+    /* #############################################################################################
+    *                                  attributes
+    * ###########################################################################################*/
+
     private final String WRONG_ACCOUNT    = "WRONG ACCOUNT";
     private final String SUCCESS          = "SUCCESS";
     private final String FAILURE          = "FAILURE";
@@ -47,7 +51,10 @@ public class ServerProxy {
     private AccountManager accountManager;
     private VideoManager videoManager;
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
+
     /**
      * @param video                 uploaded video file recorded by android app
      * @param metadata              metadata of uploaded video as file
@@ -82,14 +89,18 @@ public class ServerProxy {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response videoDownload(@FormParam(VIDEOID) int videoId, @FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("Download Request");
-        Response.ResponseBuilder response = null;
+        Response.ResponseBuilder response = Response.ok();
         if (accountData == null || videoId == 0) {
             return response.status(400).build();
         }
         setUpForRequest(accountData);
         String accountStatus = setUpForRequest(accountData);
         if (accountStatus.equals(SUCCESS)) {
-            return videoManager.download(videoId);
+            InputStream inputStream = videoManager.download(videoId);
+           if(inputStream == null) {
+               return  response.status(400).build();
+           }
+           return response.status(200).entity(inputStream).build();
         }
         return response.status(401).build();
     }
