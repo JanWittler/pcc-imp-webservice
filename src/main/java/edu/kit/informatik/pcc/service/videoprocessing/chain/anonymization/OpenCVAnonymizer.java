@@ -22,7 +22,9 @@ import java.util.logging.Logger;
  */
 public class OpenCVAnonymizer extends AAnonymizer {
 
-    // attributes
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
 
     /**
      * Analyzer that takes a frame and analyzes it for faces.
@@ -33,7 +35,9 @@ public class OpenCVAnonymizer extends AAnonymizer {
      */
     private IFilter filter;
 
-    // constructors
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
 
     /**
      * Loads the OpenCV library and creates the filters
@@ -51,7 +55,9 @@ public class OpenCVAnonymizer extends AAnonymizer {
         filter = new OpenCVBoxfilter();
     }
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     @Override
     public boolean anonymize(File input, File output) {

@@ -20,10 +20,18 @@ import java.util.logging.Logger;
  */
 public class Persistor implements IStage {
 
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
+
     /**
      * Database manager used to add the persisted video to the database.
      */
     private DatabaseManager databaseManager;
+
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     @Override
     public boolean execute(EditingContext context) {
@@ -37,6 +45,10 @@ public class Persistor implements IStage {
         return "Persistor";
     }
 
+    /* #############################################################################################
+     *                                  helper methods
+     * ###########################################################################################*/
+
     /**
      * Moves copies the files to their final destination after
      * adding the metadata to it.
@@ -47,21 +59,20 @@ public class Persistor implements IStage {
      * @param videoName The name of the video.
      * @return Returns whether persisting was successfull or not.
      */
-    protected boolean persist(File video, File metadata, Account account, String videoName) {
-        // TODO: save metadata to video
+    private boolean persist(File video, File metadata, Account account, String videoName) {
 
         try {
             //Save video to final destination.
             Files.copy(
                     video.toPath(),
-                    new File(LocationConfig.ANONYM_VID_DIR + "\\" +
+                    new File(LocationConfig.ANONYM_VID_DIR + File.separator +
                             account.getId() + "_" + videoName + ".avi").toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
 
             //Save metadata to final destination.
             Files.copy(
                     metadata.toPath(),
-                    new File(LocationConfig.META_DIR + "\\" +
+                    new File(LocationConfig.META_DIR + File.separator +
                             account.getId() + "_" + videoName + "_" + "meta.json").toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
 

@@ -13,7 +13,9 @@ import org.opencv.imgproc.Imgproc;
  */
 public class OpenCVFilter implements IFilter {
 
-    //methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     @Override
     public Mat applyFilter(Mat frame, MatOfRect detections) {

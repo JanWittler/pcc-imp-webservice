@@ -15,10 +15,12 @@ import java.util.logging.Logger;
  */
 public class VideoProcessingManager {
 
-    // attributes
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
 
     /**
-     * Size of the threapool used.
+     * Size of the thread pool used.
      */
     private final static int POOL_SIZE = 4;
     /**
@@ -35,16 +37,15 @@ public class VideoProcessingManager {
      */
     private ExecutorService executor;
 
-    // constructors
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
 
     /**
      * Sets up the queue and the executor. Defines what should happen if the queue is full
      * and a task is being inserted.
      */
     private VideoProcessingManager() {
-        /*
-      Queue that holds the tasks that are not yet executed.
-     */
         BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>(QUEUE_SIZE);
         executor = new ThreadPoolExecutor(POOL_SIZE, POOL_SIZE, 30,
                 TimeUnit.SECONDS, queue, new RejectedExecutionHandler() {
@@ -76,7 +77,9 @@ public class VideoProcessingManager {
         return (instance == null) ? instance = new VideoProcessingManager() : instance;
     }
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     /**
      * Adds a new task to the queue, which gets executed as soon as resources get free.
@@ -102,7 +105,7 @@ public class VideoProcessingManager {
      * @param metadata  Uploaded metadata.
      * @param key       Uploaded key.
      * @param account   User account who uploaded the video.
-     * @param videoName Video name of the uploaded video.
+     * @param videoName Video name of the uploaded video without extension.
      * @param response  Object use for giving responses.
      * @param chainType Chain type which will get executed.
      */
@@ -110,6 +113,7 @@ public class VideoProcessingManager {
                            Account account, String videoName, AsyncResponse response, VideoProcessingChain.Chain chainType) {
         if (response == null) {
             Logger.getGlobal().warning("No response given.");
+            return;
         }
 
         if (video == null || metadata == null || key == null

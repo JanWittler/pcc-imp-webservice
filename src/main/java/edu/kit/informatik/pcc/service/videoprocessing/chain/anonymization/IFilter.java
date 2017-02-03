@@ -11,7 +11,9 @@ import org.opencv.core.MatOfRect;
  */
 public interface IFilter {
 
-    //methods
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
 
     /**
      * Takes the input frame and makes all dections

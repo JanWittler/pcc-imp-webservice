@@ -20,7 +20,9 @@ import java.util.logging.Logger;
  */
 public class VideoProcessingChain implements Runnable {
 
-    // attributes
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
 
     /**
      * An object used to give the app status updates about the asynchronous processing.
@@ -39,7 +41,9 @@ public class VideoProcessingChain implements Runnable {
      */
     private String videoName;
 
-    // constructors
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
 
     protected VideoProcessingChain(InputStream video, InputStream metadata, InputStream key, Account account,
                                    String videoName, AsyncResponse response, Chain chain)
@@ -60,7 +64,9 @@ public class VideoProcessingChain implements Runnable {
         saveTempFiles(video, metadata, key);
     }
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     @Override
     public void run() {
@@ -93,17 +99,9 @@ public class VideoProcessingChain implements Runnable {
         deleteTempFiles(context);
     }
 
-    // getters/setters
-
-    public AsyncResponse getResponse() {
-        return response;
-    }
-
-    public String getVideoName() {
-        return videoName;
-    }
-
-    // helper methods
+    /* #############################################################################################
+     *                                  helper methods
+     * ###########################################################################################*/
 
     /**
      * Initializes the chain according to its definition here.
@@ -129,6 +127,7 @@ public class VideoProcessingChain implements Runnable {
 
     /**
      * Saves all provided inputs to their temporary location on the server.
+     *
      * @param video Uploaded video file as stream.
      * @param metadata Uploaded metadata file as stream.
      * @param key Uploaded SecretKey file as stream.
@@ -156,6 +155,7 @@ public class VideoProcessingChain implements Runnable {
 
     /**
      * Saves a file provided to a location provided.
+     *
      * @param input Input stream passing the file's data.
      * @param output Output stream saving to the new file.
      * @throws IOException in case writing or reading fails.
@@ -176,7 +176,8 @@ public class VideoProcessingChain implements Runnable {
     }
 
     /**
-     * Deletes all the temporary files that were created while processing the video
+     * Deletes all the temporary files that were created while processing the video.
+     *
      * @param context Context that contains all files used.
      */
     private void deleteTempFiles(EditingContext context) {
@@ -185,6 +186,18 @@ public class VideoProcessingChain implements Runnable {
                 file.delete();
             }
         }
+    }
+
+    public AsyncResponse getResponse() {
+        return response;
+    }
+
+    /* #############################################################################################
+     *                                  getter/setter
+     * ###########################################################################################*/
+
+    public String getVideoName() {
+        return videoName;
     }
 
     /**

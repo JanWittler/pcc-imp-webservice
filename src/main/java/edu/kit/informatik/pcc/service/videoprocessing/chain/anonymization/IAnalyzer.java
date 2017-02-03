@@ -11,7 +11,9 @@ import org.opencv.core.MatOfRect;
  */
 public interface IAnalyzer {
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     /**
      * Takes a single frames and analyzes it for personal

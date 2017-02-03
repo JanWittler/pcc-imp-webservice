@@ -16,7 +16,9 @@ import java.io.File;
  */
 public class Decryptor implements IStage {
 
-    // attributes
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
 
     /**
      * Decryptor used for decrypting video and metadata.
@@ -28,7 +30,9 @@ public class Decryptor implements IStage {
      */
     private IKeyDecryptor keyDecryptor;
 
-    //constructors
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
 
     /**
      * Creates the used decryptors.
@@ -38,7 +42,9 @@ public class Decryptor implements IStage {
         keyDecryptor = new RSADecryptor();
     }
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     @Override
     public boolean execute(EditingContext context) {

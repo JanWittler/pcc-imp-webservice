@@ -14,7 +14,9 @@ import java.util.List;
  */
 public class EditingContext {
 
-    // attributes
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
 
     /**
      * Location of the encrypted video.
@@ -53,7 +55,9 @@ public class EditingContext {
      */
     private String videoName;
 
-    //constructors
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
 
     /**
      * Creates all necessary data for processing the video
@@ -84,7 +88,9 @@ public class EditingContext {
 
     }
 
-    // getters/setters
+    /* #############################################################################################
+     *                                  getter/setter
+     * ###########################################################################################*/
 
     public File getEncVid() {
         return encVid;

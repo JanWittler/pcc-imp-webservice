@@ -9,7 +9,9 @@ package edu.kit.informatik.pcc.service.videoprocessing;
  */
 public interface IStage {
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     /**
      * Executes the work of the stage.

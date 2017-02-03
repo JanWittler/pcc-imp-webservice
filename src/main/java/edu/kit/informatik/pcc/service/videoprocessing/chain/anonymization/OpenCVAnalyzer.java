@@ -16,14 +16,18 @@ import java.util.logging.Logger;
  */
 public class OpenCVAnalyzer implements IAnalyzer {
 
-    // attributes
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
 
     /**
      * Classifier used to detect faces.
      */
     private CascadeClassifier classifier;
 
-    // constructors
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
 
     /**
      * Loads the classifier.
@@ -36,7 +40,9 @@ public class OpenCVAnalyzer implements IAnalyzer {
         }
     }
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     @Override
     public MatOfRect analyze(Mat frame) {

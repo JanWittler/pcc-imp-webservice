@@ -17,7 +17,9 @@ import java.util.logging.Logger;
  */
 public class AESDecryptor implements IFileDecryptor {
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     @Override
     public boolean decrypt(File input, SecretKey key, File output) {
@@ -27,8 +29,8 @@ public class AESDecryptor implements IFileDecryptor {
         }
 
         // open files
-        FileInputStream encfis = null;
-        FileOutputStream decfos = null;
+        FileInputStream encfis;
+        FileOutputStream decfos;
 
         try {
             encfis = new FileInputStream(input);
@@ -39,7 +41,7 @@ public class AESDecryptor implements IFileDecryptor {
         }
 
         // create cipher
-        Cipher decipher = null;
+        Cipher decipher;
         try {
             decipher = Cipher.getInstance("AES");
             decipher.init(Cipher.DECRYPT_MODE, key);

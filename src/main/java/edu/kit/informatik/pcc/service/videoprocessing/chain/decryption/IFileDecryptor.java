@@ -12,7 +12,9 @@ import java.io.File;
  */
 public interface IFileDecryptor {
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     /**
      * Decrypts a file with the given symmetric key and saves the

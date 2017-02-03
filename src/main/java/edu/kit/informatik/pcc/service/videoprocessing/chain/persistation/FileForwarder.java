@@ -10,6 +10,10 @@ import edu.kit.informatik.pcc.service.videoprocessing.IStage;
  */
 public class FileForwarder implements IStage {
 
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
+
     @Override
     public boolean execute(EditingContext context) {
         context.getDecVid().renameTo(context.getAnonymizedVid());

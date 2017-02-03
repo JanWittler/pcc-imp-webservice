@@ -15,7 +15,9 @@ import java.io.File;
  */
 public abstract class AAnonymizer implements IStage {
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
 
     @Override
     public boolean execute(EditingContext context) {

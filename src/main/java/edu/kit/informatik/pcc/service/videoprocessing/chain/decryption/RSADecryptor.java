@@ -22,7 +22,9 @@ import java.util.logging.Logger;
  */
 public class RSADecryptor implements IKeyDecryptor {
 
-    // attributes
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
 
     /**
      * Location of the private asymmetric key.
@@ -34,7 +36,9 @@ public class RSADecryptor implements IKeyDecryptor {
      */
     private PrivateKey privateKey;
 
-    // constructors
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
 
     /**
      * Loads the private asymmetric key.
@@ -53,6 +57,10 @@ public class RSADecryptor implements IKeyDecryptor {
         }
     }
 
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
+
     @Override
     public SecretKey decrypt(File input) {
         if (input == null) {
@@ -70,6 +78,10 @@ public class RSADecryptor implements IKeyDecryptor {
         byte[] decodedKey = Base64.getDecoder().decode(plainText);
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
     }
+
+    /* #############################################################################################
+     *                                  helper methods
+     * ###########################################################################################*/
 
     /**
      * Decrypts the input data with the private RSA key.
