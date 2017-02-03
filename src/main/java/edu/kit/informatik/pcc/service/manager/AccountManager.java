@@ -5,6 +5,7 @@ import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * The AccountManager processes requests concerning accounts and account information.
@@ -104,6 +105,7 @@ public class AccountManager {
             for (VideoInfo videoInfo : videoInfoList) {
                 String status = videoManager.videoDelete(videoInfo.getVideoId());
                 if (status.equals(FAILURE)) {
+                    Logger.getGlobal().warning("An error occurred deleting videos!");
                     //TODO: handle failure of videoDelete?
                 }
             }

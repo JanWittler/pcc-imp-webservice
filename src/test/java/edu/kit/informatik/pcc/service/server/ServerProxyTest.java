@@ -143,7 +143,7 @@ public class ServerProxyTest {
             File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest" + VideoInfo.FILE_EXTENTION);
             try {
                 Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                downloadFile.delete();
+                //downloadFile.delete();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -300,7 +300,7 @@ public class ServerProxyTest {
         Future<Response> futureResponse = webTarget.request().async().post(Entity.entity(multiPart, multiPart.getMediaType()), Response.class);
         try {
             Response response = futureResponse.get();
-            Assert.assertTrue(response.readEntity(String.class).equals("Finished editing video encVid"));
+            Assert.assertTrue(response.readEntity(String.class).equals("Finished editing video"));
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
