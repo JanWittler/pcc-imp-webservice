@@ -24,7 +24,7 @@ public class Main {
 
     // constants
     private static final int PORT = 2222;
-    private static final String REQUESTLOCATION = "edu.kit.informatik.pcc.service.server";
+    private static final String REQUEST_LOCATION = "edu.kit.informatik.pcc.service.server";
 
     /* #############################################################################################
      *                                  attributes
@@ -90,7 +90,7 @@ public class Main {
 
         Logger.getGlobal().info("Starting Server");
         ResourceConfig config = new ResourceConfig();
-        config.packages(REQUESTLOCATION); //where to search for rest requests
+        config.packages(REQUEST_LOCATION); //where to search for rest requests
         config.register(MultiPartFeature.class); //register feature for file upload (multipartfeature)
         ServletHolder servlet = new ServletHolder(new ServletContainer(config)); // add the config to the servletholder
 

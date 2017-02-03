@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -107,25 +106,24 @@ public class VideoManager {
      * @param videoId Unique video identifier of the video to download.
      * @return Returns an InputStream for the download.
      */
-    public Response download(int videoId) {
-
-        //TODO: put server response part in serverproxy
+    public InputStream download(int videoId) {
         VideoInfo videoInfo = databaseManager.getVideoInfo(videoId);
-        Response.ResponseBuilder response = null;
+
         if (videoInfo == null) {
-            return response.status(404).build();
+            return null;
         }
+
         String videoName = videoInfo.getName();
         File video = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".mp4");
 
-        InputStream inputStream = null;
+        InputStream inputStream;
         try {
             inputStream = new FileInputStream(video.getPath());
         } catch (FileNotFoundException e) {
             Logger.getGlobal().warning("An error has occurred finding file to download!");
+            return null;
         }
-        response = Response.ok();
-        return response.status(200).entity(inputStream).build();
+        return inputStream;
     }
 
     /**

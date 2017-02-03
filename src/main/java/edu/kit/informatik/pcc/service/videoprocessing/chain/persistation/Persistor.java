@@ -61,7 +61,10 @@ public class Persistor implements IStage {
      */
     private boolean persist(File video, File metadata, Account account, String videoName) {
 
+        String metaName = videoName + "_" + "meta";
+
         try {
+
             //Save video to final destination.
             Files.copy(
                     video.toPath(),
@@ -73,7 +76,7 @@ public class Persistor implements IStage {
             Files.copy(
                     metadata.toPath(),
                     new File(LocationConfig.META_DIR + File.separator +
-                            account.getId() + "_" + videoName + "_" + "meta.json").toPath(),
+                            account.getId() + "_" + metaName + ".json").toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
 
 

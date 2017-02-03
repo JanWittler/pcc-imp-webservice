@@ -221,6 +221,7 @@ public class DatabaseManager {
             metaJSON = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException e) {
             Logger.getGlobal().warning("An error occured reading metadata file " + filePath);
+            return null;
         }
 
         // return Metadata object
