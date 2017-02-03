@@ -213,7 +213,7 @@ public class DatabaseManager {
     public Metadata getMetaData(int videoId) {
         // create String, where meta file is stored
         String filePath = LocationConfig.META_DIR + File.separator +
-                getMetaNameByVideoId(videoId) + ".json";
+                getMetaName(videoId) + ".json";
         //read the json File into a String
         String metaJSON = "";
         // read Meta file to get infos
@@ -468,10 +468,12 @@ public class DatabaseManager {
 
     /**
      * Gets the video id of a video by using the video name to find it.
+     * Only used for test purposes.
      *
      * @param videoName Video name to look id up for.
      * @return Returns the unique id of the video.
      */
+    @Deprecated
     public int getVideoIdByName(String videoName) {
         if (!connectDatabase()) return -1;
         int id = -1;
@@ -499,7 +501,7 @@ public class DatabaseManager {
      * @param videoId: to get the related video to the metadata
      * @return String of metadata name
      */
-    public String getMetaNameByVideoId(int videoId) {
+    public String getMetaName(int videoId) {
         //connect to database
         if (!connectDatabase()) return null;
         String meta = "";

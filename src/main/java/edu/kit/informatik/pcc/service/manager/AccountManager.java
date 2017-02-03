@@ -7,28 +7,55 @@ import edu.kit.informatik.pcc.service.data.VideoInfo;
 import java.util.ArrayList;
 
 /**
+ * The AccountManager processes requests concerning accounts and account information.
+ * It takes requests from the ServerProxy handles them and forwards them to the
+ * Model devices
+ *
  * @author David Laubenstein, Fabian Wenzel
- *         Created by David Laubenstein on 01/18/2017
  */
 public class AccountManager {
-    //TODO: JAVADOC
 
-    // attributes
+    // status message constants
     private final String SUCCESS = "SUCCESS";
     private final String FAILURE = "FAILURE";
+
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
+
+    /**
+     * Active user account.
+     */
     private Account account;
+    /**
+     * Manager for database access.
+     */
     private DatabaseManager databaseManager;
 
-    // constructor
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
+
     /**
-     * @param account account for accountManager
+     * Creates a new account manager for the given account.
+     *
+     * @param account Active user account.
      */
     public AccountManager(Account account) {
         this.account = account;
         databaseManager = new DatabaseManager(account);
     }
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
+
+    /**
+     * Changes the active account to a new one.
+     *
+     * @param newAccountData JSON String of the account to change to.
+     * @return Returns status string of the request.
+     */
     public String changeAccount(String newAccountData) {
         Account newAccount = new Account(newAccountData);
         String status = "NOTHING CHANGED";
@@ -45,23 +72,31 @@ public class AccountManager {
     }
 
     /**
-     * @return integer of accountid
+     * Gets the unique account id of an account.
+     *
+     * @return Returns the unique account id.
      */
     public int getAccountId() {
         return databaseManager.getAccountId();
     }
 
     /**
-     * @param uuid string uuid to set to account
-     * @return string if account creation successfully
+     * Tries to register an account. The UUID gets stored as a value used to
+     * enable account verification later.
+     *
+     * @param uuid Unique id used to verify registration.
+     * @return Returns status of the account creation.
      */
     public String registerAccount(String uuid) {
         return databaseManager.register(uuid) ? SUCCESS : FAILURE;
     }
 
     /**
-     * @param videoManager videoManager instance to delete videos of account
-     * @return string if deletion worked successfully
+     * Deletes an account from the server. Therefore all videos and metadata registered to the account
+     * get deleted aswell.
+     *
+     * @param videoManager VideoManager used to delete videos and metadata of an account
+     * @return Returns status of the account deletion.
      */
     public String deleteAccount(VideoManager videoManager) {
         ArrayList<VideoInfo> videoInfoList = databaseManager.getVideoInfoList();
@@ -77,13 +112,17 @@ public class AccountManager {
     }
 
     /**
-     * @return boolean if authentication worked successfully
+     * Tries to authenticate an account via its main and password.
+     *
+     * @return Returns if authentication worked successfully
      */
     public boolean authenticate() {
         return databaseManager.authenticate();
     }
 
     /**
+     * Verifies an account by comparing the uuid to the stored one.
+     *
      * @param uuid string uuid to compare with uuid in database
      * @return string if deletion successfully accomplished
      */
@@ -92,17 +131,34 @@ public class AccountManager {
     }
 
     /**
+     * Checks if the active account is verified or not.
+     *
      * @return boolean if account is verified
      */
     public boolean isVerified() {
         return databaseManager.isVerified();
     }
 
-    //helper methods
+    /* #############################################################################################
+     *                                  helper methods
+     * ###########################################################################################*/
+
+    /**
+     * Sets the mail of an account.
+     *
+     * @param newMail New mail to be set.
+     * @return Returns string with a status message.
+     */
     private String setMail(String newMail) {
         return databaseManager.setMail(newMail) ? SUCCESS : FAILURE;
     }
 
+    /**
+     * Sets the password of an account.
+     *
+     * @param passwordHash New password to be set.
+     * @return Returns status message of the request.
+     */
     private String setPassword(String passwordHash) {
         return databaseManager.setPassword(passwordHash) ? SUCCESS : FAILURE;
     }

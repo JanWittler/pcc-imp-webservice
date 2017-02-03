@@ -15,29 +15,51 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
+ * The VideoManager processes requests concerning video up-/download and progression.
+ *
  * @author Fabian Wenzel, David Laubenstein
- *         Created by David Laubenstein on 01/18/2017
  */
 public class VideoManager {
-    //TODO: JAVADOC
-    // attributes
+
+    // processing status constants
     private final String SUCCESS = "SUCCESS";
     private final String FAILURE = "FAILURE";
+
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
+
+    /**
+     * Active user account.
+     */
     private Account account;
+    /**
+     * Database manager used to process database queries.
+     */
     private DatabaseManager databaseManager;
 
-    // constructor
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
+
     /**
-     * @param account account for videomanager
+     * Creates a new video manager for the given account.
+     *
+     * @param account Active user account.
      */
     public VideoManager(Account account) {
         this.account = account;
         databaseManager = new DatabaseManager(account);
     }
 
-    // methods
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
+
     /**
-     * @return arraylist of videoinfos of account
+     * Gets the video information for all videos of a user and creates a JSON string out of it.
+     *
+     * @return Returns JSON string with a JSON array containing all VideoInfo JSONs.
      */
     public String getVideoInfoList() {
         //convert VideoInfos to JSONArray
@@ -56,24 +78,38 @@ public class VideoManager {
     }
 
     /**
-     * @param video                 inputstream of videofile to upload
-     * @param metadata              inputstream of metadatafile to upload
-     * @param encryptedSymmetricKey inputstream of keyfile to upload
-     * @param videoName             string of videoname
-     * @param response              create async response
-     * @return string if task started successfully
+     * Uploads a video to the server. Files get uploaded as input streams.
+     * As the processing of the video is asynchronous to the uploading, there will not be
+     * a useful immediate response.
+     *
+     * @param video                 inputstream of video file to upload
+     * @param metadata              inputstream of metadata file to upload
+     * @param encryptedSymmetricKey inputstream of key file to upload
+     * @param videoName             name of the uploaded video without extention
+     * @param response              asynchronous response used to give response to the client
+     * @return Returns process status message.
      */
-    public String upload(InputStream video, InputStream metadata, InputStream encryptedSymmetricKey, String videoName, AsyncResponse response) {
+    public String upload(InputStream video, InputStream metadata, InputStream encryptedSymmetricKey,
+                         String videoName, AsyncResponse response) {
         VideoProcessingManager videoProcessingManager = VideoProcessingManager.getInstance();
+
+        if (videoProcessingManager == null) {
+            return FAILURE;
+        }
+
         videoProcessingManager.addTask(video, metadata, encryptedSymmetricKey, account, videoName, response);
         return SUCCESS;
     }
 
     /**
-     * @param videoId of video to download
-     * @return file to download
+     * Fetches a video from the database and provides an InputStream to download the video.
+     *
+     * @param videoId Unique video identifier of the video to download.
+     * @return Returns an InputStream for the download.
      */
     public Response download(int videoId) {
+
+        //TODO: put server response part in serverproxy
         VideoInfo videoInfo = databaseManager.getVideoInfo(videoId);
         Response.ResponseBuilder response = null;
         if (videoInfo == null) {
@@ -81,14 +117,7 @@ public class VideoManager {
         }
         String videoName = videoInfo.getName();
         File video = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".mp4");
-        if (video == null) {
-            //you cannot catch the status exception correctly
-            try {
-                return response.status(404).build();
-            } catch (NullPointerException e) {
-                Logger.getGlobal().warning("An error has occurred while building the response!");
-            }
-        }
+
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(video.getPath());
@@ -100,6 +129,8 @@ public class VideoManager {
     }
 
     /**
+     * Deletes a video and the respective metadata file from the server.
+     *
      * @param videoId of video to delete
      * @return string if file deletion successfully accomplished
      */
@@ -108,34 +139,28 @@ public class VideoManager {
         if (videoInfo == null) {
             return FAILURE;
         }
-        //TODO: CHECK IF NEEDED
-//		Metadata metadata = databaseManager.getMetaData(videoId);
-//		if (metadata == null) {
-//			return FAILURE;
-//		}
-        String videoName = videoInfo.getName();
-        String metaName = databaseManager.getMetaNameByVideoId(databaseManager.getVideoIdByName(videoName));
-        File videoFile = null;
-        try {
-            videoFile = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".mp4");
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        videoFile.delete();
-        File metaFile = null;
-        try {
-            metaFile = new File(LocationConfig.META_DIR + File.separator + metaName + ".json");
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        metaFile.delete();
-        return databaseManager.deleteVideoAndMeta(videoId) ? SUCCESS : FAILURE;
 
+        // delete video file
+        File videoFile = new File(
+                LocationConfig.ANONYM_VID_DIR + File.separator + videoInfo.getName() + ".mp4");
+        if (videoFile.exists())
+            videoFile.delete();
+
+        //delete metadata file.
+        String metaName = databaseManager.getMetaName(videoId);
+        File metaFile = new File(LocationConfig.META_DIR + File.separator + metaName + ".json");
+        if (metaFile.exists())
+            metaFile.delete();
+
+        //delete both in database
+        return databaseManager.deleteVideoAndMeta(videoId) ? SUCCESS : FAILURE;
     }
 
     /**
-     * @param videoId of metadata to get
-     * @return json string with metadata information
+     * Gets the metadata of a video as JSON string.
+     *
+     * @param videoId Unique identifier of the video to fetch metadata for.
+     * @return JSON string with metadata information
      */
     public String getMetaData(int videoId) {
         Metadata metadata = databaseManager.getMetaData(videoId);
