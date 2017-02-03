@@ -3,6 +3,7 @@ package edu.kit.informatik.pcc.service.server;
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
 import edu.kit.informatik.pcc.service.manager.VideoManager;
+import org.apache.commons.io.FilenameUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -61,11 +62,11 @@ public class ServerProxy {
     @Path("videoUpload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public String videoUpload(@FormDataParam(VIDEO) InputStream video, @FormDataParam(METADATA) InputStream metadata, @FormDataParam(KEY) InputStream encryptedSymmetricKey, @FormDataParam(ACCOUNT) String accountData, @FormDataParam(VIDEO) FormDataContentDisposition fileDetail, @Suspended AsyncResponse response) {
+        Logger.getGlobal().info("Upload Request");
         if (video == null || metadata == null || encryptedSymmetricKey == null || accountData == null || fileDetail == null) {
             return FAILURE;
         }
-        String videoName = fileDetail.getName();
-        Logger.getGlobal().info("Upload Request");
+        String videoName = FilenameUtils.getBaseName(fileDetail.getFileName());
         String accountStatus = setUpForRequest(accountData);
         return (accountStatus.equals(SUCCESS)) ?
                 videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response) : WRONG_ACCOUNT;
@@ -80,11 +81,11 @@ public class ServerProxy {
     @Path("videoDownload")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response videoDownload(@FormParam(VIDEOID) int videoId, @FormParam(ACCOUNT) String accountData) {
+        Logger.getGlobal().info("Download Request");
         Response.ResponseBuilder response = null;
         if (accountData == null || videoId == 0) {
             return response.status(400).build();
         }
-        Logger.getGlobal().info("Download Request");
         setUpForRequest(accountData);
         String accountStatus = setUpForRequest(accountData);
         if (accountStatus.equals(SUCCESS)) {
@@ -106,10 +107,10 @@ public class ServerProxy {
     @Path("videoInfo")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String videoInfo(@FormParam(VIDEOID) int videoId, @FormParam(ACCOUNT) String accountData) {
+        Logger.getGlobal().info("Get Metadata Request");
         if (accountData == null || videoId == 0) {
             return FAILURE;
         }
-        Logger.getGlobal().info("Get Metadata Request");
         String accountStatus = setUpForRequest(accountData);
         if (accountStatus.equals(SUCCESS)) {
             return videoManager.getMetaData(videoId);
@@ -126,10 +127,10 @@ public class ServerProxy {
     @Path("videoDelete")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String videoDelete(@FormParam(VIDEOID) int videoId, @FormParam(ACCOUNT) String accountData) {
+        Logger.getGlobal().info("Video Deletion Request");
         if (accountData == null || videoId == 0) {
             return FAILURE;
         }
-        Logger.getGlobal().info("Video Deletion Request");
         String accountStatus = setUpForRequest(accountData);
         if (accountStatus.equals(SUCCESS)) {
             return videoManager.videoDelete(videoId);
@@ -145,10 +146,10 @@ public class ServerProxy {
     @Path("getVideosByAccount")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String getVideosByAccount(@FormParam(ACCOUNT) String accountData) {
+        Logger.getGlobal().info("GetVideosByAccount Request");
         if (accountData == null) {
             return FAILURE;
         }
-        Logger.getGlobal().info("GetVideosByAccount Request");
         String accountStatus = setUpForRequest(accountData);
         if (accountStatus.equals(SUCCESS)) {
            return videoManager.getVideoInfoList();
@@ -164,10 +165,10 @@ public class ServerProxy {
     @Path("authenticate")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String authenticateAccount(@FormParam(ACCOUNT) String accountData) {
+        Logger.getGlobal().info("Authenticate Request");
         if (accountData == null) {
             return FAILURE;
         }
-        Logger.getGlobal().info("Authenticate Request");
         return setUpForRequest(accountData);
     }
 
@@ -180,10 +181,10 @@ public class ServerProxy {
     @Path("createAccount")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String createAccount(@FormParam(ACCOUNT) String accountData, @FormParam(UUID) String uuid) {
+        Logger.getGlobal().info("Account Creation Request");
         if (accountData == null || uuid == null) {
             return FAILURE;
         }
-        Logger.getGlobal().info("Account Creation Request");
         String accountStatus = setUpForRequest(accountData);
         return (accountStatus.equals(NOT_EXISTING)) ?
                 accountManager.registerAccount(uuid) : ACCOUNT_EXISTS;
@@ -214,10 +215,10 @@ public class ServerProxy {
     @Path("deleteAccount")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String deleteAccount(@FormParam(ACCOUNT) String accountData) {
+        Logger.getGlobal().info("Account Deletion Request");
         if (accountData == null) {
             return FAILURE;
         }
-        Logger.getGlobal().info("Account Deletion Request");
         String accountStatus = setUpForRequest(accountData);
         return (accountStatus.equals(SUCCESS) || accountStatus.equals(NOT_VERIFIED)) ?
                 accountManager.deleteAccount(videoManager) : WRONG_ACCOUNT;
@@ -232,10 +233,10 @@ public class ServerProxy {
     @Path("verifyAccount")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String verifyAccount(@FormParam(ACCOUNT) String accountData, @FormParam(UUID) String uuid) {
+        Logger.getGlobal().info("Account Verification Request");
         if (accountData == null || uuid == null) {
             return FAILURE;
         }
-        Logger.getGlobal().info("Account Verification Request");
         String accountStatus = setUpForRequest(accountData);
         if (accountStatus.equals(SUCCESS)) {
             return ALREADY_VERIFIED;
