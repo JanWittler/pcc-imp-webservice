@@ -14,20 +14,73 @@ import java.io.IOException;
 import java.util.logging.*;
 
 /**
+ * Main entry point for the webserver.
+ * Starts the server and sets up proxy for handling requests as well as
+ * video processing manager for processing videos.
+ *
  * @author Josh Romanowski, Fabian Wenzel
  */
 public class Main {
+
+    // constants
     private static final int PORT = 2222;
     private static final String REQUESTLOCATION = "edu.kit.informatik.pcc.service.server";
-    private static Server server;
+
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
 
     /**
+     * Server instance used for http access.
+     */
+    private static Server server;
+
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
+
+    /**
+     * Sets the server up and starts it.
+     *
      * @param args no args
      */
     public static void main(String[] args) {
         startServer();
     }
 
+    /**
+     * Stops the server if it is still running. Also shuts down the video processing chain.
+     */
+    public static void stopServer() {
+
+        if (server.isStopped()) {
+            Logger.getGlobal().info("Server is already stopped");
+            return;
+        }
+
+        Logger.getGlobal().info("Stopping Server");
+
+        // shutdown video processing
+        VideoProcessingManager.getInstance().shutdown();
+
+        try {
+            // shutdown server
+            server.stop();
+        } catch (Exception e) {
+            Logger.getGlobal().warning("Stopping the server failed.");
+        }
+    }
+
+    /* #############################################################################################
+     *                                  helper methods
+     * ###########################################################################################*/
+
+    /**
+     * Starts the server and sets up the proxy to handle requests.
+     * Also creates all necessary directories for the server and sets up the logger.
+     *
+     * @return Returns if starting the server is successful
+     */
     private static boolean startServer() {
 
         if (!setupDirectories() || !setupLogger()) {
@@ -56,44 +109,30 @@ public class Main {
         } catch (InterruptedException e) {
             Logger.getGlobal().warning("Server was interrupted during execution");
             return false;
-        } finally {
-            try {
-                server.stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            server.destroy();
-            return true;
-        }
-    }
-
-    public static void stopServer() {
-
-        if (server.isStopped()) {
-            Logger.getGlobal().info("Server is already stopped");
-            return;
-        }
-
-        Logger.getGlobal().info("Stopping Server");
-
-        // shutdown video processing
-        VideoProcessingManager.getInstance().shutdown();
-
-        try {
-            // shutdown server
-            server.stop();
         } catch (Exception e) {
-            Logger.getGlobal().warning("Stopping the server failed.");
+            Logger.getGlobal().severe("Error in server");
+            restartServer();
+            return false;
         }
+        return true;
     }
 
-    public static void restartServer() {
+    /**
+     * Restarts the server.
+     */
+    private static void restartServer() {
         Logger.getGlobal().info("Restarting server");
         stopServer();
 
         startServer();
     }
 
+    /**
+     * Sets up the logger so that there is one handling writing error logs and one
+     * handler writing the full log.
+     *
+     * @return Returns whether setting up the logger was succesful or not.
+     */
     private static boolean setupLogger() {
         Logger logger = Logger.getGlobal();
         try {
@@ -108,14 +147,18 @@ public class Main {
 
             logger.addHandler(fileInfoHandler);
             logger.addHandler(fileErrorHandler);
-        } catch (SecurityException e) {
-            return false;
-        } catch (IOException e) {
+        } catch (SecurityException | IOException e) {
             return false;
         }
         return true;
     }
 
+    /**
+     * Creates all necessary directions as long as they were not existing before.
+     * Also empties the tmp folder.
+     *
+     * @return Returns whether setting was successful or not.
+     */
     private static boolean setupDirectories() {
         boolean ret = true;
 
