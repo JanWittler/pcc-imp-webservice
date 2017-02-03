@@ -86,7 +86,7 @@ public class ServerProxyTest {
         databaseManager = new DatabaseManager(account);
         databaseManager.register(uuid);
         account.setId(databaseManager.getAccountId());
-        databaseManager.saveProcessedVideoAndMeta("input", "testMeta");
+        databaseManager.saveProcessedVideoAndMeta("pod", "testMeta");
         databaseManager.saveProcessedVideoAndMeta("input2", "testMeta2");
         databaseManager.saveProcessedVideoAndMeta("input3", "metaTest");
         databaseManager.verifyAccount(uuid);
@@ -131,7 +131,7 @@ public class ServerProxyTest {
 
     @org.junit.Test
     public void downloadTest() {
-        String videoId = Integer.toString(databaseManager.getVideoIdByName("input"));
+        String videoId = Integer.toString(databaseManager.getVideoIdByName("pod"));
         Form f = new Form();
         f.param("account", accountJson);
         f.param("videoId", videoId);
@@ -140,7 +140,7 @@ public class ServerProxyTest {
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         InputStream inputStream = response.readEntity(InputStream.class);
         if (response.getStatus() == 200) {
-            File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTestFail.mp4");
+            File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest.avi");
             try {
                 Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 downloadFile.delete();
@@ -161,7 +161,7 @@ public class ServerProxyTest {
         JSONArray jsonArray = new JSONArray(response.readEntity(String.class));
         JSONObject jsonObject = jsonArray.getJSONObject(0);
         String jsonName = jsonObject.getString("name");
-        Assert.assertTrue(jsonName.equals("input"));
+        Assert.assertTrue(jsonName.equals("pod"));
     }
 
     @org.junit.Test
@@ -202,8 +202,8 @@ public class ServerProxyTest {
         tempDatabaseManager.saveProcessedVideoAndMeta("deleteVideo2", "deleteMeta2");
 
         //create files for testing
-        File file1 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo1" + ".mp4");
-        File file2 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo2" + ".mp4");
+        File file1 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo1" + ".avi");
+        File file2 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo2" + ".avi");
         File file3 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta1" + ".json");
         File file4 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta2" + ".json");
         try {
@@ -278,6 +278,7 @@ public class ServerProxyTest {
 
     @org.junit.Test
     public void uploadTest() {
+        //set directories to standart
         try {
             setFinalStatic(LocationConfig.class.getDeclaredField("ANONYM_VID_DIR"), anonym_dir);
             setFinalStatic(LocationConfig.class.getDeclaredField("META_DIR"), meta_dir);
@@ -314,7 +315,7 @@ public class ServerProxyTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input"));
+        databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("pod"));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input2"));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input3"));
         databaseManager.deleteAccount();
