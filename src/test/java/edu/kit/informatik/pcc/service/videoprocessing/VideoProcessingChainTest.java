@@ -1,9 +1,6 @@
 package edu.kit.informatik.pcc.service.videoprocessing;
 
-import edu.kit.informatik.pcc.service.data.Account;
-import edu.kit.informatik.pcc.service.data.DatabaseManager;
-import edu.kit.informatik.pcc.service.data.LocationConfig;
-import edu.kit.informatik.pcc.service.data.VideoInfo;
+import edu.kit.informatik.pcc.service.data.*;
 import org.junit.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -71,8 +68,10 @@ public class VideoProcessingChainTest {
             databaseManager.deleteVideoAndMeta(video.getVideoId());
         }
 
-        File testedVid = new File(LocationConfig.ANONYM_VID_DIR + File.separator + "-1_testVideo.avi");
-        File testedMeta = new File(LocationConfig.META_DIR + File.separator + "-1_testVideo_meta.json");
+        File testedVid = new File(
+                LocationConfig.ANONYM_VID_DIR + File.separator + "-1_testVideo" + VideoInfo.FILE_EXTENTION);
+        File testedMeta = new File(
+                LocationConfig.META_DIR + File.separator + "-1_testVideo_meta" + Metadata.FILE_EXTENTION);
 
         if (testedVid.exists())
             testedVid.delete();
