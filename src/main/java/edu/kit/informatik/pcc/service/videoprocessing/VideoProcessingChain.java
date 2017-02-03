@@ -12,19 +12,31 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 /**
- *
+ * The VideoProcessingChain is the core worker of the VideoProcessing module.
+ * It does all the work for processing the video. The chain itself is runnable which makes it
+ * possible to handle it as a command and therefore enable queueing (used in the manager), logging or undoing.
  *
  * @author Josh Romanowski
  */
 public class VideoProcessingChain implements Runnable {
 
-    // TODO: jdoc
-
     // attributes
 
+    /**
+     * An object used to give the app status updates about the asynchronous processing.
+     */
     private AsyncResponse response;
+    /**
+     * Stages of the chain which will be run through upon execution.
+     */
     private LinkedList<IStage> stages;
+    /**
+     * Context which stores the information needed to process the videos.
+     */
     private EditingContext context;
+    /**
+     * Name of the video being processed.
+     */
     private String videoName;
 
     // constructors
@@ -93,6 +105,11 @@ public class VideoProcessingChain implements Runnable {
 
     // helper methods
 
+    /**
+     * Initializes the chain according to its definition here.
+     *
+     * @param chain Chain type of the chain to be created.
+     */
     private void initChain(Chain chain) {
         switch (chain) {
             case EMPTY:
@@ -110,6 +127,13 @@ public class VideoProcessingChain implements Runnable {
         }
     }
 
+    /**
+     * Saves all provided inputs to their temporary location on the server.
+     * @param video Uploaded video file as stream.
+     * @param metadata Uploaded metadata file as stream.
+     * @param key Uploaded SecretKey file as stream.
+     * @throws IllegalArgumentException incase some of the inputs could not be saved correctly and completely.
+     */
     private void saveTempFiles(InputStream video, InputStream metadata, InputStream key)
             throws IllegalArgumentException {
 
@@ -130,6 +154,12 @@ public class VideoProcessingChain implements Runnable {
         }
     }
 
+    /**
+     * Saves a file provided to a location provided.
+     * @param input Input stream passing the file's data.
+     * @param output Output stream saving to the new file.
+     * @throws IOException in case writing or reading fails.
+     */
     private void saveFile(InputStream input, OutputStream output) throws IOException {
         int read;
         byte[] bytes = new byte[1024];
@@ -145,6 +175,10 @@ public class VideoProcessingChain implements Runnable {
         }
     }
 
+    /**
+     * Deletes all the temporary files that were created while processing the video
+     * @param context Context that contains all files used.
+     */
     private void deleteTempFiles(EditingContext context) {
         for (File file : context.getAllTempFiles()) {
             if (file.exists()) {
@@ -153,6 +187,9 @@ public class VideoProcessingChain implements Runnable {
         }
     }
 
+    /**
+     * Enumeration used to make it simple to add new chain types as well as identify existing ones.
+     */
     protected enum Chain {
         EMPTY, SIMPLE, NORMAL
     }

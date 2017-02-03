@@ -142,6 +142,6 @@ public class VideoManager {
         if (metadata == null) {
             return FAILURE;
         }
-        return metadata.getAsJson();
+        return metadata.getAsJSON();
     }
 }

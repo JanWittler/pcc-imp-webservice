@@ -80,7 +80,7 @@ public class VideoProcessingManager {
 
     /**
      * Adds a new task to the queue, which gets executed as soon as resources get free.
-     * Gives response via the response object.
+     * Gives response via the response object. Uses a predefined chain setup.
      *
      * @param video     Uploaded video.
      * @param metadata  Uploaded metadata.
@@ -95,15 +95,16 @@ public class VideoProcessingManager {
     }
 
     /**
-     * TODO: javadoc
+     * Adds a new task to the queue, which gets executed as soon as resources get free.
+     * Gives response via the response object.
      *
-     * @param video
-     * @param metadata
-     * @param key
-     * @param account
-     * @param videoName
-     * @param response
-     * @param chainType
+     * @param video     Uploaded video.
+     * @param metadata  Uploaded metadata.
+     * @param key       Uploaded key.
+     * @param account   User account who uploaded the video.
+     * @param videoName Video name of the uploaded video.
+     * @param response  Object use for giving responses.
+     * @param chainType Chain type which will get executed.
      */
     protected void addTask(InputStream video, InputStream metadata, InputStream key,
                            Account account, String videoName, AsyncResponse response, VideoProcessingChain.Chain chainType) {

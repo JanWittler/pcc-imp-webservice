@@ -104,15 +104,10 @@ public class Main {
 
             Handler fileInfoHandler = new FileHandler("log\\server.log", 1024000, 1);
             fileInfoHandler.setFormatter(new SimpleFormatter());
-            fileInfoHandler.setLevel(Level.WARNING);
-
-            Handler consoleHandler = new ConsoleHandler();
-            consoleHandler.setFormatter(new SimpleFormatter());
-            consoleHandler.setLevel(Level.INFO);
+            fileInfoHandler.setLevel(Level.INFO);
 
             logger.addHandler(fileInfoHandler);
             logger.addHandler(fileErrorHandler);
-            logger.addHandler(consoleHandler);
         } catch (SecurityException e) {
             return false;
         } catch (IOException e) {
