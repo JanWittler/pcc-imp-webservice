@@ -137,11 +137,13 @@ public class Main {
         Logger logger = Logger.getGlobal();
         try {
             // output file = "error.log", max size = 1 MByte, 1 single logfile
-            Handler fileErrorHandler = new FileHandler("log\\error.log", 1024000, 1);
+            Handler fileErrorHandler = new FileHandler(
+                    LocationConfig.LOG_DIR + File.separator + "error.log", 1024000, 1);
             fileErrorHandler.setFormatter(new SimpleFormatter());
             fileErrorHandler.setLevel(Level.WARNING);
 
-            Handler fileInfoHandler = new FileHandler("log\\server.log", 1024000, 1);
+            Handler fileInfoHandler = new FileHandler(
+                    LocationConfig.LOG_DIR + File.separator + "server.log", 1024000, 1);
             fileInfoHandler.setFormatter(new SimpleFormatter());
             fileInfoHandler.setLevel(Level.INFO);
 
@@ -177,6 +179,10 @@ public class Main {
 
         //delete all temp files
         File[] tempFiles = new File(LocationConfig.TEMP_DIR).listFiles();
+        if (tempFiles == null) {
+            return false;
+        }
+
         for (File file : tempFiles) {
             ret &= file.delete();
         }
