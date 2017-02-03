@@ -29,6 +29,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author Fabian Wenzel
@@ -38,7 +40,6 @@ public class ServerProxyTest {
     private final String SUCCESS = "SUCCESS";
     private DatabaseManager databaseManager;
     private String tempUUID = "3456qwe-qw234-2342f";
-
     private String accountJson;
     private String tempAccountJson;
 
@@ -79,9 +80,8 @@ public class ServerProxyTest {
         tempAccountJson = jsonObject2.toString();
 
         //setup for various tests
-        Account account;
+        Account account = new Account(accountJson);
         String uuid = "456-sgdfgd3t5g-345fs";
-        account = new Account(accountJson);
         databaseManager = new DatabaseManager(account);
         databaseManager.register(uuid);
         account.setId(databaseManager.getAccountId());
@@ -139,9 +139,9 @@ public class ServerProxyTest {
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         InputStream inputStream = response.readEntity(InputStream.class);
         if (response.getStatus() == 200) {
-            File downloadfile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTestFail.mp4");
+            File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTestFail.mp4");
             try {
-                Files.copy(inputStream, downloadfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -220,6 +220,10 @@ public class ServerProxyTest {
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("deleteAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        Assert.assertFalse(file1.exists());
+        Assert.assertFalse(file2.exists());
+        Assert.assertFalse(file3.exists());
+        Assert.assertFalse(file4.exists());
         tempDatabaseManager.deleteAccount();
     }
 
@@ -271,7 +275,6 @@ public class ServerProxyTest {
         }
     }
 
-    @Ignore
     @org.junit.Test
     public void uploadTest() {
         Client client = ClientBuilder.newClient();
@@ -286,8 +289,16 @@ public class ServerProxyTest {
         multiPart.bodyPart(metadata);
         multiPart.bodyPart(key);
         multiPart.bodyPart(data);
-        Response response = webTarget.request().post(Entity.entity(multiPart, multiPart.getMediaType()), Response.class);
-        System.out.println(response.readEntity(String.class));
+        Future<Response> futureResponse = webTarget.request().async().post(Entity.entity(multiPart, multiPart.getMediaType()), Response.class);
+        try {
+            Response response = futureResponse.get();
+            Assert.assertTrue(response.readEntity(String.class).equals("Finished editing video encVid"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("encVid"));
     }
 
     @After
