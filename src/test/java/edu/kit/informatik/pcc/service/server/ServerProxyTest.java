@@ -292,9 +292,7 @@ public class ServerProxyTest {
         try {
             Response response = futureResponse.get();
             Assert.assertTrue(response.readEntity(String.class).equals("Finished editing video encVid"));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("encVid"));

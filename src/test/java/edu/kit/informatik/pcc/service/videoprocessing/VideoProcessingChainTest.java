@@ -72,7 +72,7 @@ public class VideoProcessingChainTest {
         }
 
         File testedVid = new File(LocationConfig.ANONYM_VID_DIR + "\\-1_testVideo.avi");
-        File testedMeta = new File(LocationConfig.META_DIR + "\\-1_testVideo_meta.txt");
+        File testedMeta = new File(LocationConfig.META_DIR + "\\-1_testVideo_meta.json");
 
         if (testedVid.exists())
             testedVid.delete();
