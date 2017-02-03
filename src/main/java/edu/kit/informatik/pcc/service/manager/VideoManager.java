@@ -114,7 +114,7 @@ public class VideoManager {
         }
 
         String videoName = videoInfo.getName();
-        File video = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".mp4");
+        File video = new File(LocationConfig.ANONYM_VID_DIR + File.separator + videoName + ".avi");
 
         InputStream inputStream;
         try {
