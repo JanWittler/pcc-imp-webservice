@@ -27,7 +27,8 @@ public class RSADecryptor implements IKeyDecryptor {
     /**
      * Location of the private asymmetric key.
      */
-    private static final String PRIVATE_KEY_FILE = LocationConfig.RESOURCES_DIR + "\\private.key";
+    private static final String PRIVATE_KEY_FILE =
+            LocationConfig.RESOURCES_DIR + File.separator + "private.key";
     /**
      * Private asymmetric key.
      */
