@@ -143,7 +143,7 @@ public class ServerProxyTest {
             File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest" + VideoInfo.FILE_EXTENTION);
             try {
                 Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                //downloadFile.delete();
+                downloadFile.delete();
             } catch (IOException e) {
                 e.printStackTrace();
             }
