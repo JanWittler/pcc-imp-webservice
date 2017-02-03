@@ -99,7 +99,7 @@ public class ServerProxyTest {
     public void authenticateTest() {
         Client client = ClientBuilder.newClient();
         Form f = new Form();
-        f.param("data", accountJson);
+        f.param("account", accountJson);
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("authenticate");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
@@ -114,7 +114,7 @@ public class ServerProxyTest {
         tempAccount.setId(tempDatabaseManager.getAccountId());
 
         Form f = new Form();
-        f.param("data", tempAccountJson);
+        f.param("account", tempAccountJson);
         f.param("uuid", tempUUID);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("verifyAccount");
@@ -128,7 +128,7 @@ public class ServerProxyTest {
     public void downloadTest() {
         String videoId = Integer.toString(databaseManager.getVideoIdByName("input"));
         Form f = new Form();
-        f.param("data", accountJson);
+        f.param("account", accountJson);
         f.param("videoId", videoId);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoDownload");
@@ -148,7 +148,7 @@ public class ServerProxyTest {
     @org.junit.Test
     public void videosByAccountTest() {
         Form f = new Form();
-        f.param("data", accountJson);
+        f.param("account", accountJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("getVideosByAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
@@ -163,7 +163,7 @@ public class ServerProxyTest {
     public void createAccountTest() {
         Account account2 = new Account(tempAccountJson);
         Form f = new Form();
-        f.param("data", tempAccountJson);
+        f.param("account", tempAccountJson);
         f.param("uuid", tempUUID);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("createAccount");
@@ -177,8 +177,8 @@ public class ServerProxyTest {
     @org.junit.Test
     public void changeAccountTest() {
         Form f = new Form();
-        f.param("data", accountJson);
-        f.param("newData", tempAccountJson);
+        f.param("account", accountJson);
+        f.param("newAccount", tempAccountJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("changeAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
@@ -204,19 +204,15 @@ public class ServerProxyTest {
         File file4 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta2" + ".json");
         try {
             createFiles = file1.createNewFile();
-            Assert.assertTrue(createFiles);
             createFiles = file2.createNewFile();
-            Assert.assertTrue(createFiles);
             createFiles = file3.createNewFile();
-            Assert.assertTrue(createFiles);
             createFiles = file4.createNewFile();
-            Assert.assertTrue(createFiles);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         Form f = new Form();
-        f.param("data", tempAccountJson);
+        f.param("account", tempAccountJson);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("deleteAccount");
         Response response = webTarget.request().post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
@@ -237,7 +233,7 @@ public class ServerProxyTest {
         Assert.assertFalse(videoId.equals("-1"));
 
         Form f = new Form();
-        f.param("data", accountJson);
+        f.param("account", accountJson);
         f.param("videoId", videoId);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoDelete");
@@ -257,7 +253,7 @@ public class ServerProxyTest {
         Assert.assertFalse(videoId.equals("-1"));
 
         Form f = new Form();
-        f.param("data", accountJson);
+        f.param("account", accountJson);
         f.param("videoId", videoId);
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target("http://localhost:2222/").path("webservice").path("videoInfo");
@@ -283,7 +279,7 @@ public class ServerProxyTest {
         FileDataBodyPart video = new FileDataBodyPart("video", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
         FileDataBodyPart metadata = new FileDataBodyPart("metadata", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta.json"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
         FileDataBodyPart key = new FileDataBodyPart("key", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encKey.txt"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        FormDataBodyPart data = new FormDataBodyPart("data", accountJson);
+        FormDataBodyPart data = new FormDataBodyPart("account", accountJson);
         multiPart.bodyPart(video);
         multiPart.bodyPart(metadata);
         multiPart.bodyPart(key);
