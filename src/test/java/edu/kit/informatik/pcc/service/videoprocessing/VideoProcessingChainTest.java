@@ -116,7 +116,7 @@ public class VideoProcessingChainTest {
             Logger.getGlobal().warning("Interrupted while waiting for response");
         }
 
-        Assert.assertEquals(responseString, "Finished editing video " + videoName);
+        Assert.assertEquals(responseString, "Finished editing video");
     }
 
     // helper functions
