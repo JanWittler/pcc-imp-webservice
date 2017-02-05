@@ -300,7 +300,7 @@ public class ServerProxyTest {
         Future<Response> futureResponse = webTarget.request().async().post(Entity.entity(multiPart, multiPart.getMediaType()), Response.class);
         try {
             Response response = futureResponse.get();
-            Assert.assertTrue(response.readEntity(String.class).equals("Finished editing video encVid"));
+            Assert.assertTrue(response.readEntity(String.class).equals("Finished editing video"));
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
