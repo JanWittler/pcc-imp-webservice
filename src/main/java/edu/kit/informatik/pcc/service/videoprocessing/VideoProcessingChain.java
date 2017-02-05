@@ -92,7 +92,7 @@ public class VideoProcessingChain implements Runnable {
                 + context.getVideoName() + " of user " + context.getAccount().getId()
                 + ". It took " + (endTime / 1000) + " seconds.");
 
-        response.resume("Finished editing video " + context.getVideoName());
+        response.resume("Finished editing video");
     }
 
     public void cleanUp() {
