@@ -90,8 +90,8 @@ public class ServerProxyTest {
 
         //register/verify account and put some test videos/metadata into database
         String uuid = "456-sgdfgd3t5g-345fs";
-        account.setId(databaseManager.getAccountId());
         databaseManager.register(uuid);
+        account.setId(databaseManager.getAccountId());
         databaseManager.verifyAccount(uuid);
         databaseManager.saveProcessedVideoAndMeta("pod", "testMeta");
         databaseManager.saveProcessedVideoAndMeta("input2", "testMeta2");
