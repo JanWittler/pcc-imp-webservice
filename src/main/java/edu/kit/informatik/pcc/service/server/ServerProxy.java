@@ -153,10 +153,12 @@ public class ServerProxy {
         return WRONG_ACCOUNT;
     }
 
+    //TODO: NOT SURE IF YOU WANT TO DELETE NOT VERIFIED ACCOUNT BY CLIENT
     /**
      * This method takes videoDelete requests from client and returns
      * a string with a success or failure message back to the client.
-     *
+     * Expects the account status to be SUCCESS or NOT_VERIFIED from setUpForRequest
+     * to have the possibility to delete not verified accounts.
      * @param videoId     integer of videoId to delete from service (files and corresponding database entry)
      * @param accountData string as json with account specifications (mail and password)
      * @return            message as string whether deletion was successfully or or corresponding failure message
@@ -220,6 +222,8 @@ public class ServerProxy {
     /**
      * This method takes a createAccount request from client and returns
      * a string with a success or failure message back to the client.
+     * Expects the account status to be NOT_EXISTING from setUpForRequest
+     * to ensure the uniqueness of each account.
      *
      * @param accountData string as json with account specifications (mail and password)
      * @param uuid        uuid of account to set in database to fulfill verification later
@@ -281,6 +285,8 @@ public class ServerProxy {
     /**
      * This method takes a deleteAccount request from client and returns
      * a string with a success or failure message back to the client.
+     * Expects the account status to be NOT_VERIFIED from setUpForRequest
+     * because account only needs to verify once.
      *
      * @param accountData string as json with account specifications (mail and password)
      * @param uuid        uuid from user to compare with corresponding uuid in database
@@ -312,7 +318,7 @@ public class ServerProxy {
      * @return            account specific status (3 different variants) as string
      */
     private String setUpForRequest(String accountData) {
-        //setup account and manager
+        //setup account and managers
         Account account = new Account(accountData);
         videoManager    = new VideoManager(account);
         accountManager  = new AccountManager(account);
