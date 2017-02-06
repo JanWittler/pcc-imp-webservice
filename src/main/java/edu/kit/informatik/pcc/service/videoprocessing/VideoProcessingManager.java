@@ -115,7 +115,7 @@ public class VideoProcessingManager {
             Logger.getGlobal().warning("No response given.");
             return;
         }
-
+        //TODO: already checking this in ServerProxy. not sure if double check is needed here.
         if (video == null || metadata == null || key == null
                 || account == null || videoName == null) {
             Logger.getGlobal().warning("Not all inputs were given correctly");

@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 /**
  * The AccountManager processes requests concerning accounts and account information.
  * It takes requests from the ServerProxy handles them and forwards them to the
- * Model devices
+ * Model devices.
  *
  * @author David Laubenstein, Fabian Wenzel
  */
@@ -94,7 +94,7 @@ public class AccountManager {
 
     /**
      * Deletes an account from the server. Therefore all videos and metadata registered to the account
-     * get deleted aswell.
+     * get deleted as well.
      *
      * @param videoManager VideoManager used to delete videos and metadata of an account
      * @return Returns status of the account deletion.
