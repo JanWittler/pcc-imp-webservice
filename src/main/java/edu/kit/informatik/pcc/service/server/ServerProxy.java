@@ -7,10 +7,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
@@ -281,31 +278,26 @@ public class ServerProxy {
         return (accountStatus.equals(SUCCESS) || accountStatus.equals(NOT_VERIFIED)) ?
                 accountManager.deleteAccount(videoManager) : WRONG_ACCOUNT;
     }
-
+    //TODO:Check JAVADDOC
     /**
      * This method takes a deleteAccount request from client and returns
      * a string with a success or failure message back to the client.
      * Expects the account status to be NOT_VERIFIED from setUpForRequest
      * because account only needs to verify once.
      *
-     * @param accountData string as json with account specifications (mail and password)
      * @param uuid        uuid from user to compare with corresponding uuid in database
      * @return            message as string whether verification was successfully or not (or already verified)
      */
-    @POST
+    @GET
     @Path("verifyAccount")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String verifyAccount(@FormParam(ACCOUNT) String accountData, @FormParam(UUID) String uuid) {
+    @Produces(MediaType.TEXT_PLAIN)
+    public String verifyAccount(@QueryParam(UUID) String uuid) {
         Logger.getGlobal().info("Account Verification Request");
-        if (accountData == null || uuid == null) {
+        if (uuid == null) {
             return FAILURE;
         }
-        String accountStatus = setUpForRequest(accountData);
-        if (accountStatus.equals(SUCCESS)) {
-            return ALREADY_VERIFIED;
-        }
-        return (accountStatus.equals(NOT_VERIFIED)) ?
-                accountManager.verifyAccount(uuid) : WRONG_ACCOUNT;
+        AccountManager accountManager = new AccountManager(null);
+        return accountManager.verifyAccount(uuid);
     }
 
     /**

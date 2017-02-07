@@ -129,7 +129,7 @@ public class AccountManager {
      * @return string if deletion successfully accomplished
      */
     public String verifyAccount(String uuid) {
-        return databaseManager.verifyAccount(uuid) ? SUCCESS : FAILURE;
+        return databaseManager.verifyAccount(uuid);
     }
 
     /**

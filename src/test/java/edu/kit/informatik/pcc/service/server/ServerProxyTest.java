@@ -33,22 +33,24 @@ import java.util.concurrent.Future;
 
 /**
  * @author Fabian Wenzel
- *         Created by Fabi on 20.01.2017.
  */
 public class ServerProxyTest {
+    //string for client/request/response
     private final String SUCCESS = "SUCCESS";
     private final String PATH = "http://localhost:2222/webservice/";
     private final String ACCOUNT = "account";
-    private DatabaseManager databaseManager;
+
     private String accountJson;
     private String tempAccountJson;
     private String tempUUID = "3456qwe-qw234-2342f";
     private String anonym_dir = LocationConfig.ANONYM_VID_DIR;
     private String meta_dir = LocationConfig.META_DIR;
     private Form form;
+
+    private DatabaseManager databaseManager;
     private Client client;
 
-    //mockup LocationConfig fields
+    //mockup function for LocationConfig fields
     //public because of DatabaseManagerTest
     public static void setFinalStatic(Field field, Object newValue) throws Exception {
         field.setAccessible(true);
@@ -125,12 +127,14 @@ public class ServerProxyTest {
         DatabaseManager tempDatabaseManager = new DatabaseManager(tempAccount);
         tempDatabaseManager.register(tempUUID);
         tempAccount.setId(tempDatabaseManager.getAccountId());
-        form.param(ACCOUNT, tempAccountJson);
-        form.param("uuid", tempUUID);
+
+        //client request
         WebTarget webTarget = client.target(PATH).path("verifyAccount");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        System.out.println(webTarget.getUri());
+        Response response = webTarget.queryParam("uuid", tempUUID).request().get();
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
 
+        //after
         tempDatabaseManager.deleteAccount();
     }
 
@@ -300,7 +304,7 @@ public class ServerProxyTest {
     }
 
     @After
-    public void afterElse() {
+    public void after() {
         //set directories back to original paths
         try {
             setFinalStatic(LocationConfig.class.getDeclaredField("ANONYM_VID_DIR"), anonym_dir);
