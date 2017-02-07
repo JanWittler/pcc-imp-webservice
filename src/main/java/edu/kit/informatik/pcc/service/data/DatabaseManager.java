@@ -420,7 +420,7 @@ public class DatabaseManager {
         if (!uuidVerified) {
             try {
                 Statement stmt = this.c.createStatement();
-                stmt.executeUpdate("update \"user\" set verified=TRUE where id=" + account.getId() + ";");
+                stmt.executeUpdate("update \"user\" set verified=TRUE where uuid='" + uuid + "';");
                 stmt.close();
                 this.c.close();
                 return "SUCCESS";
