@@ -1,5 +1,6 @@
 package edu.kit.informatik.pcc.service.data;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import edu.kit.informatik.pcc.service.server.Main;
 
 import java.io.File;
@@ -396,48 +397,39 @@ public class DatabaseManager {
      * @param uuid is the uuid, which is in the link of the verification mail
      * @return Returns verification status.
      */
-    public boolean verifyAccount(String uuid) {
+    public String verifyAccount(String uuid) {
         //connect to Database
-        if (!connectDatabase()) return false;
+        if (!connectDatabase()) return "FAILURE";
         // get uuid from account
-        String uuidDatabase = "";
+        boolean uuidVerified = false;
         try {
             Statement stmt = this.c.createStatement();
 
-            ResultSet rs = stmt.executeQuery("select \"uuid\" from \"user\" as usr  where usr.id='" +
-                    account.getId() + "'");
+            ResultSet rs = stmt.executeQuery("select \"verified\" from \"user\" as usr  where usr.uuid='" +
+                    uuid + "'");
             // insert result in ArrayList
             if (rs != null && rs.next()) {
-                uuidDatabase = rs.getString("uuid");
+                uuidVerified = rs.getBoolean("verified");
             }
             rs.close();
             stmt.close();
         } catch (NullPointerException | SQLException e) {
             Logger.getGlobal().warning("verifyAccount occurred a problem in storing uuid temporarily: ");
+            return "FAILURE";
         }
-
-        if (uuidDatabase.equals(uuid)) {
+        if (!uuidVerified) {
             try {
                 Statement stmt = this.c.createStatement();
                 stmt.executeUpdate("update \"user\" set verified=TRUE where id=" + account.getId() + ";");
                 stmt.close();
                 this.c.close();
-                return true;
+                return "SUCCESS";
             } catch (NullPointerException | SQLException e) {
                 Logger.getGlobal().severe("A problem occured while updating verification status ");
+                return "FAILURE";
             }
-            return false;
-
-        } else {
-            Logger.getGlobal().warning("UUID of the account is not like UUID in database!");
-            // close c, because when if=true, c is needed
-            try {
-                this.c.close();
-            } catch (SQLException sqlE) {
-                Logger.getGlobal().warning("Connection c cannot be closed! ");
-            }
-            return false;
         }
+        return "ALREADY VERIFIED";
     }
 
     /**
