@@ -95,7 +95,12 @@ public class VideoProcessingChain implements Runnable {
         response.resume("Finished editing video");
     }
 
+    /**
+     * Cleans up all files and further context created for the video processing.
+     */
     public void cleanUp() {
+        // atm only calls deleteTempFiles but is separated from it in case further functionality
+        // becomes necessary for cleaning up.
         deleteTempFiles(context);
     }
 
@@ -128,9 +133,9 @@ public class VideoProcessingChain implements Runnable {
     /**
      * Saves all provided inputs to their temporary location on the server.
      *
-     * @param video Uploaded video file as stream.
+     * @param video    Uploaded video file as stream.
      * @param metadata Uploaded metadata file as stream.
-     * @param key Uploaded SecretKey file as stream.
+     * @param key      Uploaded SecretKey file as stream.
      * @throws IllegalArgumentException incase some of the inputs could not be saved correctly and completely.
      */
     private void saveTempFiles(InputStream video, InputStream metadata, InputStream key)
@@ -156,7 +161,7 @@ public class VideoProcessingChain implements Runnable {
     /**
      * Saves a file provided to a location provided.
      *
-     * @param input Input stream passing the file's data.
+     * @param input  Input stream passing the file's data.
      * @param output Output stream saving to the new file.
      * @throws IOException in case writing or reading fails.
      */
@@ -188,13 +193,14 @@ public class VideoProcessingChain implements Runnable {
         }
     }
 
-    public AsyncResponse getResponse() {
-        return response;
-    }
 
     /* #############################################################################################
      *                                  getter/setter
      * ###########################################################################################*/
+
+    public AsyncResponse getResponse() {
+        return response;
+    }
 
     public String getVideoName() {
         return videoName;

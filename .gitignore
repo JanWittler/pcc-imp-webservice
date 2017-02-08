@@ -45,9 +45,8 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-#log stuff
-log.txt
-log.txt.lck
-
-
+/log
+/vid
+/tmp
+/meta
 /target

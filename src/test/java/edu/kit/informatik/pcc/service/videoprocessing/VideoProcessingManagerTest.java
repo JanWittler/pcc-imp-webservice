@@ -91,7 +91,7 @@ public class VideoProcessingManagerTest {
 
         // check result
         lock.await(2000, TimeUnit.MILLISECONDS);
-        Assert.assertEquals(responseString, "Finished editing video " + videoName);
+        Assert.assertEquals(responseString, "Finished editing video");
     }
 
     @Test
