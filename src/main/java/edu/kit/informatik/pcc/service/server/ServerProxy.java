@@ -32,23 +32,23 @@ public class ServerProxy {
     * ###########################################################################################*/
 
     //status strings
-    private final String WRONG_ACCOUNT = "WRONG ACCOUNT";
-    private final String SUCCESS = "SUCCESS";
-    private final String FAILURE = "FAILURE";
-    private final String NOT_EXISTING = "NOT EXISTING";
-    private final String NOT_VERIFIED = "NOT VERIFIED";
-    private final String WRONG_PASSWORD = "WRONG PASSWORD";
-    private final String ALREADY_VERIFIED = "ALREADY VERIFIED";
-    private final String ACCOUNT_EXISTS = "ACCOUNT EXISTS";
+    private static final String WRONG_ACCOUNT = "WRONG ACCOUNT";
+    private static final String SUCCESS = "SUCCESS";
+    private static final String FAILURE = "FAILURE";
+    private static final String NOT_EXISTING = "NOT EXISTING";
+    private static final String NOT_VERIFIED = "NOT VERIFIED";
+    private static final String WRONG_PASSWORD = "WRONG PASSWORD";
+    private static final String ALREADY_VERIFIED = "ALREADY VERIFIED";
+    private static final String ACCOUNT_EXISTS = "ACCOUNT EXISTS";
 
     //param strings
-    private final String VIDEO_ID = "videoId";
-    private final String ACCOUNT = "account";
-    private final String NEW_ACCOUNT = "newAccount";
-    private final String VIDEO = "video";
-    private final String METADATA = "metadata";
-    private final String KEY = "key";
-    private final String UUID = "uuid";
+    private static final String VIDEO_ID = "videoId";
+    private static final String ACCOUNT = "account";
+    private static final String NEW_ACCOUNT = "newAccount";
+    private static final String VIDEO = "video";
+    private static final String METADATA = "metadata";
+    private static final String KEY = "key";
+    private static final String UUID = "uuid";
 
     //manager instances
     private AccountManager accountManager;
@@ -178,7 +178,7 @@ public class ServerProxy {
     }
 
     /**
-     * This method takes a getVideosByAccount request from client and returns
+     * This method takes a getVideos request from client and returns
      * an JSONArray of all relevant video information for the given account.
      * If an error occurred an error string is send back to the client.
      *
@@ -186,9 +186,9 @@ public class ServerProxy {
      * @return all videoInfo of user (by accountData) by success or variant failure message
      */
     @POST
-    @Path("getVideosByAccount")
+    @Path("getVideos")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String getVideosByAccount(@FormParam(ACCOUNT) String accountData) {
+    public String getVideos(@FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("GetVideosByAccount Request");
         if (accountData == null) {
             return FAILURE;

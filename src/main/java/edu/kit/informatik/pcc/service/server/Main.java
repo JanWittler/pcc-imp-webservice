@@ -157,6 +157,7 @@ public class Main {
         } catch (SecurityException | IOException e) {
             return false;
         }
+        logger.info("Logger setup");
         return true;
     }
 
