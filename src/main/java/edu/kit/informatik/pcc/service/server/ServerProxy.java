@@ -320,15 +320,12 @@ public class ServerProxy {
         //TODO: do things with "?"
         //authentication process
         int accountId = accountManager.getAccountId();
-        if (accountId < 1) {
+        if (accountId < 1)
             return NOT_EXISTING;
-        }
-
         account.setId(accountId);
 
-        if (!accountManager.authenticate()) {
+        if (!accountManager.authenticate())
             return WRONG_PASSWORD;
-        }
 
         return (!accountManager.isVerified()) ? NOT_VERIFIED : SUCCESS;
     }
