@@ -161,25 +161,6 @@ public class DatabaseManagerTest {
     }
 
     @Test
-    public void getMetaDataTest() {
-        registered = dm.register(OWN_UUID);
-        account.setId(dm.getAccountId());
-        String videoName = "videoTestGETMETADATA";
-        String metaName = "metaTestGETMETADATA";
-        // save bsp video, where the metafile already exists
-        dm.saveProcessedVideoAndMeta(videoName, metaName);
-        // save Strings in account object to class attributes
-
-        Metadata md = dm.getMetaData(dm.getVideoIdByName(videoName));
-        Assert.assertTrue(md.getDate() == 123 && md.getTriggerType().equals("23"));
-        dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));
-        Assert.assertTrue(md.getGForce()[0] == (float) 30.33333
-                && md.getGForce()[1] == (float) 40
-                && md.getGForce()[2] == (float) 50);
-        //delete Video
-    }
-
-    @Test
     public void getMetaNameByVideoId() {
         registered = dm.register(OWN_UUID);
         account.setId(dm.getAccountId());

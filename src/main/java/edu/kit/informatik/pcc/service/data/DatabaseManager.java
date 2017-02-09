@@ -1,12 +1,7 @@
 package edu.kit.informatik.pcc.service.data;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import edu.kit.informatik.pcc.service.server.Main;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -197,36 +192,6 @@ public class DatabaseManager {
                     "There is a problem with the Video, maybe the id of the video: ");
         }
         return false;
-    }
-
-    /**
-     * Get the metadata of a video as a {@link Metadata} object.
-     * <p>
-     * The SQL command search for the id of the video and get the name of the metadata File.
-     * Then the path will be merged by the path to the folder, where all metadata are saved, the name of the
-     * metadata file and the extension of the file.
-     * With this path the metadata File will be read out and stored in a {@link Metadata} object.
-     * </p>
-     *
-     * @param videoId: unique id of a video
-     * @return a metadata-object
-     */
-    public Metadata getMetaData(int videoId) {
-        // create String, where meta file is stored
-        String filePath = LocationConfig.META_DIR + File.separator +
-                getMetaName(videoId) + ".json";
-        //read the json File into a String
-        String metaJSON = "";
-        // read Meta file to get infos
-        try {
-            metaJSON = new String(Files.readAllBytes(Paths.get(filePath)));
-        } catch (IOException e) {
-            Logger.getGlobal().warning("An error occured reading metadata file " + filePath);
-            return null;
-        }
-
-        // return Metadata object
-        return new Metadata(metaJSON);
     }
 
     /**
@@ -496,8 +461,9 @@ public class DatabaseManager {
      */
     public String getMetaName(int videoId) {
         //connect to database
-        if (!connectDatabase()) return null;
-        String meta = "";
+        if (!connectDatabase())
+            return null;
+
         try {
             Statement stmt = this.c.createStatement();
 
@@ -505,7 +471,7 @@ public class DatabaseManager {
                     videoId + ";");
             // insert result in ArrayList
             if (rs.next()) {
-                meta = rs.getString("meta_name");
+                return rs.getString("meta_name");
             }
             rs.close();
             stmt.close();
@@ -513,7 +479,7 @@ public class DatabaseManager {
         } catch (NullPointerException | SQLException e) {
             Logger.getGlobal().severe("Retrieving metadata from database failed");
         }
-        return meta;
+        return null;
     }
 
     /**

@@ -6,10 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.ws.rs.container.AsyncResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -113,15 +112,14 @@ public class VideoManager {
             return null;
         }
 
-        String videoName = videoInfo.getName();
-        File video = new File(
-                LocationConfig.ANONYM_VID_DIR + File.separator + videoName + VideoInfo.FILE_EXTENTION);
+        File video = new File(LocationConfig.ANONYM_VID_DIR + File.separator +
+                videoInfo.getName() + VideoInfo.FILE_EXTENTION);
 
         InputStream inputStream;
         try {
             inputStream = new FileInputStream(video.getPath());
         } catch (FileNotFoundException e) {
-            Logger.getGlobal().warning("An error has occurred finding file to download!");
+            Logger.getGlobal().warning("An error has occurred finding file " + video.getPath());
             return null;
         }
         return inputStream;
@@ -140,14 +138,15 @@ public class VideoManager {
         }
 
         // delete video file
-        File videoFile = new File(
-                LocationConfig.ANONYM_VID_DIR + File.separator + videoInfo.getName() + VideoInfo.FILE_EXTENTION);
+        File videoFile = new File(LocationConfig.ANONYM_VID_DIR + File.separator +
+                videoInfo.getName() + VideoInfo.FILE_EXTENTION);
         if (videoFile.exists())
             videoFile.delete();
 
         //delete metadata file.
         String metaName = databaseManager.getMetaName(videoId);
-        File metaFile = new File(LocationConfig.META_DIR + File.separator + metaName + Metadata.FILE_EXTENTION);
+        File metaFile = new File(LocationConfig.META_DIR + File.separator +
+                metaName + Metadata.FILE_EXTENTION);
         if (metaFile.exists())
             metaFile.delete();
 
@@ -162,10 +161,19 @@ public class VideoManager {
      * @return JSON string with metadata information
      */
     public String getMetaData(int videoId) {
-        Metadata metadata = databaseManager.getMetaData(videoId);
-        if (metadata == null) {
+        String metaName = databaseManager.getMetaName(videoId);
+
+        if (metaName == null)
+            return FAILURE;
+
+        String filePath = LocationConfig.META_DIR + File.separator +
+                metaName + Metadata.FILE_EXTENTION;
+
+        try {
+            return new String(Files.readAllBytes(Paths.get(filePath)));
+        } catch (IOException e) {
+            Logger.getGlobal().warning("An error occured reading metadata file " + filePath);
             return FAILURE;
         }
-        return metadata.getAsJSON();
     }
 }
