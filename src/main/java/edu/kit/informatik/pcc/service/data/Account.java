@@ -36,6 +36,7 @@ public class Account {
      */
     private int id;
 
+
     /* #############################################################################################
      *                                  constructors
      * ###########################################################################################*/
@@ -102,9 +103,7 @@ public class Account {
         return passwordHash;
     }
 
-    public void setPasswordHash(String json, byte[] salt) {
-        JSONObject account = new JSONObject(json);
-        String password = account.getString("password");
+    public void setPasswordHash(String password, byte[] salt) {
         this.passwordHash = hashPassword(password, salt);
     }
 

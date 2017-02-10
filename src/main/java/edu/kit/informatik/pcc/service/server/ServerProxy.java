@@ -6,6 +6,7 @@ import edu.kit.informatik.pcc.service.manager.VideoManager;
 import org.apache.commons.io.FilenameUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.json.JSONObject;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
@@ -236,8 +237,10 @@ public class ServerProxy {
             return FAILURE;
         }
         String accountStatus = setUpForRequest(accountData);
+        JSONObject accountJson = new JSONObject(accountData);
+        String password = accountJson.getString("password");
         return (accountStatus.equals(NOT_EXISTING)) ?
-                accountManager.registerAccount(uuid) : ACCOUNT_EXISTS;
+                accountManager.registerAccount(uuid, password) : ACCOUNT_EXISTS;
     }
 
     /**
@@ -327,7 +330,9 @@ public class ServerProxy {
         byte[] salt = accountManager.getSalt();
         if (salt == null)
             return FAILURE;
-        account.setPasswordHash(accountData, salt);
+        JSONObject accountJson = new JSONObject(accountData);
+        String password = accountJson.getString("password");
+        account.setPasswordHash(password, salt);
 
         if (!accountManager.authenticate())
             return WRONG_PASSWORD;

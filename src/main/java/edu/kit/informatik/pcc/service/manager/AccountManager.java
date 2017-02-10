@@ -91,10 +91,10 @@ public class AccountManager {
      * @param uuid Unique id used to verify registration.
      * @return Returns status of the account creation.
      */
-    public String registerAccount(String uuid) {
+    public String registerAccount(String uuid, String password) {
         //TODO: CREATE SALT AND PASSWORDHASH
         byte[] salt = createSalt();
-
+        account.setPasswordHash(password, salt);
         return databaseManager.register(uuid, salt) ? SUCCESS : FAILURE;
     }
 
