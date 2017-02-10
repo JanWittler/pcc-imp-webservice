@@ -5,7 +5,6 @@ import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.UUID;
 
 import static edu.kit.informatik.pcc.service.server.ServerProxyTest.setFinalStatic;
 
@@ -19,7 +18,6 @@ public class DatabaseManagerTest {
     private DatabaseManager dm;
     private boolean registered = false;
     private String bytes;
-    String PASSWORD;
 
 
     @BeforeClass
@@ -34,16 +32,16 @@ public class DatabaseManagerTest {
     @Before
     public void setUpBefore() {
         String json = "";
-        String MAIL = "\"testEMAIL@123schonVorbei.com\"";
-        PASSWORD = "\"testPasswordForUni\"";
+        String mail = "\"testEMAIL@123schonVorbei.com\"";
+        String password = "\"testPasswordForUni\"";
         String DATE = "\"123\"";
         String TRIGGER_TYPE = "\"23\"";
         String G_FORCE_X = "30.33333";
         String G_FORCE_Y = "40";
         String G_FORCE_Z = "50";
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("mail", MAIL);
-        jsonObject.put("password", PASSWORD);
+        jsonObject.put("mail", mail);
+        jsonObject.put("password", password);
         json = jsonObject.toString();
         account = new Account(json);
         byte[] bytesB = new byte[] { (byte)0xe0, 0x4f, (byte)0xd0, 0x20, (byte)0xea, 0x3a, 0x69, 0x10, (byte)0xa2, (byte)0xd8,
@@ -200,7 +198,7 @@ public class DatabaseManagerTest {
     public void authenticateTest() {
         registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
-        account.setPasswordHash(PASSWORD, Base64.getDecoder().decode(dm.getSalt()));
+        account.hashPassword(Base64.getDecoder().decode(dm.getSalt()));
         dm.setPassword(account.getPasswordHash());
         Assert.assertTrue(dm.authenticate());
     }

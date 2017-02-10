@@ -328,11 +328,8 @@ public class ServerProxy {
         account.setId(accountId);
 
         byte[] salt = accountManager.getSalt();
-        if (salt == null)
+        if (salt == null || !account.hashPassword(salt))
             return FAILURE;
-        JSONObject accountJson = new JSONObject(accountData);
-        String password = accountJson.getString("password");
-        account.setPasswordHash(password, salt);
 
         if (!accountManager.authenticate())
             return WRONG_PASSWORD;

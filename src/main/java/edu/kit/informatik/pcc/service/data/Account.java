@@ -4,8 +4,6 @@ import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 
 /**
  * Datacontainer for information concerning user accounts.
@@ -16,6 +14,7 @@ public class Account {
 
     // JSON keys
     private static final String JSON_KEY_MAIL = "mail";
+    private static final String JSON_KEY_PASSWORD = "password";
 
     /* #############################################################################################
      *                                  attributes
@@ -30,6 +29,11 @@ public class Account {
      * Password of the account.
      */
     private String passwordHash;
+
+    /**
+     * Clear text password, not accessible.
+     */
+    private String password;
 
     /**
      * Unique identifier for each account, maps to the one in the database.
@@ -49,6 +53,17 @@ public class Account {
     public Account(String json) {
         JSONObject account = new JSONObject(json);
         this.mail = account.getString(JSON_KEY_MAIL);
+        this.password = account.getString(JSON_KEY_PASSWORD);
+    }
+
+    /**
+     * Hashes the password stored when creating the Account
+     *
+     * @param salt Salt used for hashing.
+     * @return Returns whether hashing the password was successfull or not.
+     */
+    public boolean hashPassword(byte[] salt) {
+        return (passwordHash = hashPassword(password, salt)) != null;
     }
 
     /* #############################################################################################
@@ -56,19 +71,19 @@ public class Account {
      * ###########################################################################################*/
 
     /**
-     * hashes a password with a function and given salt
+     * Hashes a password with a function and given salt
      *
      * @param password password in plain text
      * @return hashed password
      */
     private String hashPassword(String password, byte[] salt) {
-
         String generatedPassword = password;
+
         try {
             // Create MessageDigest instance for MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
             //Add password bytes to digest
-           // md.update(salt);
+            md.update(salt);
             //Get the hash's bytes
             byte[] bytes = md.digest(generatedPassword.getBytes());
             //This bytes[] has bytes in decimal format;
@@ -81,7 +96,7 @@ public class Account {
             generatedPassword = sb.toString();
         }
         catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            return null;
         }
         return generatedPassword;
     }
@@ -101,10 +116,6 @@ public class Account {
 
     public String getPasswordHash() {
         return passwordHash;
-    }
-
-    public void setPasswordHash(String password, byte[] salt) {
-        this.passwordHash = hashPassword(password, salt);
     }
 
     public String getMail() {
