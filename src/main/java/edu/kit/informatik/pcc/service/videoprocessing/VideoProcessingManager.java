@@ -130,7 +130,7 @@ public class VideoProcessingManager {
         } catch (IllegalArgumentException e) {
             Logger.getGlobal().warning("Setting up for editing video "
                     + videoName + " of user " + account.getId() + " failed. Processing aborted");
-            response.resume("Setting up for editing video " + videoName + " failed. Processing aborted");
+            response.resume("Setting up for editing video failed. Processing aborted");
             return;
         }
 

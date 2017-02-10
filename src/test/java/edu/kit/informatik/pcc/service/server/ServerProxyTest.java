@@ -160,9 +160,9 @@ public class ServerProxyTest {
     }
 
     @org.junit.Test
-    public void videosByAccountTest() {
+    public void videosTest() {
         form.param(ACCOUNT, accountJson);
-        WebTarget webTarget = client.target(PATH).path("getVideosByAccount");
+        WebTarget webTarget = client.target(PATH).path("getVideos");
         Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
         JSONArray jsonArray = new JSONArray(response.readEntity(String.class));
         JSONObject jsonObject = jsonArray.getJSONObject(0);

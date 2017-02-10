@@ -1,6 +1,7 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain.decryption;
 
 import edu.kit.informatik.pcc.service.data.LocationConfig;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,5 +41,13 @@ public class DecryptTest {
     @Test
     public void validTest() {
         Assert.assertTrue(decryptor.decrypt(encVid, encKey, encMeta, decVid, decMeta));
+    }
+
+    @After
+    public void cleanUp() {
+        if (decVid.exists())
+            decVid.delete();
+        if (decMeta.exists())
+            decMeta.delete();
     }
 }

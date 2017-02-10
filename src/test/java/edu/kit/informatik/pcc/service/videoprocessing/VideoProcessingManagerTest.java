@@ -73,13 +73,6 @@ public class VideoProcessingManagerTest {
     }
 
     @Test
-    public void addInvalidInputTest() throws InterruptedException {
-        lock = new CountDownLatch(1);
-
-        manager.addTask(vidInput, metaInput, keyInput, account, videoName, response, VideoProcessingChain.Chain.EMPTY);
-    }
-
-    @Test
     public void addValidTaskTest() throws InterruptedException {
         //test setup
         lock = new CountDownLatch(1);
@@ -91,7 +84,7 @@ public class VideoProcessingManagerTest {
 
         // check result
         lock.await(2000, TimeUnit.MILLISECONDS);
-        Assert.assertEquals(responseString, "Finished editing video " + videoName);
+        Assert.assertEquals(responseString, "Finished editing video");
     }
 
     @Test
