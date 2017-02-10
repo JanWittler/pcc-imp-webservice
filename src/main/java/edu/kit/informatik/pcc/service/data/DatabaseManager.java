@@ -516,6 +516,28 @@ public class DatabaseManager {
         return meta;
     }
 
+    public String getSalt() {
+        //connect to database
+        if (!connectDatabase()) return null;
+        String salt = null;
+        try {
+            Statement stmt = this.c.createStatement();
+
+            ResultSet rs = stmt.executeQuery("select \"password_salt\" from \"user\" as usr where usr.id=" +
+                    account.getId() + ";");
+            // insert result in ArrayList
+            if (rs.next()) {
+                salt = rs.getString("password_salt");
+            }
+            rs.close();
+            stmt.close();
+            this.c.close();
+        } catch (NullPointerException | SQLException e) {
+            Logger.getGlobal().severe("Retrieving metadata from database failed");
+        }
+        return salt;
+    }
+
     /**
      * check, if a mail address is already saved in database table <b>user</b>
      *
