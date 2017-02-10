@@ -343,7 +343,9 @@ public class DatabaseManager {
         try {
             Statement stmt = this.c.createStatement();
             // sql command
-            String sql = "insert into \"user\" (mail,password,uuid,verified,password_hash) values ('" + account.getMail() + "','" +
+            String sql = "insert into \"user\" (mail,password,uuid,verified,password_salt) values ('" + account.getMail
+                    () +
+                    "','" +
                     account.getPasswordHash() + "','" + uuid + "', false, '" + salt + "' );";
             stmt.executeUpdate(sql);
             stmt.close();
