@@ -24,18 +24,18 @@ CREATE UNIQUE INDEX "video_id_uindex" ON public.video (id);
 CREATE UNIQUE INDEX "video_meta_name_uindex" ON public.video (meta_name);
 
 
-insert into "user" (mail,password,uuid) values ('test@example.de','passwordTest',321675, '123asd');
-insert into "user" (mail,password,uuid) values ('test2@example.de','passwordTest',321668, '123asd');
-insert into "user" (mail,password,uuid) values ('test3@example.de','passwordTest',321698, '123asd');
-insert into "user" (mail,password,uuid) values ('test4@example.de','passwordTest',321669, '123asd');
-insert into "user" (mail,password,uuid) values ('test5@example.de','passwordTest',321656, '123asd');
-insert into "user" (mail,password,uuid) values ('test6@example.de','passwordTest',321655, '123asd');
-insert into "user" (mail,password,uuid) values ('test7@example.de','passwordTest',321658, '123asd');
-insert into "user" (mail,password,uuid) values ('test8@example.de','passwordTest',321662, '123asd');
-insert into "user" (mail,password,uuid) values ('test9@example.de','passwordTest',321657, '123asd');
-insert into "user" (mail,password,uuid) values ('test10@example.de','passwordTest',321706, '123asd');
-insert into "user" (mail,password,uuid) values ('test11@example.de','passwordTest',321707, '123asd');
-insert into "user" (mail,password,uuid) values ('test12@example.de','passwordTest',321684, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test@example.de','passwordTest',321675, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test2@example.de','passwordTest',321668, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test3@example.de','passwordTest',321698, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test4@example.de','passwordTest',321669, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test5@example.de','passwordTest',321656, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test6@example.de','passwordTest',321655, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test7@example.de','passwordTest',321658, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test8@example.de','passwordTest',321662, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test9@example.de','passwordTest',321657, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test10@example.de','passwordTest',321706, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test11@example.de','passwordTest',321707, '123asd');
+insert into "user" (mail,password,uuid,password_salt) values ('test12@example.de','passwordTest',321684, '123asd');
 
 insert into "video" (user_id,video_name,meta_name) values (3,'testvideoName234235','meta_name_test1');
 insert into "video" (user_id,video_name,meta_name) values (3,'testvideoName234241','meta_name_test2');
