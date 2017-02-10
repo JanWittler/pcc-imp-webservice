@@ -95,6 +95,10 @@ public class AccountManager {
      */
     public String registerAccount(String uuid, String password) {
         byte[] salt = createSalt();
+
+        if (salt == null)
+            return FAILURE;
+
         account.hashPassword(salt);
         String saltString = Base64.getEncoder().encodeToString(salt);
         return databaseManager.register(uuid, saltString) ? SUCCESS : FAILURE;
@@ -114,7 +118,6 @@ public class AccountManager {
                 String status = videoManager.videoDelete(videoInfo.getVideoId());
                 if (status.equals(FAILURE)) {
                     Logger.getGlobal().warning("An error occurred deleting videos!");
-                    //TODO: handle failure of videoDelete?
                 }
             }
         }
@@ -149,6 +152,14 @@ public class AccountManager {
         return databaseManager.isVerified();
     }
 
+    public byte[] getSalt() {
+        String saltString = databaseManager.getSalt();
+        if (saltString == null) {
+            return null;
+        }
+        return Base64.getDecoder().decode(saltString);
+    }
+
     /* #############################################################################################
      *                                  helper methods
      * ###########################################################################################*/
@@ -173,24 +184,13 @@ public class AccountManager {
         return databaseManager.setPassword(passwordHash) ? SUCCESS : FAILURE;
     }
 
-    //TODO: JAVADOC
-    public byte[] getSalt() {
-        String saltString = databaseManager.getSalt();
-        if (saltString == null) {
-            return null;
-        }
-        return Base64.getDecoder().decode(saltString);
-    }
-
-    private byte[] createSalt () {
+    private byte[] createSalt() {
         //Always use a SecureRandom generator
-        SecureRandom sr = null;
+        SecureRandom sr;
         try {
             sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            return null;
         }
         //Create array for salt
         byte[] salt = new byte[16];

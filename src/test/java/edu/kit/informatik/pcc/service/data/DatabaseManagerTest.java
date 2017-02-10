@@ -94,7 +94,6 @@ public class DatabaseManagerTest {
         VideoInfo vI = dm.getVideoInfo(dm.getVideoIdByName(videoName));
         Assert.assertTrue(vI.getName().equals(videoName));
         // getMetaInfo
-        //TODO: if metadata is working, outcomment following two lines
         Assert.assertTrue((dm.getMetaName(dm.getVideoIdByName(videoName))).equals(metaName));
         // delete Video
         dm.deleteVideoAndMeta(dm.getVideoIdByName(videoName));

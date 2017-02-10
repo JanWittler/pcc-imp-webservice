@@ -60,7 +60,7 @@ public class Account {
      * Hashes the password stored when creating the Account
      *
      * @param salt Salt used for hashing.
-     * @return Returns whether hashing the password was successfull or not.
+     * @return Returns whether hashing the password was successful or not.
      */
     public boolean hashPassword(byte[] salt) {
         return (passwordHash = hashPassword(password, salt)) != null;
