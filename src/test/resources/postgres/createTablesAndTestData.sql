@@ -5,7 +5,7 @@ CREATE TABLE public.user
     password TEXT NOT NULL,
     uuid TEXT NOT NULL,
     verified BOOLEAN DEFAULT FALSE  NOT NULL,
-    password_salt TEXT NOT NULL
+    password_salt BYTEA NOT NULL
 );
 CREATE UNIQUE INDEX "user_id_uindex" ON public.user (id);
 CREATE UNIQUE INDEX "user_mail_uindex" ON public.user (mail);

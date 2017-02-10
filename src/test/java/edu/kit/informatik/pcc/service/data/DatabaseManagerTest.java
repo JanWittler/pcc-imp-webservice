@@ -4,6 +4,8 @@ import org.json.JSONObject;
 import org.junit.*;
 
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.UUID;
 
 import static edu.kit.informatik.pcc.service.server.ServerProxyTest.setFinalStatic;
 
@@ -16,6 +18,7 @@ public class DatabaseManagerTest {
     private Account account;
     private DatabaseManager dm;
     private boolean registered = false;
+    private String bytes;
 
 
     @BeforeClass
@@ -42,6 +45,9 @@ public class DatabaseManagerTest {
         jsonObject.put("password", PASSWORD);
         json = jsonObject.toString();
         account = new Account(json);
+        byte[] bytesB = new byte[] { (byte)0xe0, 0x4f, (byte)0xd0, 0x20, (byte)0xea, 0x3a, 0x69, 0x10, (byte)0xa2, (byte)0xd8,
+                0x08, 0x00, 0x2b, 0x30, 0x30, (byte)0x9d };
+        bytes = Base64.getEncoder().encodeToString(bytesB);
 
         dm = new DatabaseManager(account);
         try {
@@ -53,14 +59,14 @@ public class DatabaseManagerTest {
 
     @Test
     public void registerTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         Assert.assertTrue(registered);
     }
 
     @Test
     public void getAccountIdTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         Assert.assertEquals("account.getId() is not equals dm.getAccountId()", account.getId(), dm.getAccountId());
     }
@@ -70,7 +76,7 @@ public class DatabaseManagerTest {
      */
     @Test
     public void isVerifiedTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         Assert.assertTrue(!dm.isVerified());
         dm.verifyAccount(OWN_UUID);
@@ -79,7 +85,7 @@ public class DatabaseManagerTest {
 
     @Test
     public void saveProcessedVideoAndMetaTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         String videoName = "videoTest123";
         String metaName = "metaTest123";
@@ -97,7 +103,7 @@ public class DatabaseManagerTest {
 
     @Test
     public void getVideoInfoTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         String videoName = "videoTest123321";
         String metaName = "videoTest123321";
@@ -113,7 +119,7 @@ public class DatabaseManagerTest {
 
     @Test
     public void getVideoIdByNameTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         dm.saveProcessedVideoAndMeta("getVideoIdByNameTestVIDEO", "getVideoIdByNameTestMETA");
         Assert.assertTrue(dm.deleteVideoAndMeta(dm.getVideoIdByName("getVideoIdByNameTestVIDEO")));
@@ -121,7 +127,7 @@ public class DatabaseManagerTest {
 
     @Test
     public void getVideoInfoListTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         String videoName1 = "videoGetVideoInfoListTest";
         String videoName2 = "video2GetVideoInfoListTest";
@@ -153,7 +159,7 @@ public class DatabaseManagerTest {
 
     @Test
     public void deleteVideoAndMetaTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         boolean create  = dm.saveProcessedVideoAndMeta("test","test");
         boolean delete = dm.deleteVideoAndMeta(dm.getVideoIdByName("test"));
@@ -162,7 +168,7 @@ public class DatabaseManagerTest {
 
     @Test
     public void getMetaNameByVideoId() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         String videoName = "videoGetMetaNameByVideoId";
         String metaName = "metaGetMetaNameByVideoId";
@@ -191,17 +197,24 @@ public class DatabaseManagerTest {
 
     @Test
     public void authenticateTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         Assert.assertTrue(dm.authenticate());
     }
 
     @Test
     public void isMailExistingTest() {
-        registered = dm.register(OWN_UUID);
+        registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         Assert.assertTrue(dm.isMailExisting(account.getMail()));
         Assert.assertFalse(dm.isMailExisting("mailWhichIsNotExisting@notExisting.NO"));
+    }
+
+    @Test
+    public void getSaltTest() {
+        registered = dm.register(OWN_UUID, bytes);
+        account.setId(dm.getAccountId());
+        Assert.assertEquals(dm.getSalt(), bytes);
     }
 
     @After
