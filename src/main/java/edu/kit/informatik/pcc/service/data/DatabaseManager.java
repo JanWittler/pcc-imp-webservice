@@ -337,14 +337,14 @@ public class DatabaseManager {
      * @param uuid is unique and is for verification process
      * @return Returns whether registering was successful or not.
      */
-    public boolean register(String uuid) {
+    public boolean register(String uuid, byte[] salt) {
         if (!connectDatabase()) return false;
         // send sql command and catch possible exeptions
         try {
             Statement stmt = this.c.createStatement();
             // sql command
-            String sql = "insert into \"user\" (mail,password,uuid,verified) values ('" + account.getMail() + "','" +
-                    account.getPasswordHash() + "','" + uuid + "', false);";
+            String sql = "insert into \"user\" (mail,password,uuid,verified,password_hash) values ('" + account.getMail() + "','" +
+                    account.getPasswordHash() + "','" + uuid + "', false, '" + salt + "' );";
             stmt.executeUpdate(sql);
             stmt.close();
             this.c.close();
@@ -482,10 +482,10 @@ public class DatabaseManager {
         return null;
     }
 
-    public String getSalt() {
+    public byte[] getSalt() {
         //connect to database
         if (!connectDatabase()) return null;
-        String salt = null;
+        byte[] salt = null;
         try {
             Statement stmt = this.c.createStatement();
 
@@ -493,7 +493,7 @@ public class DatabaseManager {
                     account.getId() + ";");
             // insert result in ArrayList
             if (rs.next()) {
-                salt = rs.getString("password_salt");
+                salt = rs.getBytes("password_salt");
             }
             rs.close();
             stmt.close();
