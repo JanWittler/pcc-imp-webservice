@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.logging.Logger;
 
 /**
@@ -95,7 +96,8 @@ public class AccountManager {
         //TODO: CREATE SALT AND PASSWORDHASH
         byte[] salt = createSalt();
         account.setPasswordHash(password, salt);
-        return databaseManager.register(uuid, salt) ? SUCCESS : FAILURE;
+        String saltString = Base64.getEncoder().encodeToString(salt);
+        return databaseManager.register(uuid, saltString) ? SUCCESS : FAILURE;
     }
 
     /**
@@ -173,11 +175,11 @@ public class AccountManager {
 
     //TODO: JAVADOC
     public byte[] getSalt() {
-        byte[] salt = databaseManager.getSalt();
-        if (salt == null) {
+        String saltString = databaseManager.getSalt();
+        if (saltString == null) {
             return null;
         }
-        return salt;
+        return Base64.getDecoder().decode(saltString);
     }
 
     private byte[] createSalt () {
