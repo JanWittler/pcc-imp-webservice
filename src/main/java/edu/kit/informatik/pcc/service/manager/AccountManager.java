@@ -177,8 +177,6 @@ public class AccountManager {
         return databaseManager.setPassword(passwordHash) ? SUCCESS : FAILURE;
     }
 
-    private byte[] createSalt() {
-
     /**
      * This method fetches the salt for the given account from the database,
      * which is represented as encoded string. this string will be decoded an
@@ -204,9 +202,8 @@ public class AccountManager {
         try {
             sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            return null;
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             Logger.getGlobal().warning("An error occurred getting a secure random instance!");
+            return null;
         }
         //Create array for salt
         byte[] salt = new byte[16];
