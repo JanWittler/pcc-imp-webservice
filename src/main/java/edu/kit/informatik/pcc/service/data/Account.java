@@ -26,6 +26,7 @@ public class Account {
      * E-mail address of the account
      */
     private String mail;
+
     /**
      * Password of the account.
      */
@@ -47,7 +48,6 @@ public class Account {
     public Account(String json) {
         JSONObject account = new JSONObject(json);
         this.mail = account.getString(JSON_KEY_MAIL);
-        this.passwordHash = hashPassword(account.getString(JSON_KEY_PASSWORD));
     }
 
     /* #############################################################################################
@@ -55,27 +55,13 @@ public class Account {
      * ###########################################################################################*/
 
     /**
+
      * hashes a password with a function
      *
      * @param password password in plain text
      * @return hashed password
      */
-    private String hashPassword(String password) {
-        //TODO: hashPassword
-        //Always use a SecureRandom generator
-        SecureRandom sr = null;
-        try {
-            sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        }
-        //Create array for salt
-        byte[] salt = new byte[16];
-        //Get a random salt
-        sr.nextBytes(salt);
-
+    private String hashPassword(String password, String salt) {
         String generatedPassword = password;
 //        try {
 //            // Create MessageDigest instance for MD5
@@ -115,6 +101,10 @@ public class Account {
 
     public String getPasswordHash() {
         return passwordHash;
+    }
+
+    public void setPasswordHash(String password, String salt) {
+        this.passwordHash = hashPassword(password, salt);
     }
 
     public String getMail() {
