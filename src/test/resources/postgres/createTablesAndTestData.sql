@@ -4,7 +4,8 @@ CREATE TABLE public.user
     mail TEXT NOT NULL,
     password TEXT NOT NULL,
     uuid TEXT NOT NULL,
-    verified BOOLEAN DEFAULT FALSE  NOT NULL
+    verified BOOLEAN DEFAULT FALSE  NOT NULL,
+    password_salt TEXT NOT NULL
 );
 CREATE UNIQUE INDEX "user_id_uindex" ON public.user (id);
 CREATE UNIQUE INDEX "user_mail_uindex" ON public.user (mail);
@@ -23,18 +24,18 @@ CREATE UNIQUE INDEX "video_id_uindex" ON public.video (id);
 CREATE UNIQUE INDEX "video_meta_name_uindex" ON public.video (meta_name);
 
 
-insert into "user" (mail,password,uuid) values ('test@example.de','passwordTest',321675);
-insert into "user" (mail,password,uuid) values ('test2@example.de','passwordTest',321668);
-insert into "user" (mail,password,uuid) values ('test3@example.de','passwordTest',321698);
-insert into "user" (mail,password,uuid) values ('test4@example.de','passwordTest',321669);
-insert into "user" (mail,password,uuid) values ('test5@example.de','passwordTest',321656);
-insert into "user" (mail,password,uuid) values ('test6@example.de','passwordTest',321655);
-insert into "user" (mail,password,uuid) values ('test7@example.de','passwordTest',321658);
-insert into "user" (mail,password,uuid) values ('test8@example.de','passwordTest',321662);
-insert into "user" (mail,password,uuid) values ('test9@example.de','passwordTest',321657);
-insert into "user" (mail,password,uuid) values ('test10@example.de','passwordTest',321706);
-insert into "user" (mail,password,uuid) values ('test11@example.de','passwordTest',321707);
-insert into "user" (mail,password,uuid) values ('test12@example.de','passwordTest',321684);
+insert into "user" (mail,password,uuid) values ('test@example.de','passwordTest',321675, '123asd');
+insert into "user" (mail,password,uuid) values ('test2@example.de','passwordTest',321668, '123asd');
+insert into "user" (mail,password,uuid) values ('test3@example.de','passwordTest',321698, '123asd');
+insert into "user" (mail,password,uuid) values ('test4@example.de','passwordTest',321669, '123asd');
+insert into "user" (mail,password,uuid) values ('test5@example.de','passwordTest',321656, '123asd');
+insert into "user" (mail,password,uuid) values ('test6@example.de','passwordTest',321655, '123asd');
+insert into "user" (mail,password,uuid) values ('test7@example.de','passwordTest',321658, '123asd');
+insert into "user" (mail,password,uuid) values ('test8@example.de','passwordTest',321662, '123asd');
+insert into "user" (mail,password,uuid) values ('test9@example.de','passwordTest',321657, '123asd');
+insert into "user" (mail,password,uuid) values ('test10@example.de','passwordTest',321706, '123asd');
+insert into "user" (mail,password,uuid) values ('test11@example.de','passwordTest',321707, '123asd');
+insert into "user" (mail,password,uuid) values ('test12@example.de','passwordTest',321684, '123asd');
 
 insert into "video" (user_id,video_name,meta_name) values (3,'testvideoName234235','meta_name_test1');
 insert into "video" (user_id,video_name,meta_name) values (3,'testvideoName234241','meta_name_test2');
