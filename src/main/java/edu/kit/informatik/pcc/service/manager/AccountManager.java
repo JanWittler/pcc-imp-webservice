@@ -93,7 +93,7 @@ public class AccountManager {
      * @param uuid Unique id used to verify registration.
      * @return Returns status of the account creation.
      */
-    public String registerAccount(String uuid, String password) {
+    public String registerAccount(String uuid) {
         byte[] salt = createSalt();
 
         if (salt == null)
@@ -118,6 +118,7 @@ public class AccountManager {
                 String status = videoManager.videoDelete(videoInfo.getVideoId());
                 if (status.equals(FAILURE)) {
                     Logger.getGlobal().warning("An error occurred deleting videos!");
+                    return FAILURE;
                 }
             }
         }
@@ -152,14 +153,6 @@ public class AccountManager {
         return databaseManager.isVerified();
     }
 
-    public byte[] getSalt() {
-        String saltString = databaseManager.getSalt();
-        if (saltString == null) {
-            return null;
-        }
-        return Base64.getDecoder().decode(saltString);
-    }
-
     /* #############################################################################################
      *                                  helper methods
      * ###########################################################################################*/
@@ -185,12 +178,35 @@ public class AccountManager {
     }
 
     private byte[] createSalt() {
+
+    /**
+     * This method fetches the salt for the given account from the database,
+     * which is represented as encoded string. this string will be decoded an
+     *
+     * @return salt from database returned as byte[]
+     */
+    public byte[] getSalt() {
+        String saltString = databaseManager.getSalt();
+        if (saltString == null) {
+            return null;
+        }
+        try {
+            return Base64.getDecoder().decode(saltString);
+        } catch (IllegalArgumentException e) {
+            Logger.getGlobal().warning("byte[] should at least two bytes for Base64!");
+            return null;
+        }
+    }
+
+    private byte[] createSalt () {
         //Always use a SecureRandom generator
         SecureRandom sr;
         try {
             sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             return null;
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            Logger.getGlobal().warning("An error occurred getting a secure random instance!");
         }
         //Create array for salt
         byte[] salt = new byte[16];

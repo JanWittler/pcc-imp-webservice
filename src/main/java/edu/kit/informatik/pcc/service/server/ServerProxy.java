@@ -235,10 +235,8 @@ public class ServerProxy {
             return FAILURE;
         }
         String accountStatus = setUpForRequest(accountData);
-        JSONObject accountJson = new JSONObject(accountData);
-        String password = accountJson.getString("password");
         return (accountStatus.equals(NOT_EXISTING)) ?
-                accountManager.registerAccount(uuid, password) : ACCOUNT_EXISTS;
+                accountManager.registerAccount(uuid) : ACCOUNT_EXISTS;
     }
 
     /**
