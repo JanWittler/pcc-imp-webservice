@@ -485,6 +485,12 @@ public class DatabaseManager {
         return null;
     }
 
+    /**
+     * return the salt of the hashed password. uses the account.getId() of the account object.
+     * will be converted to String when saved to database
+     *
+     * @return the salt of the hashed password, which is normally a byte[] array.
+     */
     public String getSalt() {
         //connect to database
         if (!connectDatabase()) return null;
