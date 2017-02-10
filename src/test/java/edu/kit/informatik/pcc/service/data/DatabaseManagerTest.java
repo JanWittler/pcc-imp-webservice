@@ -19,6 +19,7 @@ public class DatabaseManagerTest {
     private DatabaseManager dm;
     private boolean registered = false;
     private String bytes;
+    String PASSWORD;
 
 
     @BeforeClass
@@ -34,7 +35,7 @@ public class DatabaseManagerTest {
     public void setUpBefore() {
         String json = "";
         String MAIL = "\"testEMAIL@123schonVorbei.com\"";
-        String PASSWORD = "\"testPasswordForUni\"";
+        PASSWORD = "\"testPasswordForUni\"";
         String DATE = "\"123\"";
         String TRIGGER_TYPE = "\"23\"";
         String G_FORCE_X = "30.33333";
@@ -199,6 +200,8 @@ public class DatabaseManagerTest {
     public void authenticateTest() {
         registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
+        account.setPasswordHash(PASSWORD, Base64.getDecoder().decode(dm.getSalt()));
+        dm.setPassword(account.getPasswordHash());
         Assert.assertTrue(dm.authenticate());
     }
 
