@@ -116,6 +116,7 @@ public class EditingContext {
         return anonymizedVid;
     }
 
+    //TODO: delete?
     public File getVidWithMeta() {
         return vidWithMeta;
     }

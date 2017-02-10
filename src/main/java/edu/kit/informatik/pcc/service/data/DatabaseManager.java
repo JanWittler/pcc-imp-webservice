@@ -379,6 +379,7 @@ public class DatabaseManager {
             if (rs != null && rs.next()) {
                 uuidVerified = rs.getBoolean("verified");
             }
+            assert rs != null;
             rs.close();
             stmt.close();
         } catch (NullPointerException | SQLException e) {
@@ -519,7 +520,8 @@ public class DatabaseManager {
      * @param mail is the mail, which will be checked
      * @return if mail exists in database
      */
-    protected boolean isMailExisting(String mail) {
+    @Deprecated //TODO: IS TESTING METHOD: getAccountId does the same thing
+    public boolean isMailExisting(String mail) {
         //connect to database
         if (!connectDatabase()) return false;
         int count_mail = 0;
@@ -535,7 +537,7 @@ public class DatabaseManager {
             stmt.close();
             this.c.close();
         } catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().warning("Checking for mail existance in databse failed");
+            Logger.getGlobal().warning("Checking for mail existence in database failed");
         }
         return count_mail != 0;
     }

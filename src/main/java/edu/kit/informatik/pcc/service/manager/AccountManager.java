@@ -93,7 +93,7 @@ public class AccountManager {
      * @param uuid Unique id used to verify registration.
      * @return Returns status of the account creation.
      */
-    public String registerAccount(String uuid, String password) {
+    public String registerAccount(String uuid) {
         byte[] salt = createSalt();
         account.hashPassword(salt);
         String saltString = Base64.getEncoder().encodeToString(salt);
@@ -114,7 +114,7 @@ public class AccountManager {
                 String status = videoManager.videoDelete(videoInfo.getVideoId());
                 if (status.equals(FAILURE)) {
                     Logger.getGlobal().warning("An error occurred deleting videos!");
-                    //TODO: handle failure of videoDelete?
+                    return FAILURE;
                 }
             }
         }
@@ -173,13 +173,24 @@ public class AccountManager {
         return databaseManager.setPassword(passwordHash) ? SUCCESS : FAILURE;
     }
 
-    //TODO: JAVADOC
+
+    /**
+     * This method fetches the salt for the given account from the database,
+     * which is represented as encoded string. this string will be decoded an
+     *
+     * @return salt from database returned as byte[]
+     */
     public byte[] getSalt() {
         String saltString = databaseManager.getSalt();
         if (saltString == null) {
             return null;
         }
-        return Base64.getDecoder().decode(saltString);
+        try {
+            return Base64.getDecoder().decode(saltString);
+        } catch (IllegalArgumentException e) {
+            Logger.getGlobal().warning("byte[] should at least two bytes for Base64!");
+            return null;
+        }
     }
 
     private byte[] createSalt () {
@@ -187,14 +198,13 @@ public class AccountManager {
         SecureRandom sr = null;
         try {
             sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            Logger.getGlobal().warning("An error occurred getting a secure random instance!");
         }
         //Create array for salt
         byte[] salt = new byte[16];
         //Get a random salt
+        assert sr != null;
         sr.nextBytes(salt);
         return salt;
     }

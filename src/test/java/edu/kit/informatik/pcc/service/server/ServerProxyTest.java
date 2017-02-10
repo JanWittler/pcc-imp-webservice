@@ -5,6 +5,7 @@ import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
+import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -48,7 +49,6 @@ public class ServerProxyTest {
 
     private String accountJson;
     private String tempAccountJson;
-    private String tempAccountPassword = "ichbindershitfuckyooo";
     private String tempUUID = "3456qwe-qw234-2342f";
     private String anonym_dir = LocationConfig.ANONYM_VID_DIR;
     private String meta_dir = LocationConfig.META_DIR;
@@ -84,15 +84,14 @@ public class ServerProxyTest {
             e.printStackTrace();
         }
         //create two json objects for testing
-        String accountPassword = "yochilldeinlife";
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("mail", "fabiistkrass@imperium.baba");
-        jsonObject.put("password", accountPassword);
+        jsonObject.put("password", "yochilldeinlife");
         accountJson = jsonObject.toString();
 
         JSONObject jsonObject2 = new JSONObject();
         jsonObject2.put("mail", "fabiistababa@baba.de");
-        jsonObject2.put("password", tempAccountPassword);
+        jsonObject2.put("password", "ichbindershitfuckyooo");
         tempAccountJson = jsonObject2.toString();
 
         //setup account and databaseManager for various tests
@@ -104,7 +103,7 @@ public class ServerProxyTest {
         //register/verify account and put some test videos/metadata into database
 
         String uuid = "456-sgdfgd3t5g-345fs";
-        accountManager.registerAccount(uuid, accountPassword);
+        accountManager.registerAccount(uuid);
         account.setId(databaseManager.getAccountId());
         databaseManager.verifyAccount(uuid);
         databaseManager.saveProcessedVideoAndMeta("pod", "testMeta");
@@ -138,7 +137,7 @@ public class ServerProxyTest {
         Account tempAccount = new Account(tempAccountJson);
         DatabaseManager tempDatabaseManager = new DatabaseManager(tempAccount);
         AccountManager tempAccountManager = new AccountManager(tempAccount);
-        tempAccountManager.registerAccount(tempUUID, tempAccountPassword);
+        tempAccountManager.registerAccount(tempUUID);
         tempAccount.setId(tempDatabaseManager.getAccountId());
 
         //client request
@@ -215,7 +214,7 @@ public class ServerProxyTest {
         Account tempAccount = new Account(tempAccountJson);
         DatabaseManager tempDatabaseManager = new DatabaseManager(tempAccount);
         AccountManager tempAccountManager = new AccountManager(tempAccount);
-        tempAccountManager.registerAccount(tempUUID, tempAccountPassword);
+        tempAccountManager.registerAccount(tempUUID);
         tempAccount.setId(tempDatabaseManager.getAccountId());
         tempDatabaseManager.verifyAccount(tempUUID);
         tempDatabaseManager.saveProcessedVideoAndMeta("deleteVideo1", "deleteMeta1");
@@ -315,7 +314,6 @@ public class ServerProxyTest {
         multiPart.bodyPart(key);
         multiPart.bodyPart(data);
         Future<Response> futureResponse = webTarget.request().async().post(Entity.entity(multiPart, multiPart.getMediaType()), Response.class);
-        //TODO: also check if first response is "SUCCESS" and change it in app
         try {
             Response response = futureResponse.get();
             Assert.assertTrue(response.readEntity(String.class).equals("Finished editing video"));
@@ -343,28 +341,5 @@ public class ServerProxyTest {
 
         //stop server
         Main.stopServer();
-    }
-
-
-
-    @Test
-    public void test() {
-        String videoId = Integer.toString(databaseManager.getVideoIdByName("pod"));
-        form.param(ACCOUNT, accountJson);
-        form.param("videoId", videoId);
-        WebTarget webTarget = client.target(PATH).path("videoDownload");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
-        InputStream inputStream = response.readEntity(InputStream.class);
-        if (response.getStatus() == 200) {
-            File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest" + VideoInfo.FILE_EXTENTION);
-            try {
-                Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                boolean status = downloadFile.delete();
-                Assert.assertTrue(status);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        Assert.assertTrue(response.getStatus() == 200);
     }
 }

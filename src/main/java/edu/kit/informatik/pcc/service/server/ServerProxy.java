@@ -150,8 +150,6 @@ public class ServerProxy {
         return WRONG_ACCOUNT;
     }
 
-    //TODO: NOT SURE IF YOU WANT TO DELETE NOT VERIFIED ACCOUNT BY CLIENT
-
     /**
      * This method takes videoDelete requests from client and returns
      * a string with a success or failure message back to the client.
@@ -237,10 +235,8 @@ public class ServerProxy {
             return FAILURE;
         }
         String accountStatus = setUpForRequest(accountData);
-        JSONObject accountJson = new JSONObject(accountData);
-        String password = accountJson.getString("password");
         return (accountStatus.equals(NOT_EXISTING)) ?
-                accountManager.registerAccount(uuid, password) : ACCOUNT_EXISTS;
+                accountManager.registerAccount(uuid) : ACCOUNT_EXISTS;
     }
 
     /**
@@ -282,7 +278,6 @@ public class ServerProxy {
         return (accountStatus.equals(SUCCESS) || accountStatus.equals(NOT_VERIFIED)) ?
                 accountManager.deleteAccount(videoManager) : WRONG_ACCOUNT;
     }
-    //TODO:Check JAVADDOC
     /**
      * This method takes a deleteAccount request from client and returns
      * a string with a success or failure message back to the client.
@@ -319,7 +314,6 @@ public class ServerProxy {
         videoManager = new VideoManager(account);
         accountManager = new AccountManager(account);
 
-        //TODO: do things with "?"
         //authentication process
         int accountId = accountManager.getAccountId();
         if (accountId < 1)
