@@ -3,6 +3,7 @@ package edu.kit.informatik.pcc.service.manager;
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
+import org.json.JSONObject;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -63,6 +64,9 @@ public class AccountManager {
      */
     public String changeAccount(String newAccountData) {
         Account newAccount = new Account(newAccountData);
+        JSONObject accountJson = new JSONObject(newAccountData);
+        String password = accountJson.getString("password");
+        newAccount.setPasswordHash(password, getSalt());
         String status = "NOTHING CHANGED";
         if (!newAccount.getMail().equals(account.getMail())) {
             status = setMail(newAccount.getMail());
