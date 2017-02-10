@@ -32,23 +32,22 @@ public class ServerProxy {
     * ###########################################################################################*/
 
     //status strings
-    private static final String WRONG_ACCOUNT = "WRONG ACCOUNT";
-    private static final String SUCCESS = "SUCCESS";
-    private static final String FAILURE = "FAILURE";
-    private static final String NOT_EXISTING = "NOT EXISTING";
-    private static final String NOT_VERIFIED = "NOT VERIFIED";
-    private static final String WRONG_PASSWORD = "WRONG PASSWORD";
-    private static final String ALREADY_VERIFIED = "ALREADY VERIFIED";
-    private static final String ACCOUNT_EXISTS = "ACCOUNT EXISTS";
+    private final String WRONG_ACCOUNT    = "WRONG ACCOUNT";
+    private final String SUCCESS          = "SUCCESS";
+    private final String FAILURE          = "FAILURE";
+    private final String NOT_EXISTING     = "NOT EXISTING";
+    private final String NOT_VERIFIED     = "NOT VERIFIED";
+    private final String WRONG_PASSWORD   = "WRONG PASSWORD";
+    private final String ACCOUNT_EXISTS   = "ACCOUNT EXISTS";
 
     //param strings
-    private static final String VIDEO_ID = "videoId";
-    private static final String ACCOUNT = "account";
-    private static final String NEW_ACCOUNT = "newAccount";
-    private static final String VIDEO = "video";
-    private static final String METADATA = "metadata";
-    private static final String KEY = "key";
-    private static final String UUID = "uuid";
+    private final String VIDEO_ID    = "videoId";
+    private final String ACCOUNT     = "account";
+    private final String NEW_ACCOUNT = "newAccount";
+    private final String VIDEO       = "video";
+    private final String METADATA    = "metadata";
+    private final String KEY         = "key";
+    private final String UUID        = "uuid";
 
     //manager instances
     private AccountManager accountManager;
@@ -72,8 +71,8 @@ public class ServerProxy {
      * @param accountData           string as json with account specifications (mail and password)
      * @param fileDetail            extracting the file details to get name of file
      * @param response              mark response as async response
-     * @return message in form of string is send back to the client whether uploading task has
-     * started successfully or corresponding failure message
+     * @return                      message in form of string is send back to the client whether uploading task has
+     *                              started successfully or corresponding failure message
      */
     @POST
     @Path("videoUpload")
@@ -101,7 +100,7 @@ public class ServerProxy {
      *
      * @param videoId     integer of specific video to download from client
      * @param accountData string as json with account specifications (mail and password)
-     * @return returning video as inputstream by success or corresponding failure message
+     * @return            returning video as inputstream by success or corresponding failure message
      */
     //TODO: Check if http numbers are correctly set for each case!
     @POST
@@ -132,8 +131,8 @@ public class ServerProxy {
      *
      * @param videoId     integer of videoId of associated metadata
      * @param accountData string as json with account specifications (mail and password)
-     * @return string as json with video specific information (name and id) by success
-     * or corresponding failure message
+     * @return            string as json with video specific information (name and id) by success
+     *                    or corresponding failure message
      */
     @POST
     @Path("videoInfo")
@@ -160,7 +159,7 @@ public class ServerProxy {
      *
      * @param videoId     integer of videoId to delete from service (files and corresponding database entry)
      * @param accountData string as json with account specifications (mail and password)
-     * @return message as string whether deletion was successfully or or corresponding failure message
+     * @return            message as string whether deletion was successfully or or corresponding failure message
      */
     @POST
     @Path("videoDelete")
@@ -183,7 +182,7 @@ public class ServerProxy {
      * If an error occurred an error string is send back to the client.
      *
      * @param accountData string as json with account specifications (mail and password)
-     * @return all videoInfo of user (by accountData) by success or variant failure message
+     * @return            all videoInfo of user (by accountData) by success or variant failure message
      */
     @POST
     @Path("getVideos")
@@ -205,7 +204,7 @@ public class ServerProxy {
      * returns the account status produced by setUpForRequest.
      *
      * @param accountData string as json with account specifications (mail and password)
-     * @return account status in service (specified by setUpForRequest)
+     * @return            account status in service (specified by setUpForRequest)
      */
     @POST
     @Path("authenticate")
@@ -226,7 +225,7 @@ public class ServerProxy {
      *
      * @param accountData string as json with account specifications (mail and password)
      * @param uuid        uuid of account to set in database to fulfill verification later
-     * @return message as string whether creation was successfully or not
+     * @return            message as string whether creation was successfully or not
      */
     @POST
     @Path("createAccount")
@@ -247,7 +246,7 @@ public class ServerProxy {
      *
      * @param newAccountData string as json with  new set account specifications (mail and password)
      * @param accountData    string as json with account specifications (mail and password)
-     * @return message as string whether changing was successfully or not
+     * @return               message as string whether changing was successfully or not
      */
     @POST
     @Path("changeAccount")
@@ -266,7 +265,7 @@ public class ServerProxy {
      * a string with a success or failure message back to the client.
      *
      * @param accountData string as json with account specifications (mail and password)
-     * @return message as string whether deletion was successfully or not
+     * @return            message as string whether deletion was successfully or not
      */
     @POST
     @Path("deleteAccount")
@@ -288,7 +287,7 @@ public class ServerProxy {
      * because account only needs to verify once.
      *
      * @param uuid        uuid from user to compare with corresponding uuid in database
-     * @return message as string whether verification was successfully or not (or already verified)
+     * @return            message as string whether verification was successfully or not (or already verified)
      */
     @GET
     @Path("verifyAccount")
@@ -309,7 +308,7 @@ public class ServerProxy {
      * with the database content and giving a account status back to the calling methods.
      *
      * @param accountData string as json with account specifications (mail and password)
-     * @return account specific status (3 different variants) as string
+     * @return            account specific status (3 different variants) as string
      */
     private String setUpForRequest(String accountData) {
         //setup account and managers
@@ -322,7 +321,13 @@ public class ServerProxy {
         int accountId = accountManager.getAccountId();
         if (accountId < 1)
             return NOT_EXISTING;
+
         account.setId(accountId);
+
+        byte[] salt = accountManager.getSalt();
+        if (salt == null)
+            return FAILURE;
+        account.setPasswordHash(accountData, salt);
 
         if (!accountManager.authenticate())
             return WRONG_PASSWORD;

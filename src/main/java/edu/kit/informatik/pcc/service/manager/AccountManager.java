@@ -4,6 +4,9 @@ import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -89,7 +92,10 @@ public class AccountManager {
      * @return Returns status of the account creation.
      */
     public String registerAccount(String uuid) {
-        return databaseManager.register(uuid) ? SUCCESS : FAILURE;
+        //TODO: CREATE SALT AND PASSWORDHASH
+        byte[] salt = createSalt();
+
+        return databaseManager.register(uuid, salt) ? SUCCESS : FAILURE;
     }
 
     /**
@@ -164,4 +170,31 @@ public class AccountManager {
     private String setPassword(String passwordHash) {
         return databaseManager.setPassword(passwordHash) ? SUCCESS : FAILURE;
     }
+
+    //TODO: JAVADOC
+    public byte[] getSalt() {
+        byte[] salt = databaseManager.getSalt();
+        if (salt == null) {
+            return null;
+        }
+        return salt;
+    }
+
+    private byte[] createSalt () {
+        //Always use a SecureRandom generator
+        SecureRandom sr = null;
+        try {
+            sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        //Create array for salt
+        byte[] salt = new byte[16];
+        //Get a random salt
+        sr.nextBytes(salt);
+        return salt;
+    }
+
 }

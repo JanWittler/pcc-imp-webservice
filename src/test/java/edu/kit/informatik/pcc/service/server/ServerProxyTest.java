@@ -4,6 +4,7 @@ import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
+import edu.kit.informatik.pcc.service.manager.AccountManager;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -24,10 +25,14 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -49,6 +54,7 @@ public class ServerProxyTest {
 
     private DatabaseManager databaseManager;
     private Client client;
+    private AccountManager accountManager;
 
     //mockup function for LocationConfig fields
     //public because of DatabaseManagerTest
@@ -89,10 +95,12 @@ public class ServerProxyTest {
         //setup account and databaseManager for various tests
         Account account = new Account(accountJson);
         databaseManager = new DatabaseManager(account);
+        accountManager = new AccountManager(account);
+
 
         //register/verify account and put some test videos/metadata into database
         String uuid = "456-sgdfgd3t5g-345fs";
-        databaseManager.register(uuid);
+        accountManager.registerAccount(uuid);
         account.setId(databaseManager.getAccountId());
         databaseManager.verifyAccount(uuid);
         databaseManager.saveProcessedVideoAndMeta("pod", "testMeta");
@@ -125,7 +133,8 @@ public class ServerProxyTest {
         //setup for test
         Account tempAccount = new Account(tempAccountJson);
         DatabaseManager tempDatabaseManager = new DatabaseManager(tempAccount);
-        tempDatabaseManager.register(tempUUID);
+        AccountManager tempAccountManager = new AccountManager(tempAccount);
+        tempAccountManager.registerAccount(tempUUID);
         tempAccount.setId(tempDatabaseManager.getAccountId());
 
         //client request
@@ -134,12 +143,13 @@ public class ServerProxyTest {
         Response response = webTarget.queryParam("uuid", tempUUID).request().get();
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
 
-        //after
+        //cleanup
         tempDatabaseManager.deleteAccount();
     }
 
     @org.junit.Test
     public void downloadTest() {
+        //setup for test
         String videoId = Integer.toString(databaseManager.getVideoIdByName("pod"));
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
@@ -161,6 +171,7 @@ public class ServerProxyTest {
 
     @org.junit.Test
     public void videosTest() {
+        //setup for test
         form.param(ACCOUNT, accountJson);
         WebTarget webTarget = client.target(PATH).path("getVideos");
         Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
@@ -172,6 +183,7 @@ public class ServerProxyTest {
 
     @org.junit.Test
     public void createAccountTest() {
+        //setup for test
         Account account2 = new Account(tempAccountJson);
         form.param(ACCOUNT, tempAccountJson);
         form.param("uuid", tempUUID);
@@ -185,6 +197,7 @@ public class ServerProxyTest {
 
     @org.junit.Test
     public void changeAccountTest() {
+        //setup for test
         form.param(ACCOUNT, accountJson);
         form.param("newAccount", tempAccountJson);
         WebTarget webTarget = client.target(PATH).path("changeAccount");
@@ -197,7 +210,8 @@ public class ServerProxyTest {
         //setup for test
         Account tempAccount = new Account(tempAccountJson);
         DatabaseManager tempDatabaseManager = new DatabaseManager(tempAccount);
-        tempDatabaseManager.register(tempUUID);
+        AccountManager tempAccountManager = new AccountManager(tempAccount);
+        tempAccountManager.registerAccount(tempUUID);
         tempAccount.setId(tempDatabaseManager.getAccountId());
         tempDatabaseManager.verifyAccount(tempUUID);
         tempDatabaseManager.saveProcessedVideoAndMeta("deleteVideo1", "deleteMeta1");
@@ -220,11 +234,15 @@ public class ServerProxyTest {
         form.param(ACCOUNT, tempAccountJson);
         WebTarget webTarget = client.target(PATH).path("deleteAccount");
         Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+
+        //various assertions
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
         Assert.assertFalse(file1.exists());
         Assert.assertFalse(file2.exists());
         Assert.assertFalse(file3.exists());
         Assert.assertFalse(file4.exists());
+
+        //cleanup
         tempDatabaseManager.deleteAccount();
     }
 
