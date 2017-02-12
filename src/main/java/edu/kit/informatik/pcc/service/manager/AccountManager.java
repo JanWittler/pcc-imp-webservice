@@ -197,7 +197,7 @@ public class AccountManager {
         try {
             return Base64.getDecoder().decode(saltString);
         } catch (IllegalArgumentException e) {
-            Logger.getGlobal().warning("byte[] should at least two bytes for Base64!");
+            Logger.getGlobal().warning("byte[] should at least be two bytes for Base64!");
             return null;
         }
     }

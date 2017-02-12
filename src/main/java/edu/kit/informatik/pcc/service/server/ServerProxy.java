@@ -63,8 +63,6 @@ public class ServerProxy {
      * and forward it to to the VideoManager. All needed files and data are send with the MultiPartFeature
      * (org.glassfish.jersey.media.multipart.MultiPart and co.),
      * which give us the opportunity to send files via inputstream from the client to the service.
-     * This method sends back two different responses, a synchronous(from the ServerProxy/VideoManager)
-     * and a asynchronous response (from VideoProcessing module).
      *
      * @param video                 uploaded video file recorded by client
      * @param metadata              metadata of uploaded video as file

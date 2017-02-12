@@ -65,11 +65,14 @@ public class ServerProxyTest {
             }
         });
         t.start();
+
+        //wait for server to be up (2 seconds for server but on pc 1 second is enough)
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         //create two json objects for testing
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("mail", "fabiistkrass@gmail.de");
