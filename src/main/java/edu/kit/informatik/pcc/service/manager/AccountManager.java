@@ -3,6 +3,7 @@ package edu.kit.informatik.pcc.service.manager;
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
+import org.apache.commons.validator.routines.EmailValidator;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -100,6 +101,11 @@ public class AccountManager {
             return FAILURE;
 
         account.hashPassword(salt);
+        boolean validMail = isValidMail(account.getMail());
+        if (!validMail) {
+            return FAILURE;
+        }
+
         String saltString = Base64.getEncoder().encodeToString(salt);
         return databaseManager.register(uuid, saltString) ? SUCCESS : FAILURE;
     }
@@ -211,5 +217,24 @@ public class AccountManager {
         sr.nextBytes(salt);
         return salt;
     }
+
+
+    /**
+     * Method to check if mail given by client is valid
+     *
+     * @param email to validate
+     * @return      true if mail is valid and false if not
+     */
+    private boolean isValidMail(String email) {
+        if (email == null || "".equals(email))
+            return false;
+
+        email = email.trim();
+
+        EmailValidator ev = EmailValidator.getInstance();
+        return ev.isValid(email);
+
+    }
+
 
 }

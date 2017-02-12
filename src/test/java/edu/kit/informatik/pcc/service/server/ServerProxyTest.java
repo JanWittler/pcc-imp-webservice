@@ -5,7 +5,6 @@ import edu.kit.informatik.pcc.service.data.DatabaseManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
-import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -28,14 +27,10 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -46,7 +41,7 @@ public class ServerProxyTest {
     //TODO: SHORTEN ALL STUFF
     //string for client/request/response
     private final String SUCCESS = "SUCCESS";
-    private final String PATH = "http://localhost:2222/webservice/";
+    private final String MAIN_ADDRESS = "http://localhost:2222/webservice/";
     private final String ACCOUNT = "account";
 
     private String accountJson;
@@ -77,12 +72,12 @@ public class ServerProxyTest {
         }
         //create two json objects for testing
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("mail", "fabiistkrass@imperium.baba");
+        jsonObject.put("mail", "fabiistkrass@gmail.de");
         jsonObject.put("password", "yochilldeinlife");
         accountJson = jsonObject.toString();
 
         JSONObject jsonObject2 = new JSONObject();
-        jsonObject2.put("mail", "fabiistababa@baba.de");
+        jsonObject2.put("mail", "fabiistababa@yahoo.com");
         jsonObject2.put("password", "ichbindershitfuckyooo");
         tempAccountJson = jsonObject2.toString();
 
@@ -131,7 +126,7 @@ public class ServerProxyTest {
         tempAccount.setId(tempDatabaseManager.getAccountId());
 
         //client request (not using post method because of queryParameter)
-        WebTarget webTarget = client.target(PATH).path("verifyAccount");
+        WebTarget webTarget = client.target(MAIN_ADDRESS).path("verifyAccount");
         Response response = webTarget.queryParam("uuid", tempUUID).request().get();
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
 
@@ -286,7 +281,7 @@ public class ServerProxyTest {
         }
 
         //client request (here using multipart feature for upload)
-        WebTarget webTarget = client.target(PATH).path("videoUpload").register(MultiPartFeature.class);
+        WebTarget webTarget = client.target(MAIN_ADDRESS).path("videoUpload").register(MultiPartFeature.class);
         MultiPart multiPart = new MultiPart();
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
         FileDataBodyPart video = new FileDataBodyPart("video", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
@@ -340,7 +335,7 @@ public class ServerProxyTest {
     }
 
     private Response post(String path) {
-        WebTarget webTarget = client.target(PATH).path(path);
+        WebTarget webTarget = client.target(MAIN_ADDRESS).path(path);
         try {
             return webTarget.request().post(
                     Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
