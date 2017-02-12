@@ -17,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -42,6 +43,7 @@ import java.util.concurrent.Future;
  * @author Fabian Wenzel
  */
 public class ServerProxyTest {
+    //TODO: SHORTEN ALL STUFF
     //string for client/request/response
     private final String SUCCESS = "SUCCESS";
     private final String PATH = "http://localhost:2222/webservice/";
@@ -57,16 +59,6 @@ public class ServerProxyTest {
     private DatabaseManager databaseManager;
     private Client client;
     private AccountManager accountManager;
-
-    //mockup function for LocationConfig fields
-    //public because of DatabaseManagerTest
-    public static void setFinalStatic(Field field, Object newValue) throws Exception {
-        field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        field.set(null, newValue);
-    }
 
     @Before
     public void setUp() {
@@ -101,7 +93,6 @@ public class ServerProxyTest {
 
 
         //register/verify account and put some test videos/metadata into database
-
         String uuid = "456-sgdfgd3t5g-345fs";
         accountManager.registerAccount(uuid);
         account.setId(databaseManager.getAccountId());
@@ -126,8 +117,7 @@ public class ServerProxyTest {
     @Test
     public void authenticateTest() {
         form.param(ACCOUNT, accountJson);
-        WebTarget webTarget = client.target(PATH).path("authenticate");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        Response response = post("authenticate");
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
     }
 
@@ -140,9 +130,8 @@ public class ServerProxyTest {
         tempAccountManager.registerAccount(tempUUID);
         tempAccount.setId(tempDatabaseManager.getAccountId());
 
-        //client request
+        //client request (not using post method because of queryParameter)
         WebTarget webTarget = client.target(PATH).path("verifyAccount");
-        System.out.println(webTarget.getUri());
         Response response = webTarget.queryParam("uuid", tempUUID).request().get();
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
 
@@ -156,8 +145,7 @@ public class ServerProxyTest {
         String videoId = Integer.toString(databaseManager.getVideoIdByName("pod"));
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
-        WebTarget webTarget = client.target(PATH).path("videoDownload");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        Response response = post("videoDownload");
         InputStream inputStream = response.readEntity(InputStream.class);
         if (response.getStatus() == 200) {
             File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest" + VideoInfo.FILE_EXTENTION);
@@ -176,8 +164,7 @@ public class ServerProxyTest {
     public void videosTest() {
         //setup for test
         form.param(ACCOUNT, accountJson);
-        WebTarget webTarget = client.target(PATH).path("getVideos");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        Response response = post("getVideos");
         JSONArray jsonArray = new JSONArray(response.readEntity(String.class));
         JSONObject jsonObject = jsonArray.getJSONObject(0);
         String jsonName = jsonObject.getString("name");
@@ -190,8 +177,7 @@ public class ServerProxyTest {
         Account account2 = new Account(tempAccountJson);
         form.param(ACCOUNT, tempAccountJson);
         form.param("uuid", tempUUID);
-        WebTarget webTarget = client.target(PATH).path("createAccount");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        Response response = post("createAccount");
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
         DatabaseManager tempDM = new DatabaseManager(account2);
         account2.setId(tempDM.getAccountId());
@@ -203,8 +189,7 @@ public class ServerProxyTest {
         //setup for test
         form.param(ACCOUNT, accountJson);
         form.param("newAccount", tempAccountJson);
-        WebTarget webTarget = client.target(PATH).path("changeAccount");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        Response response = post("changeAccount");
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
     }
 
@@ -235,8 +220,7 @@ public class ServerProxyTest {
         }
 
         form.param(ACCOUNT, tempAccountJson);
-        WebTarget webTarget = client.target(PATH).path("deleteAccount");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        Response response = post("deleteAccount");
 
         //various assertions
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
@@ -263,8 +247,7 @@ public class ServerProxyTest {
 
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
-        WebTarget webTarget = client.target(PATH).path("videoDelete");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        Response response = post("videoDelete");
         Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input4"));
     }
@@ -281,8 +264,7 @@ public class ServerProxyTest {
 
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
-        WebTarget webTarget = client.target(PATH).path("videoInfo");
-        Response response = webTarget.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        Response response = post("videoInfo");
         String entity = response.readEntity(String.class);
         if (!entity.equals("FAILURE")) {
             JSONObject jsonObject = new JSONObject(entity);
@@ -302,6 +284,8 @@ public class ServerProxyTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        //client request (here using multipart feature for upload)
         WebTarget webTarget = client.target(PATH).path("videoUpload").register(MultiPartFeature.class);
         MultiPart multiPart = new MultiPart();
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
@@ -320,6 +304,8 @@ public class ServerProxyTest {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+
+        //cleanup
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("encVid"));
     }
 
@@ -342,4 +328,25 @@ public class ServerProxyTest {
         //stop server
         Main.stopServer();
     }
+
+    //mockup function for LocationConfig fields
+    //public because of DatabaseManagerTest
+    public static void setFinalStatic(Field field, Object newValue) throws Exception {
+        field.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        field.set(null, newValue);
+    }
+
+    private Response post(String path) {
+        WebTarget webTarget = client.target(PATH).path(path);
+        try {
+            return webTarget.request().post(
+                    Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        } catch (ProcessingException e) {
+            return null;
+        }
+    }
 }
+
