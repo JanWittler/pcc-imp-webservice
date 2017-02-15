@@ -55,6 +55,16 @@ public class ServerProxyTest {
     private Client client;
     private AccountManager accountManager;
 
+    //mockup function for LocationConfig fields
+    //public because of DatabaseManagerTest
+    public static void setFinalStatic(Field field, Object newValue) throws Exception {
+        field.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        field.set(null, newValue);
+    }
+
     @Before
     public void setUp() {
         //start server in different thread
@@ -231,7 +241,6 @@ public class ServerProxyTest {
         tempDatabaseManager.deleteAccount();
     }
 
-
     @Test
     public void videoDeleteTest() {
         String videoId = "-1";
@@ -325,16 +334,6 @@ public class ServerProxyTest {
 
         //stop server
         Main.stopServer();
-    }
-
-    //mockup function for LocationConfig fields
-    //public because of DatabaseManagerTest
-    public static void setFinalStatic(Field field, Object newValue) throws Exception {
-        field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        field.set(null, newValue);
     }
 
     private Response post(String path) {
