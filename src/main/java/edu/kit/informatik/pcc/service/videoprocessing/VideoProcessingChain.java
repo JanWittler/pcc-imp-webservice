@@ -80,6 +80,7 @@ public class VideoProcessingChain implements Runnable {
             if (!stage.execute(context)) {
                 Logger.getGlobal().warning("Stage " + stage.getName() + " failed");
                 cleanUp();
+                response.resume("Error while editing");
                 return;
             }
         }
