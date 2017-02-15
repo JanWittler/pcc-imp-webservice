@@ -81,7 +81,8 @@ public class ServerProxy {
                               @FormDataParam(VIDEO) FormDataContentDisposition fileDetail, @Suspended AsyncResponse response) {
         Logger.getGlobal().info("Upload Request");
         if (video == null || metadata == null || encryptedSymmetricKey == null || accountData == null || fileDetail == null) {
-            Logger.getGlobal().info("Something was null");
+            Logger.getGlobal().info("Uploaded data was not recieved correctly");
+            response.resume("Uploaded data was not recieved correctly");
             return;
         }
         String videoName = FilenameUtils.getBaseName(fileDetail.getFileName());
