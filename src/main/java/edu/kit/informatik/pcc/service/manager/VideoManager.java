@@ -112,7 +112,7 @@ public class VideoManager {
             return null;
         }
 
-        File video = new File(LocationConfig.ANONYM_VID_DIR + File.separator +
+        File video = new File(LocationConfig.ANONYM_VID_DIR + File.separator + account.getId() + "_" +
                 videoInfo.getName() + VideoInfo.FILE_EXTENTION);
 
         InputStream inputStream;
@@ -138,14 +138,14 @@ public class VideoManager {
         }
 
         // delete video file
-        File videoFile = new File(LocationConfig.ANONYM_VID_DIR + File.separator +
+        File videoFile = new File(LocationConfig.ANONYM_VID_DIR + File.separator + account.getId() + "_" +
                 videoInfo.getName() + VideoInfo.FILE_EXTENTION);
         if (videoFile.exists())
             videoFile.delete();
 
         //delete metadata file.
         String metaName = databaseManager.getMetaName(videoId);
-        File metaFile = new File(LocationConfig.META_DIR + File.separator +
+        File metaFile = new File(LocationConfig.META_DIR + File.separator + account.getId() + "_" +
                 metaName + Metadata.FILE_EXTENTION);
         if (metaFile.exists())
             metaFile.delete();
@@ -166,7 +166,7 @@ public class VideoManager {
         if (metaName == null)
             return FAILURE;
 
-        String filePath = LocationConfig.META_DIR + File.separator +
+        String filePath = LocationConfig.META_DIR + File.separator + account.getId() + "_" +
                 metaName + Metadata.FILE_EXTENTION;
 
         try {
