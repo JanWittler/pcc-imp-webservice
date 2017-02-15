@@ -34,8 +34,8 @@ public class Persistor implements IStage {
     @Override
     public boolean execute(EditingContext context) {
         databaseManager = new DatabaseManager(context.getAccount());
-        return persist(context.getAnonymizedVid(), context.getDecMetadata()
-                , context.getAccount(), context.getVideoName());
+        return persist(context.getAnonymizedVid(), context.getDecMetadata(),
+                context.getAccount(), context.getVideoName());
     }
 
     @Override

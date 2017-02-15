@@ -1,8 +1,6 @@
-package edu.kit.informatik.pcc.service.videoprocessing.chain;
+package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
 import edu.kit.informatik.pcc.service.data.LocationConfig;
-import edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization.AAnonymizer;
-import edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization.OpenCVAnonymizer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -14,7 +12,7 @@ import java.io.File;
  * Test for the OpenCv anonymizer.
  *
  * @author Josh Romanowski
- * Created by Josh Romanowski on 18.01.2017.
+ *         Created by Josh Romanowski on 18.01.2017.
  */
 @Ignore
 public class OpenCvAnonymizeTest {

@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.videoprocessing.chain;
+package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -12,8 +12,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by Josh Romanowski on 18.01.2017.
  */
 @Ignore
-public class OpenCvTest
-{
+public class OpenCvTest {
     @BeforeClass
     public static void setUp() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
