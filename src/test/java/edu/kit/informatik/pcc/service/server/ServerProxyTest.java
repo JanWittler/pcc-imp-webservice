@@ -1,9 +1,6 @@
 package edu.kit.informatik.pcc.service.server;
 
-import edu.kit.informatik.pcc.service.data.Account;
-import edu.kit.informatik.pcc.service.data.DatabaseManager;
-import edu.kit.informatik.pcc.service.data.LocationConfig;
-import edu.kit.informatik.pcc.service.data.VideoInfo;
+import edu.kit.informatik.pcc.service.data.*;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
@@ -44,6 +41,7 @@ public class ServerProxyTest {
     private final String MAIN_ADDRESS = "http://localhost:2222/webservice/";
     private final String ACCOUNT = "account";
 
+    private Account account;
     private String accountJson;
     private String tempAccountJson;
     private String tempUUID = "3456qwe-qw234-2342f";
@@ -53,7 +51,6 @@ public class ServerProxyTest {
 
     private DatabaseManager databaseManager;
     private Client client;
-    private AccountManager accountManager;
 
     //mockup function for LocationConfig fields
     //public because of DatabaseManagerTest
@@ -95,9 +92,9 @@ public class ServerProxyTest {
         tempAccountJson = jsonObject2.toString();
 
         //setup account and databaseManager for various tests
-        Account account = new Account(accountJson);
+        account = new Account(accountJson);
         databaseManager = new DatabaseManager(account);
-        accountManager = new AccountManager(account);
+        AccountManager accountManager = new AccountManager(account);
 
 
         //register/verify account and put some test videos/metadata into database
@@ -126,7 +123,11 @@ public class ServerProxyTest {
     public void authenticateTest() {
         form.param(ACCOUNT, accountJson);
         Response response = post("authenticate");
-        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        if (response != null) {
+            Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        } else {
+            Assert.fail();
+        }
     }
 
     @Test
@@ -151,21 +152,40 @@ public class ServerProxyTest {
     public void downloadTest() {
         //setup for test
         String videoId = Integer.toString(databaseManager.getVideoIdByName("pod"));
+        File podAccount = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + account.getId() + "_pod"+ VideoInfo.FILE_EXTENTION);
+        File podStandard = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "pod" + VideoInfo.FILE_EXTENTION);
+        try {
+            Files.copy(podStandard.toPath(), podAccount.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //client request
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
         Response response = post("videoDownload");
-        InputStream inputStream = response.readEntity(InputStream.class);
-        if (response.getStatus() == 200) {
+        InputStream inputStream = null;
+        if (response != null) {
+            inputStream = response.readEntity(InputStream.class);
+        }
+        if (response != null && response.getStatus() == 200) {
             File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest" + VideoInfo.FILE_EXTENTION);
             try {
                 Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 boolean status = downloadFile.delete();
                 Assert.assertTrue(status);
             } catch (IOException e) {
-                e.printStackTrace();
+                Assert.fail();
             }
         }
-        Assert.assertTrue(response.getStatus() == 200);
+        if (response != null) {
+            Assert.assertTrue(response.getStatus() == 200);
+        }
+
+        //cleanup
+        boolean status = podAccount.delete();
+        Assert.assertTrue(status);
+
     }
 
     @Test
@@ -173,10 +193,21 @@ public class ServerProxyTest {
         //setup for test
         form.param(ACCOUNT, accountJson);
         Response response = post("getVideos");
-        JSONArray jsonArray = new JSONArray(response.readEntity(String.class));
-        JSONObject jsonObject = jsonArray.getJSONObject(0);
-        String jsonName = jsonObject.getString("name");
-        Assert.assertTrue(jsonName.equals("pod"));
+        JSONArray jsonArray = null;
+        if (response != null) {
+            jsonArray = new JSONArray(response.readEntity(String.class));
+        }
+        JSONObject jsonObject = null;
+        if (jsonArray != null) {
+            jsonObject = jsonArray.getJSONObject(0);
+        }
+        String jsonName = null;
+        if (jsonObject != null) {
+            jsonName = jsonObject.getString("name");
+        }
+        if (jsonName != null) {
+            Assert.assertTrue(jsonName.equals("pod"));
+        }
     }
 
     @Test
@@ -186,7 +217,9 @@ public class ServerProxyTest {
         form.param(ACCOUNT, tempAccountJson);
         form.param("uuid", tempUUID);
         Response response = post("createAccount");
-        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        if (response != null) {
+            Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        }
         DatabaseManager tempDM = new DatabaseManager(account2);
         account2.setId(tempDM.getAccountId());
         tempDM.deleteAccount();
@@ -198,7 +231,9 @@ public class ServerProxyTest {
         form.param(ACCOUNT, accountJson);
         form.param("newAccount", tempAccountJson);
         Response response = post("changeAccount");
-        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        if (response != null) {
+            Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        }
     }
 
     @Test
@@ -214,10 +249,10 @@ public class ServerProxyTest {
         tempDatabaseManager.saveProcessedVideoAndMeta("deleteVideo2", "deleteMeta2");
 
         //create files for testing
-        File file1 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo1" + VideoInfo.FILE_EXTENTION);
-        File file2 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteVideo2" + VideoInfo.FILE_EXTENTION);
-        File file3 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta1" + ".json");
-        File file4 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "deleteMeta2" + ".json");
+        File file1 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + tempAccount.getId() + "_" + "deleteVideo1" + VideoInfo.FILE_EXTENTION);
+        File file2 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + tempAccount.getId() + "_" + "deleteVideo2" + VideoInfo.FILE_EXTENTION);
+        File file3 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + tempAccount.getId() + "_" + "deleteMeta1" + Metadata.FILE_EXTENTION);
+        File file4 = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + tempAccount.getId() + "_" + "deleteMeta2" + Metadata.FILE_EXTENTION);
         try {
             file1.createNewFile();
             file2.createNewFile();
@@ -231,7 +266,7 @@ public class ServerProxyTest {
         Response response = post("deleteAccount");
 
         //various assertions
-        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        Assert.assertTrue(response != null && response.readEntity(String.class).equals(SUCCESS));
         Assert.assertFalse(file1.exists());
         Assert.assertFalse(file2.exists());
         Assert.assertFalse(file3.exists());
@@ -255,12 +290,15 @@ public class ServerProxyTest {
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
         Response response = post("videoDelete");
-        Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        if (response != null) {
+            Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        }
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input4"));
     }
 
     @Test
     public void videoInfoTest() {
+        //setup
         String videoId = "-1";
         for (VideoInfo videoInfo : databaseManager.getVideoInfoList()) {
             if (videoInfo.getName().equals("input3")) {
@@ -268,18 +306,36 @@ public class ServerProxyTest {
             }
         }
         Assert.assertFalse(videoId.equals("-1"));
+        File metaAccount = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + account.getId() + "_" + "metaTest" + Metadata.FILE_EXTENTION);
+        File metaStandard = new File (LocationConfig.TEST_RESOURCES_DIR + File.separator + "metaTest" + Metadata.FILE_EXTENTION);
+        try {
+            Files.copy(metaStandard.toPath(), metaAccount.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+
+        //client request
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
         Response response = post("videoInfo");
-        String entity = response.readEntity(String.class);
-        if (!entity.equals("FAILURE")) {
-            JSONObject jsonObject = new JSONObject(entity);
-            float gForceY = (float) jsonObject.getDouble("triggerForceY");
-            Assert.assertTrue(gForceY == 40.0f);
-        } else {
-            Assert.fail();
+        String entity = null;
+        if (response != null) {
+            entity = response.readEntity(String.class);
         }
+        if (entity != null) {
+            if (!entity.equals("FAILURE")) {
+                JSONObject jsonObject = new JSONObject(entity);
+                float gForceY = (float) jsonObject.getDouble("triggerForceY");
+                Assert.assertTrue(gForceY == 40.0f);
+            } else {
+                Assert.fail();
+            }
+        }
+
+        //cleanup
+        boolean status = metaAccount.delete();
+        Assert.assertTrue(status);
     }
 
     @Test
@@ -297,7 +353,7 @@ public class ServerProxyTest {
         MultiPart multiPart = new MultiPart();
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
         FileDataBodyPart video = new FileDataBodyPart("video", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        FileDataBodyPart metadata = new FileDataBodyPart("metadata", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta.json"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        FileDataBodyPart metadata = new FileDataBodyPart("metadata", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta" + Metadata.FILE_EXTENTION), MediaType.APPLICATION_OCTET_STREAM_TYPE);
         FileDataBodyPart key = new FileDataBodyPart("key", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encKey.txt"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
         FormDataBodyPart data = new FormDataBodyPart(ACCOUNT, accountJson);
         multiPart.bodyPart(video);
@@ -314,6 +370,12 @@ public class ServerProxyTest {
 
         //cleanup
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("encVid"));
+        File encVid = new File(LocationConfig.ANONYM_VID_DIR + File.separator + account.getId() + "_encVid" + VideoInfo.FILE_EXTENTION);
+        File encMeta = new File(LocationConfig.META_DIR + File.separator + account.getId() + "_encVid_meta" + Metadata.FILE_EXTENTION);
+        boolean status = encVid.delete();
+        Assert.assertTrue(status);
+        status = encMeta.delete();
+        Assert.assertTrue(status);
     }
 
     @After
