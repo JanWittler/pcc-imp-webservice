@@ -93,7 +93,7 @@ public class RSADecryptor implements IKeyDecryptor {
         byte[] dectyptedText;
         try {
             // get an RSA cipher object and print the provider
-            final Cipher cipher = Cipher.getInstance("RSA");
+            final Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
             // decrypt the text using the private key
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
