@@ -43,7 +43,7 @@ public class AESDecryptor implements IFileDecryptor {
         // create cipher
         Cipher decipher;
         try {
-            decipher = Cipher.getInstance("AES");
+            decipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             decipher.init(Cipher.DECRYPT_MODE, key);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             Logger.getGlobal().warning("Creating cipher failed");
