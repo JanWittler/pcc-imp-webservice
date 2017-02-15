@@ -86,7 +86,7 @@ public class ServerProxy {
             return;
         }
         String videoName = FilenameUtils.getBaseName(fileDetail.getFileName());
-        //setUpForRequest(accountData);
+        setUpForRequest(accountData);
         videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
     }
 
