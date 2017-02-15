@@ -76,17 +76,17 @@ public class ServerProxy {
     @POST
     @Path("videoUpload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public String videoUpload(@FormDataParam(VIDEO) InputStream video, @FormDataParam(METADATA) InputStream metadata,
+    public void videoUpload(@FormDataParam(VIDEO) InputStream video, @FormDataParam(METADATA) InputStream metadata,
                               @FormDataParam(KEY) InputStream encryptedSymmetricKey, @FormDataParam(ACCOUNT) String accountData,
                               @FormDataParam(VIDEO) FormDataContentDisposition fileDetail, @Suspended AsyncResponse response) {
         Logger.getGlobal().info("Upload Request");
         if (video == null || metadata == null || encryptedSymmetricKey == null || accountData == null || fileDetail == null) {
-            return FAILURE;
+            Logger.getGlobal().info("Something was null");
+            return;
         }
         String videoName = FilenameUtils.getBaseName(fileDetail.getFileName());
-        String accountStatus = setUpForRequest(accountData);
-        return (accountStatus.equals(SUCCESS)) ?
-                videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response) : WRONG_ACCOUNT;
+        setUpForRequest(accountData);
+        videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
     }
 
     //!All other requests use the normal javax.ws.rs.core.Form for sending data to the service!
