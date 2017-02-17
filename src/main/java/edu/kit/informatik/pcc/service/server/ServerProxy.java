@@ -70,8 +70,6 @@ public class ServerProxy {
      * @param accountData           string as json with account specifications (mail and password)
      * @param fileDetail            extracting the file details to get name of file
      * @param response              mark response as async response
-     * @return                      message in form of string is send back to the client whether uploading task has
-     *                              started successfully or corresponding failure message
      */
     @POST
     @Path("videoUpload")
@@ -81,8 +79,8 @@ public class ServerProxy {
                               @FormDataParam(VIDEO) FormDataContentDisposition fileDetail, @Suspended AsyncResponse response) {
         Logger.getGlobal().info("Upload Request");
         if (video == null || metadata == null || encryptedSymmetricKey == null || accountData == null || fileDetail == null) {
-            Logger.getGlobal().info("Uploaded data was not recieved correctly");
-            response.resume("Uploaded data was not recieved correctly");
+            Logger.getGlobal().info("Uploaded data was not received correctly");
+            response.resume("Uploaded data was not received correctly");
             return;
         }
         String videoName = FilenameUtils.getBaseName(fileDetail.getFileName());

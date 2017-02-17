@@ -83,20 +83,19 @@ public class VideoManager {
      * @param video                 inputstream of video file to upload
      * @param metadata              inputstream of metadata file to upload
      * @param encryptedSymmetricKey inputstream of key file to upload
-     * @param videoName             name of the uploaded video without extention
+     * @param videoName             name of the uploaded video without extension
      * @param response              asynchronous response used to give response to the client
-     * @return Returns process status message.
      */
-    public String upload(InputStream video, InputStream metadata, InputStream encryptedSymmetricKey,
+    public void upload(InputStream video, InputStream metadata, InputStream encryptedSymmetricKey,
                          String videoName, AsyncResponse response) {
         VideoProcessingManager videoProcessingManager = VideoProcessingManager.getInstance();
 
         if (videoProcessingManager == null) {
-            return FAILURE;
+            response.resume("VideoProcessingManager failure");
+            return;
         }
 
         videoProcessingManager.addTask(video, metadata, encryptedSymmetricKey, account, videoName, response);
-        return SUCCESS;
     }
 
     /**
