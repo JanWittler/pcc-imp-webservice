@@ -14,6 +14,7 @@ import java.io.File;
  * @author Josh Romanowski
  *         Created by Josh Romanowski on 18.01.2017.
  */
+@Ignore
 public class OpenCvAnonymizeTest {
     private AAnonymizer anonymizer;
     private File input;
