@@ -25,10 +25,10 @@ public class DecryptTest {
 
     @Before
     public void setUp() {
-        encKey = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encKey.txt");
-        encVid = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4");
+        encKey = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "KEY_1487198226374.key");
+        encVid = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "VIDEO_1487198226374.mp4");
         decVid = new File(LocationConfig.OUTPUT_DIR + File.separator + "decVid.mp4");
-        encMeta = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta.json");
+        encMeta = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "META_1487198226374.json");
         decMeta = new File(LocationConfig.OUTPUT_DIR + File.separator + "decMeta.json");
         decryptor = new Decryptor();
     }
@@ -45,9 +45,9 @@ public class DecryptTest {
 
     @After
     public void cleanUp() {
-        if (decVid.exists())
+        /*if (decVid.exists())
             decVid.delete();
         if (decMeta.exists())
-            decMeta.delete();
+            decMeta.delete();*/
     }
 }
