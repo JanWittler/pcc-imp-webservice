@@ -1,7 +1,8 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
+
+import org.bytedeco.javacpp.opencv_core.RectVector;
+import org.bytedeco.javacpp.opencv_core.Mat;
 
 /**
  * Interfaces for classes that analyzes single frames
@@ -22,5 +23,5 @@ public interface IAnalyzer {
      * @param frame Input frame.
      * @return Returns all face detections.
      */
-    public MatOfRect analyze(Mat frame);
+    public RectVector analyze(Mat frame);
 }

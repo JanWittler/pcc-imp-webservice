@@ -2,9 +2,9 @@ package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.server.Main;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.objdetect.CascadeClassifier;
+import org.bytedeco.javacpp.opencv_core.RectVector;
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
 
 import java.util.logging.Logger;
 
@@ -45,8 +45,8 @@ public class OpenCVAnalyzer implements IAnalyzer {
      * ###########################################################################################*/
 
     @Override
-    public MatOfRect analyze(Mat frame) {
-        MatOfRect detections = new MatOfRect();
+    public RectVector analyze(Mat frame) {
+        RectVector detections = new RectVector();
         classifier.detectMultiScale(frame, detections);
         return detections;
     }

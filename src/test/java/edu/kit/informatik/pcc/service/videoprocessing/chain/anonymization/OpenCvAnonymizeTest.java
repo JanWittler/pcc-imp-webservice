@@ -14,7 +14,6 @@ import java.io.File;
  * @author Josh Romanowski
  *         Created by Josh Romanowski on 18.01.2017.
  */
-@Ignore
 public class OpenCvAnonymizeTest {
     private AAnonymizer anonymizer;
     private File input;
@@ -34,6 +33,8 @@ public class OpenCvAnonymizeTest {
         Assert.assertFalse(anonymizer.anonymize(null, null));
     }
 
+    // ignore for performance when building
+    @Ignore
     @Test
     public void validTest() {
         Assert.assertTrue(anonymizer.anonymize(input, output));

@@ -1,13 +1,15 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
-import edu.kit.informatik.pcc.service.server.Main;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Size;
-import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.VideoWriter;
-import org.opencv.videoio.Videoio;
+import com.xuggle.xuggler.IContainer;
+import com.xuggle.xuggler.IStream;
+import com.xuggle.xuggler.IStreamCoder;
+import org.bytedeco.javacpp.avutil;
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.RectVector;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -43,13 +45,6 @@ public class OpenCVAnonymizer extends AAnonymizer {
      * Loads the OpenCV library and creates the filters
      */
     public OpenCVAnonymizer() {
-        try {
-            System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-            System.loadLibrary("opencv_ffmpeg310_64");
-        } catch (UnsatisfiedLinkError e) {
-            Logger.getGlobal().severe("Loading OpenCV failed. Check project setup");
-            Main.stopServer();
-        }
 
         analyzer = new OpenCVAnalyzer();
         filter = new OpenCVBoxfilter();
@@ -62,39 +57,62 @@ public class OpenCVAnonymizer extends AAnonymizer {
     @Override
     public boolean anonymize(File input, File output) {
         if (input == null || output == null) {
-            Logger.getGlobal().warning("Invalid input/oputput");
+            Logger.getGlobal().warning("Invalid input/output");
             return false;
         }
+        // shut ffmpeg logger
+        avutil.av_log_set_level(avutil.AV_LOG_QUIET);
 
-        //setup capturing
-        VideoCapture capture = new VideoCapture(input.getAbsolutePath());
-        if (!capture.isOpened()) {
-            Logger.getGlobal().warning("Video " + input.getAbsolutePath() + " couldn't be opened.");
-            return false;
-        }
+        // Read settings
+        IContainer container = IContainer.make();
+        container.open(input.getAbsolutePath(), IContainer.Type.READ, null);
+        IStream stream = container.getStream(0);
+        IStreamCoder coder = stream.getStreamCoder();
+        int width = coder.getWidth();
+        int heigth = coder.getHeight();
+        double fps = coder.getFrameRate().getValue();
+        int bitrate = coder.getBitRate();
+        long length = container.getDuration() / 1000000;
+        coder.close();
+        container.close();
 
-        Size frameSize = new Size((int) capture.get(Videoio.CAP_PROP_FRAME_WIDTH),
-                (int) capture.get(Videoio.CAP_PROP_FRAME_HEIGHT));
-        VideoWriter videoWriter = new VideoWriter(output.getAbsolutePath(), VideoWriter.fourcc('X', 'V', 'I', 'D'),
-                capture.get(Videoio.CAP_PROP_FPS), frameSize, true);
+        Logger.getGlobal().info(String.format(
+                "Start anonymizing %s. Fps:%d, Size:%d x %d, Dur:%ds",
+                input.getName(), (int) fps, width, heigth, length));
 
-        //start capture
-        Mat frame = new Mat();
+        // initialize grabber and recorder
+        FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(input.getAbsolutePath());
+        grabber.setFrameRate(fps);
 
-        Logger.getGlobal().info("Start anonymization video " + input.getName());
-        while (capture.read(frame)) {
-            if (!frame.empty()) {
+        FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(output.getAbsoluteFile(),
+                width, heigth);
+        recorder.setFormat("mp4");
+        recorder.setFrameRate(fps);
+        recorder.setVideoCodec(8);
+        recorder.setVideoBitrate(bitrate);
+
+        OpenCVFrameConverter converter = new OpenCVFrameConverter.ToMat();
+
+        //record
+        try {
+            grabber.start();
+            recorder.start();
+            Frame frame;
+            while ((frame = grabber.grabImage()) != null) {
                 // detect faces
-                MatOfRect detections = analyzer.analyze(frame);
-                frame = filter.applyFilter(frame, detections);
-            } else {
-                Logger.getGlobal().info("Finished capturing video " + input.getName());
-                break;
+                Mat mat = converter.convertToMat(frame);
+                RectVector detections = analyzer.analyze(mat);
+                mat = filter.applyFilter(mat, detections);
+                Frame end = converter.convert(mat);
+                recorder.record(end);
             }
-            videoWriter.write(frame);
+            grabber.stop();
+            recorder.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        capture.release();
-        videoWriter.release();
+
+
         Logger.getGlobal().info("Finished anonymization video " + input.getName());
         return true;
     }

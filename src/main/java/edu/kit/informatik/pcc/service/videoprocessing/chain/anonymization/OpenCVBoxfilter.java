@@ -1,10 +1,11 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
+import org.bytedeco.javacpp.opencv_core.Scalar;
+import org.bytedeco.javacpp.opencv_core.Rect;
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.RectVector;
+import org.bytedeco.javacpp.opencv_imgproc;
+
 
 /**
  * Uses an OpenCV blur filter to anonymize face detections.
@@ -18,9 +19,11 @@ public class OpenCVBoxfilter implements IFilter {
      * ###########################################################################################*/
 
     @Override
-    public Mat applyFilter(Mat frame, MatOfRect detections) {
-        for (Rect rect : detections.toArray()) {
-            Imgproc.rectangle(frame, rect.tl(), rect.br(), new Scalar(0, 0, 0), -1);
+    public Mat applyFilter(Mat frame, RectVector detections) {
+        for (int i = 0; i < detections.size(); i++) {
+            Rect rect = detections.get(i);
+            opencv_imgproc.rectangle(frame, rect.tl(), rect.br(), new Scalar(0, 0),
+                    opencv_imgproc.CV_FILLED, 0, 0);
         }
         return frame;
     }

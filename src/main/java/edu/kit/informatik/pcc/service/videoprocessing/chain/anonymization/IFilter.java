@@ -1,7 +1,7 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.RectVector;
 
 /**
  * Interface for classes that make detections
@@ -23,5 +23,5 @@ public interface IFilter {
      * @param detections Detections to anonymize.
      * @return Returns the edited input frame.
      */
-    public Mat applyFilter(Mat frame, MatOfRect detections);
+    public Mat applyFilter(Mat frame, RectVector detections);
 }
