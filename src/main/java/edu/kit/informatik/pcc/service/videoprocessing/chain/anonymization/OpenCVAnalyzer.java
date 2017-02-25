@@ -2,10 +2,11 @@ package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.server.Main;
-import org.bytedeco.javacpp.opencv_core.RectVector;
 import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.RectVector;
 import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 /**
@@ -33,7 +34,7 @@ public class OpenCVAnalyzer implements IAnalyzer {
      * Loads the classifier.
      */
     public OpenCVAnalyzer() {
-        classifier = new CascadeClassifier(LocationConfig.RESOURCES_DIR + "\\haarcascade_frontalface_alt.xml");
+        classifier = new CascadeClassifier(LocationConfig.RESOURCES_DIR + File.separator + "haarcascade_frontalface_alt.xml");
         if (classifier.empty()) {
             Logger.getGlobal().severe("Classifier couldn't be loaded");
             Main.stopServer();

@@ -6,6 +6,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 
 /**
+ * Created just to test if opencv java bindings work on that platform
+ *
+ * @author Josh Romanowski
  * Created by Josh Romanowski on 18.01.2017.
  */
 public class OpenCvTest {
