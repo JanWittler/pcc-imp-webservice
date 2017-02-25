@@ -1,6 +1,7 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization;
 
 import edu.kit.informatik.pcc.service.data.LocationConfig;
+import edu.kit.informatik.pcc.service.data.VideoInfo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -22,8 +23,8 @@ public class OpenCvAnonymizeTest {
     @Before
     public void setUp() {
         anonymizer = new OpenCVAnonymizer();
-        input = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "decVid.mp4");
-        output = new File(LocationConfig.OUTPUT_DIR + File.separator + "output.avi");
+        input = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "Video.mp4");
+        output = new File(LocationConfig.OUTPUT_DIR + File.separator + "output" + VideoInfo.FILE_EXTENTION);
     }
 
     @Test

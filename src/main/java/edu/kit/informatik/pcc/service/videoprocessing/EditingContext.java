@@ -2,6 +2,8 @@ package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
+import edu.kit.informatik.pcc.service.data.Metadata;
+import edu.kit.informatik.pcc.service.data.VideoInfo;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -76,15 +78,15 @@ public class EditingContext {
         this.encKey = new File(LocationConfig.TEMP_DIR
                 + File.separator + account.getId() + "_" + videoName + "_" + "encKey.txt");
         this.encMetadata = new File(LocationConfig.TEMP_DIR
-                + File.separator + account.getId() + "_" + videoName + "_" + "encMetadata.json");
+                + File.separator + account.getId() + "_" + videoName + "_" + "encMetadata" + Metadata.FILE_EXTENTION);
         this.decVid = new File(LocationConfig.TEMP_DIR
                 + File.separator + account.getId() + "_" + videoName + "_" + "decVid.mp4");
         this.decMetadata = new File(LocationConfig.TEMP_DIR
-                + File.separator + account.getId() + "_" + videoName + "_" + "meta.json");
+                + File.separator + account.getId() + "_" + videoName + "_" + "meta" + Metadata.FILE_EXTENTION);
         this.anonymizedVid = new File(LocationConfig.TEMP_DIR
-                + File.separator + account.getId() + "_" + videoName + "_" + "anonym.avi");
+                + File.separator + account.getId() + "_" + videoName + "_" + "anonym" + VideoInfo.FILE_EXTENTION);
         this.vidWithMeta = new File(LocationConfig.TEMP_DIR
-                + File.separator + account.getId() + "_" + videoName + "_" + "videoWithMeta.avi");
+                + File.separator + account.getId() + "_" + videoName + "_" + "videoWithMeta" + VideoInfo.FILE_EXTENTION);
 
     }
 
