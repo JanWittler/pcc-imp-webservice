@@ -94,7 +94,7 @@ public class VideoProcessingManager {
      */
     public void addTask(InputStream video, InputStream metadata, InputStream key,
                         Account account, String videoName, AsyncResponse response) {
-        addTask(video, metadata, key, account, videoName, response, VideoProcessingChain.Chain.SIMPLE);
+        addTask(video, metadata, key, account, videoName, response, VideoProcessingChain.Chain.NORMAL);
     }
 
     /**

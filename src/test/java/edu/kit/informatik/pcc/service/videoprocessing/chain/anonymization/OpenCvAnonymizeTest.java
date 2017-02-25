@@ -34,7 +34,6 @@ public class OpenCvAnonymizeTest {
     }
 
     // ignore for performance when building
-    @Ignore
     @Test
     public void validTest() {
         Assert.assertTrue(anonymizer.anonymize(input, output));
