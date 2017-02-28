@@ -67,13 +67,13 @@ public class AccountManager {
         newAccount.hashPassword(getSalt());
         String status = "NOTHING CHANGED";
         if (!newAccount.getMail().equals(account.getMail())) {
-            status = setMail(newAccount.getMail());
+            status = databaseManager.setMail(newAccount.getMail()) ? SUCCESS : FAILURE;
             if (!(status.equals(SUCCESS))) {
                 return status;
             }
         }
         if (!newAccount.getPasswordHash().equals(account.getPasswordHash())) {
-            return setPassword(newAccount.getPasswordHash());
+            return databaseManager.setPassword(newAccount.getPasswordHash()) ? SUCCESS : FAILURE;
         }
         return status;
     }
@@ -162,26 +162,6 @@ public class AccountManager {
     /* #############################################################################################
      *                                  helper methods
      * ###########################################################################################*/
-
-    /**
-     * Sets the mail of an account.
-     *
-     * @param newMail New mail to be set.
-     * @return Returns string with a status message.
-     */
-    private String setMail(String newMail) {
-        return databaseManager.setMail(newMail) ? SUCCESS : FAILURE;
-    }
-
-    /**
-     * Sets the password of an account.
-     *
-     * @param passwordHash New password to be set.
-     * @return Returns status message of the request.
-     */
-    private String setPassword(String passwordHash) {
-        return databaseManager.setPassword(passwordHash) ? SUCCESS : FAILURE;
-    }
 
     /**
      * This method fetches the salt for the given account from the database,

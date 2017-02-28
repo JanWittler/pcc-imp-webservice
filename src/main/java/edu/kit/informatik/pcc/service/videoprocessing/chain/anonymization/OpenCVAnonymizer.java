@@ -67,6 +67,12 @@ public class OpenCVAnonymizer extends AAnonymizer {
         IContainer container = IContainer.make();
         container.open(input.getAbsolutePath(), IContainer.Type.READ, null);
         IStream stream = container.getStream(0);
+
+        if (stream == null) {
+            Logger.getGlobal().warning("Uploaded file contained no video stream");
+            return false;
+        }
+
         IStreamCoder coder = stream.getStreamCoder();
         int width = coder.getWidth();
         int heigth = coder.getHeight();

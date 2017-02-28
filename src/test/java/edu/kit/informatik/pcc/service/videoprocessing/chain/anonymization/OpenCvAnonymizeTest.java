@@ -4,7 +4,6 @@ import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.data.VideoInfo;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -23,7 +22,7 @@ public class OpenCvAnonymizeTest {
     @Before
     public void setUp() {
         anonymizer = new OpenCVAnonymizer();
-        input = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "Video.mp4");
+        input = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "decVid.mp4");
         output = new File(LocationConfig.OUTPUT_DIR + File.separator + "output" + VideoInfo.FILE_EXTENTION);
     }
 
@@ -38,5 +37,11 @@ public class OpenCvAnonymizeTest {
     @Test
     public void validTest() {
         Assert.assertTrue(anonymizer.anonymize(input, output));
+    }
+
+    @Test
+    public void noVideoTest() {
+        input = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta.json");
+        Assert.assertFalse(anonymizer.anonymize(input, output));
     }
 }

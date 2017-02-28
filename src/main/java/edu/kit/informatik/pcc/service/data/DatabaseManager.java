@@ -520,7 +520,6 @@ public class DatabaseManager {
      * @param mail is the mail, which will be checked
      * @return if mail exists in database
      */
-    @Deprecated //TODO: IS TESTING METHOD: getAccountId does the same thing
     public boolean isMailExisting(String mail) {
         //connect to database
         if (!connectDatabase()) return false;

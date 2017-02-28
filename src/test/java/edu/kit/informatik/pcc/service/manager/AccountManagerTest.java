@@ -6,4 +6,7 @@ package edu.kit.informatik.pcc.service.manager;
  */
 public class AccountManagerTest {
     //TEST STUFF
+
+    // test password hashing
+    // test e-mail validation
 }
