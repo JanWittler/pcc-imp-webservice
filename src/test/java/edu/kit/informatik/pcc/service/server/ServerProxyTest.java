@@ -8,10 +8,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
@@ -338,6 +335,8 @@ public class ServerProxyTest {
         Assert.assertTrue(status);
     }
 
+    // Ignored for faster building, VideoProcessingChain gets tested individually
+    @Ignore
     @Test
     public void uploadTest() {
         //set directories to standard

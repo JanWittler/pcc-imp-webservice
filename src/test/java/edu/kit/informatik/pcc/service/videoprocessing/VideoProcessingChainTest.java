@@ -89,7 +89,7 @@ public class VideoProcessingChainTest {
         testChainType(VideoProcessingChain.Chain.SIMPLE, 5);
     }
 
-    // ignored for faster building
+    // ignored for faster building, anonymization gets tested individually
     @Ignore
     @Test
     public void normalChainTest() {

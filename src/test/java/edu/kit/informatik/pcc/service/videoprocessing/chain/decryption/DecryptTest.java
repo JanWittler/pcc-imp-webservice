@@ -45,9 +45,9 @@ public class DecryptTest {
 
     @After
     public void cleanUp() {
-        /*if (decVid.exists())
+        if (decVid.exists())
             decVid.delete();
         if (decMeta.exists())
-            decMeta.delete();*/
+            decMeta.delete();
     }
 }
