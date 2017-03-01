@@ -1,11 +1,13 @@
 package edu.kit.informatik.pcc.service.videoprocessing.chain.decryption;
 
-import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.server.Main;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
@@ -29,8 +31,7 @@ public class RSADecryptor implements IKeyDecryptor {
     /**
      * Location of the private asymmetric key.
      */
-    private static final String PRIVATE_KEY_FILE =
-            LocationConfig.RESOURCES_DIR + File.separator + "private.key";
+    private static final String PRIVATE_KEY_FILE = "/private.key";
     /**
      * Private asymmetric key.
      */
@@ -44,9 +45,8 @@ public class RSADecryptor implements IKeyDecryptor {
      * Loads the private asymmetric key.
      */
     public RSADecryptor() {
-        ObjectInputStream inputStream;
         try {
-            inputStream = new ObjectInputStream(new FileInputStream(PRIVATE_KEY_FILE));
+            ObjectInputStream inputStream = new ObjectInputStream(getClass().getResourceAsStream(PRIVATE_KEY_FILE));
             privateKey = (PrivateKey) inputStream.readObject();
         } catch (FileNotFoundException e) {
             Logger.getGlobal().severe("Private key file was missing");

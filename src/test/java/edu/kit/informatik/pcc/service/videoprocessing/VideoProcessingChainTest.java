@@ -1,10 +1,7 @@
 package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.service.data.*;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -74,7 +71,7 @@ public class VideoProcessingChainTest {
         File testedVid = new File(
                 LocationConfig.ANONYM_VID_DIR + File.separator + "-1_" + videoName + VideoInfo.FILE_EXTENTION);
         File testedMeta = new File(
-                LocationConfig.META_DIR + File.separator + "-1_" + videoName + Metadata.FILE_EXTENTION);
+                LocationConfig.META_DIR + File.separator + "-1_" + videoName + "_meta" + Metadata.FILE_EXTENTION);
 
         if (testedVid.exists())
             testedVid.delete();
@@ -93,6 +90,7 @@ public class VideoProcessingChainTest {
     }
 
     // ignored for faster building, anonymization gets tested individually
+    @Ignore
     @Test
     public void normalChainTest() {
         testChainType(VideoProcessingChain.Chain.NORMAL, 120);

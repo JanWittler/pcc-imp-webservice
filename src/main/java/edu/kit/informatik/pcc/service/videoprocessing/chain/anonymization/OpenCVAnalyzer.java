@@ -7,6 +7,10 @@ import org.bytedeco.javacpp.opencv_core.RectVector;
 import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.logging.Logger;
 
 /**
@@ -16,6 +20,8 @@ import java.util.logging.Logger;
  * @author Josh Romanowski
  */
 public class OpenCVAnalyzer implements IAnalyzer {
+
+    private static final String CASCADE_LOCATION = LocationConfig.PROJECT_DIR + File.separator + "cascade.xml";
 
     /* #############################################################################################
      *                                  attributes
@@ -34,12 +40,18 @@ public class OpenCVAnalyzer implements IAnalyzer {
      * Loads the classifier.
      */
     public OpenCVAnalyzer() {
-        classifier = new CascadeClassifier(LocationConfig.RESOURCES_DIR + File.separator + "haarcascade_frontalface_alt.xml");
+
+        if (!new File(CASCADE_LOCATION).exists()) {
+            copyCascade();
+        }
+
+        classifier = new CascadeClassifier(CASCADE_LOCATION);
         if (classifier.empty()) {
             Logger.getGlobal().severe("Classifier couldn't be loaded");
             Main.stopServer();
         }
     }
+
 
     /* #############################################################################################
      *                                  methods
@@ -50,5 +62,14 @@ public class OpenCVAnalyzer implements IAnalyzer {
         RectVector detections = new RectVector();
         classifier.detectMultiScale(frame, detections);
         return detections;
+    }
+
+    private void copyCascade() {
+        InputStream is = getClass().getResourceAsStream("/haarcascade_frontalface_alt.xml");
+        try {
+            Files.copy(is, new File(CASCADE_LOCATION).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
