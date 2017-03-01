@@ -67,13 +67,13 @@ public class AccountManager {
         newAccount.hashPassword(getSalt());
         String status = "NOTHING CHANGED";
         if (!newAccount.getMail().equals(account.getMail())) {
-            status = databaseManager.setMail(newAccount.getMail()) ? SUCCESS : FAILURE;
-            if (!(status.equals(SUCCESS))) {
-                return status;
-            }
+            if (!databaseManager.setMail(newAccount.getMail()))
+                return FAILURE;
         }
-        if (!newAccount.getPasswordHash().equals(account.getPasswordHash())) {
-            return databaseManager.setPassword(newAccount.getPasswordHash()) ? SUCCESS : FAILURE;
+
+        String newPwHash = newAccount.getPasswordHash();
+        if (!newPwHash.equals(account.getPasswordHash())) {
+            return databaseManager.setPassword(newPwHash) ? SUCCESS : FAILURE;
         }
         return status;
     }

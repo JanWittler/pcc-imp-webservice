@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 
 /**
  * Datacontainer for video metadata.
+ * Currently offers no additional information to the metadata served by the app.
+ * This class allows to add additional metadata concerning the editing on the service.
  *
  * @author David Laubenstein, Fabian Wenzel, Josh Romanowski
  */

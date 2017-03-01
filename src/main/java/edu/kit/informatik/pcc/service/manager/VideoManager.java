@@ -169,7 +169,8 @@ public class VideoManager {
                 metaName + Metadata.FILE_EXTENTION;
 
         try {
-            return new String(Files.readAllBytes(Paths.get(filePath)));
+            Metadata metadata = new Metadata(new String(Files.readAllBytes(Paths.get(filePath))));
+            return metadata.getAsJSON();
         } catch (IOException e) {
             Logger.getGlobal().warning("An error occured reading metadata file " + filePath);
             return FAILURE;

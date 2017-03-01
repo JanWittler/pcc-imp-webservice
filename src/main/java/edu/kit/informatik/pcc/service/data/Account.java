@@ -63,42 +63,24 @@ public class Account {
      * @return Returns whether hashing the password was successful or not.
      */
     public boolean hashPassword(byte[] salt) {
-        return (passwordHash = hashPassword(password, salt)) != null;
-    }
-
-    /* #############################################################################################
-     *                                  methods
-     * ###########################################################################################*/
-
-    /**
-     * Hashes a password with a function and given salt
-     *
-     * @param password password in plain text
-     * @return hashed password
-     */
-    private String hashPassword(String password, byte[] salt) {
-        String generatedPassword = password;
-
         try {
             // Create MessageDigest instance for MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
             //Add password bytes to digest
             md.update(salt);
             //Get the hash's bytes
-            byte[] bytes = md.digest(generatedPassword.getBytes());
+            byte[] bytes = md.digest(password.getBytes());
             //This bytes[] has bytes in decimal format;
             //Convert it to hexadecimal format
             StringBuilder sb = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++)
-            {
+            for (int i = 0; i < bytes.length; i++) {
                 sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
-            generatedPassword = sb.toString();
+            passwordHash = sb.toString();
+            return true;
+        } catch (NoSuchAlgorithmException e) {
+            return false;
         }
-        catch (NoSuchAlgorithmException e) {
-            return null;
-        }
-        return generatedPassword;
     }
 
 
