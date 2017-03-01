@@ -25,6 +25,7 @@ public class Metadata {
     private final static String JSON_KEY_TRIGGER_FORCE_X = "triggerForceX";
     private final static String JSON_KEY_TRIGGER_FORCE_Y = "triggerForceY";
     private final static String JSON_KEY_TRIGGER_FORCE_Z = "triggerForceZ";
+    private final static String JSON_KEY_EDITING_DATE = "editingDate";
 
     /* #############################################################################################
      *                                  attributes
@@ -43,6 +44,8 @@ public class Metadata {
      */
     private float[] gForce;
 
+    private long editingDate = -1;
+
     /* #############################################################################################
      *                                  constructor
      * ###########################################################################################*/
@@ -53,15 +56,24 @@ public class Metadata {
      * @param json JSON string to fetch data from.
      */
     public Metadata(String json) {
-        JSONObject metadata = new JSONObject(json);
 
         // retrieve json data
-        this.date = metadata.getLong(JSON_KEY_DATE);
-        this.triggerType = metadata.getString(JSON_KEY_TRIGGER_TYPE);
-        this.gForce = new float[3];
-        this.gForce[0] = (float) metadata.getDouble(JSON_KEY_TRIGGER_FORCE_X);
-        this.gForce[1] = (float) metadata.getDouble(JSON_KEY_TRIGGER_FORCE_Y);
-        this.gForce[2] = (float) metadata.getDouble(JSON_KEY_TRIGGER_FORCE_Z);
+        try {
+            JSONObject metadata = new JSONObject(json);
+            this.date = metadata.getLong(JSON_KEY_DATE);
+            this.triggerType = metadata.getString(JSON_KEY_TRIGGER_TYPE);
+            this.gForce = new float[3];
+            this.gForce[0] = (float) metadata.getDouble(JSON_KEY_TRIGGER_FORCE_X);
+            this.gForce[1] = (float) metadata.getDouble(JSON_KEY_TRIGGER_FORCE_Y);
+            this.gForce[2] = (float) metadata.getDouble(JSON_KEY_TRIGGER_FORCE_Z);
+
+            if (metadata.has(JSON_KEY_EDITING_DATE)) {
+                this.editingDate = metadata.getLong(JSON_KEY_EDITING_DATE);
+            }
+        } catch (JSONException e) {
+            Logger.getGlobal().warning("Error reading metadata json");
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -89,6 +101,10 @@ public class Metadata {
             json.put(JSON_KEY_TRIGGER_FORCE_X, this.gForce[0]);
             json.put(JSON_KEY_TRIGGER_FORCE_Y, this.gForce[1]);
             json.put(JSON_KEY_TRIGGER_FORCE_Z, this.gForce[2]);
+
+            if (editingDate != -1) {
+                json.put(JSON_KEY_EDITING_DATE, editingDate);
+            }
         } catch (JSONException e) {
             Logger.getGlobal().warning("Error creating metadata json");
         }
@@ -109,5 +125,9 @@ public class Metadata {
 
     public float[] getGForce() {
         return gForce;
+    }
+
+    public void setEditingDate(long editingDate) {
+        this.editingDate = editingDate;
     }
 }

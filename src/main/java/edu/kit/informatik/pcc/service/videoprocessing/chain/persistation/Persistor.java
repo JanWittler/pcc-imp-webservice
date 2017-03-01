@@ -6,7 +6,9 @@ import edu.kit.informatik.pcc.service.videoprocessing.IStage;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.logging.Logger;
 
@@ -69,6 +71,15 @@ public class Persistor implements IStage {
                     new File(LocationConfig.ANONYM_VID_DIR + File.separator +
                             account.getId() + "_" + videoName + VideoInfo.FILE_EXTENTION).toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
+
+
+            //Put editing time into metadata
+            Metadata meta = new Metadata(new String(Files.readAllBytes(Paths.get(metadata.getAbsolutePath()))));
+            meta.setEditingDate(System.currentTimeMillis());
+            PrintWriter pw = new PrintWriter(metadata);
+            pw.println(meta.getAsJSON());
+            pw.flush();
+            pw.close();
 
             //Save metadata to final destination.
             Files.copy(

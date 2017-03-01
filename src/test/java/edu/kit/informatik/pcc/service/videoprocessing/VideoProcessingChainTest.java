@@ -1,7 +1,10 @@
 package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.service.data.*;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -47,11 +50,11 @@ public class VideoProcessingChainTest {
     public void setUp() {
         response = setupResponse();
 
-        vidFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4");
-        metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta.json");
-        keyFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encKey.txt");
+        vidFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "VIDEO_1487198226374.mp4");
+        metaFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "META_1487198226374.json");
+        keyFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "KEY_1487198226374.key");
 
-        videoName = "testVideo";
+        videoName = "1487198226374";
         account = Mockito.mock(Account.class);
 
         Mockito.when(account.getId()).thenReturn(-1);
@@ -69,14 +72,14 @@ public class VideoProcessingChainTest {
         }
 
         File testedVid = new File(
-                LocationConfig.ANONYM_VID_DIR + File.separator + "-1_testVideo" + VideoInfo.FILE_EXTENTION);
+                LocationConfig.ANONYM_VID_DIR + File.separator + "-1_" + videoName + VideoInfo.FILE_EXTENTION);
         File testedMeta = new File(
-                LocationConfig.META_DIR + File.separator + "-1_testVideo_meta" + Metadata.FILE_EXTENTION);
+                LocationConfig.META_DIR + File.separator + "-1_" + videoName + Metadata.FILE_EXTENTION);
 
         if (testedVid.exists())
             testedVid.delete();
-        if (testedMeta.exists())
-            testedMeta.delete();
+        //if (testedMeta.exists())
+        //    testedMeta.delete();
     }
 
     @Test
@@ -90,7 +93,6 @@ public class VideoProcessingChainTest {
     }
 
     // ignored for faster building, anonymization gets tested individually
-    @Ignore
     @Test
     public void normalChainTest() {
         testChainType(VideoProcessingChain.Chain.NORMAL, 120);
@@ -108,7 +110,13 @@ public class VideoProcessingChainTest {
 
         // test
 
-        chain.run();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                chain.run();
+            }
+        }).start();
+
 
         // check result
         try {
