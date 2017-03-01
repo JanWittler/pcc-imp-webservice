@@ -78,8 +78,8 @@ public class VideoProcessingChainTest {
 
         if (testedVid.exists())
             testedVid.delete();
-        //if (testedMeta.exists())
-        //    testedMeta.delete();
+        if (testedMeta.exists())
+            testedMeta.delete();
     }
 
     @Test
