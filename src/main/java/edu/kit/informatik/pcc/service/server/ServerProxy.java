@@ -6,7 +6,6 @@ import edu.kit.informatik.pcc.service.manager.VideoManager;
 import org.apache.commons.io.FilenameUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.json.JSONObject;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
@@ -27,7 +26,7 @@ import java.util.logging.Logger;
 @Path("webservice")
 public class ServerProxy {
     //TODO: ASK IF YOU NEED TO CHECK IF VIDEO_ID AND ACCOUNT HAVE A CONNECTION TO EACH OTHER, else send a FAILURE MESSAGE BACK
-
+    //TODO: CREATE TABLE TO SHOW EACH RETURN PER METHOD
     /* #############################################################################################
     *                                  attributes
     * ###########################################################################################*/
@@ -84,8 +83,13 @@ public class ServerProxy {
             return;
         }
         String videoName = FilenameUtils.getBaseName(fileDetail.getFileName());
-        setUpForRequest(accountData);
-        videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
+        String accountStatus = setUpForRequest(accountData);
+        if (accountStatus.equals(SUCCESS)) {
+            videoManager.upload(video, metadata, encryptedSymmetricKey, videoName, response);
+        } else {
+            Logger.getGlobal().info("Account data not valid");
+            response.resume("Account data not valid");
+        }
     }
 
     //!All other requests use the normal javax.ws.rs.core.Form for sending data to the service!
@@ -103,7 +107,6 @@ public class ServerProxy {
     //TODO: Check if http numbers are correctly set for each case!
     @POST
     @Path("videoDownload")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response videoDownload(@FormParam(VIDEO_ID) int videoId, @FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("Download Request");
         Response.ResponseBuilder response = Response.ok();
@@ -134,7 +137,6 @@ public class ServerProxy {
      */
     @POST
     @Path("videoInfo")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String videoInfo(@FormParam(VIDEO_ID) int videoId, @FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("Get Metadata Request");
         if (accountData == null || videoId == 0) {
@@ -159,7 +161,6 @@ public class ServerProxy {
      */
     @POST
     @Path("videoDelete")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String videoDelete(@FormParam(VIDEO_ID) int videoId, @FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("Video Deletion Request");
         if (accountData == null || videoId == 0) {
@@ -182,7 +183,6 @@ public class ServerProxy {
      */
     @POST
     @Path("getVideos")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String getVideos(@FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("GetVideosByAccount Request");
         if (accountData == null) {
@@ -204,7 +204,6 @@ public class ServerProxy {
      */
     @POST
     @Path("authenticate")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String authenticateAccount(@FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("Authenticate Request");
         if (accountData == null) {
@@ -225,7 +224,6 @@ public class ServerProxy {
      */
     @POST
     @Path("createAccount")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String createAccount(@FormParam(ACCOUNT) String accountData, @FormParam(UUID) String uuid) {
         Logger.getGlobal().info("Account Creation Request");
         if (accountData == null || uuid == null) {
@@ -246,7 +244,6 @@ public class ServerProxy {
      */
     @POST
     @Path("changeAccount")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String changeAccount(@FormParam(NEW_ACCOUNT) String newAccountData, @FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("AccountData Changing Request");
         if (accountData == null || newAccountData == null) {
@@ -265,7 +262,6 @@ public class ServerProxy {
      */
     @POST
     @Path("deleteAccount")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public String deleteAccount(@FormParam(ACCOUNT) String accountData) {
         Logger.getGlobal().info("Account Deletion Request");
         if (accountData == null) {
