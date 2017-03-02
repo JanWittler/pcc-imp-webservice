@@ -351,9 +351,9 @@ public class ServerProxyTest {
         WebTarget webTarget = client.target(MAIN_ADDRESS).path("videoUpload").register(MultiPartFeature.class);
         MultiPart multiPart = new MultiPart();
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
-        FileDataBodyPart video = new FileDataBodyPart("video", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        FileDataBodyPart metadata = new FileDataBodyPart("metadata", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta" + Metadata.FILE_EXTENTION), MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        FileDataBodyPart key = new FileDataBodyPart("key", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encKey.txt"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        FileDataBodyPart video = new FileDataBodyPart("video", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "VIDEO_1487198226374" + VideoInfo.FILE_EXTENTION), MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        FileDataBodyPart metadata = new FileDataBodyPart("metadata", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "META_1487198226374" + Metadata.FILE_EXTENTION), MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        FileDataBodyPart key = new FileDataBodyPart("key", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "KEY_1487198226374.key"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
         FormDataBodyPart data = new FormDataBodyPart(ACCOUNT, accountJson);
         multiPart.bodyPart(video);
         multiPart.bodyPart(metadata);
@@ -369,8 +369,8 @@ public class ServerProxyTest {
 
         //cleanup
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("encVid"));
-        File encVid = new File(LocationConfig.ANONYM_VID_DIR + File.separator + account.getId() + "_encVid" + VideoInfo.FILE_EXTENTION);
-        File encMeta = new File(LocationConfig.META_DIR + File.separator + account.getId() + "_encVid_meta" + Metadata.FILE_EXTENTION);
+        File encVid = new File(LocationConfig.ANONYM_VID_DIR + File.separator + account.getId() + "_VIDEO_1487198226374" + VideoInfo.FILE_EXTENTION);
+        File encMeta = new File(LocationConfig.META_DIR + File.separator + account.getId() + "_VIDEO_1487198226374_meta" + Metadata.FILE_EXTENTION);
         boolean status = encVid.delete();
         Assert.assertTrue(status);
         status = encMeta.delete();
