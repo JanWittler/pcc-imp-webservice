@@ -136,7 +136,7 @@ public class Main {
      * Sets up the logger so that there is one handling writing error logs and one
      * handler writing the full log.
      *
-     * @return Returns whether setting up the logger was succesful or not.
+     * @return Returns whether setting up the logger was successful or not.
      */
     private static boolean setupLogger() {
         Logger logger = Logger.getGlobal();

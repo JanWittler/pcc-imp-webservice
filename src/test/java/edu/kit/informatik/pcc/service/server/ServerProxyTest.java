@@ -2,6 +2,7 @@ package edu.kit.informatik.pcc.service.server;
 
 import edu.kit.informatik.pcc.service.data.*;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
+import org.bytedeco.javacpp.presets.opencv_core;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -35,6 +36,7 @@ public class ServerProxyTest {
     //TODO: SHORTEN ALL STUFF
     //string for client/request/response
     private final String SUCCESS = "SUCCESS";
+    private final String FAILURE = "FAILURE";
     private final String MAIN_ADDRESS = "http://localhost:2222/webservice/";
     private final String ACCOUNT = "account";
 
@@ -117,14 +119,33 @@ public class ServerProxyTest {
     }
 
     @Test
-    public void authenticateTest() {
+    public void authenticateValidTest() {
         form.param(ACCOUNT, accountJson);
-        Response response = post("authenticate");
-        if (response != null) {
-            Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        String responseString = authentication();
+        if (responseString != null) {
+            Assert.assertTrue(responseString.equals(SUCCESS));
         } else {
             Assert.fail();
         }
+    }
+
+    @Test
+    public void authenticateFailTest() {
+        String responseString = authentication();
+        if (responseString != null) {
+            Assert.assertTrue(responseString.equals(FAILURE));
+        } else {
+            Assert.fail();
+        }
+    }
+
+    private String authentication () {
+        //form must be filled in calling function
+        Response response = post("authenticate");
+        if (response != null) {
+            return response.readEntity(String.class);
+        }
+        return null;
     }
 
     @Test
@@ -338,7 +359,7 @@ public class ServerProxyTest {
     // Ignored for faster building, VideoProcessingChain gets tested individually
     @Ignore
     @Test
-    public void uploadTest() {
+    public void uploadValidTest() {
         //set directories to standard
         try {
             setFinalStatic(LocationConfig.class.getDeclaredField("ANONYM_VID_DIR"), anonym_dir);
@@ -348,7 +369,7 @@ public class ServerProxyTest {
         }
 
         //client request (here using multipart feature for upload)
-        WebTarget webTarget = client.target(MAIN_ADDRESS).path("videoUpload").register(MultiPartFeature.class);
+
         MultiPart multiPart = new MultiPart();
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
         FileDataBodyPart video = new FileDataBodyPart("video", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encVid.mp4"), MediaType.APPLICATION_OCTET_STREAM_TYPE);
@@ -359,12 +380,11 @@ public class ServerProxyTest {
         multiPart.bodyPart(metadata);
         multiPart.bodyPart(key);
         multiPart.bodyPart(data);
-        Future<Response> futureResponse = webTarget.request().async().post(Entity.entity(multiPart, multiPart.getMediaType()), Response.class);
-        try {
-            Response response = futureResponse.get();
-            Assert.assertTrue(response.readEntity(String.class).equals("Finished editing video"));
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        String responseString = upload(multiPart);
+        if (responseString != null) {
+            Assert.assertTrue(responseString.equals("Finished editing video"));
+        } else {
+            Assert.fail();
         }
 
         //cleanup
@@ -375,6 +395,39 @@ public class ServerProxyTest {
         Assert.assertTrue(status);
         status = encMeta.delete();
         Assert.assertTrue(status);
+    }
+
+    @Test
+    public void uploadFailTest() {
+        //set directories to standard
+        try {
+            setFinalStatic(LocationConfig.class.getDeclaredField("ANONYM_VID_DIR"), anonym_dir);
+            setFinalStatic(LocationConfig.class.getDeclaredField("META_DIR"), meta_dir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //client request
+        MultiPart multiPart = new MultiPart();
+        multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+        FormDataBodyPart data = new FormDataBodyPart(ACCOUNT, accountJson);
+        multiPart.bodyPart(data);
+        String responseString = upload(multiPart);
+        if (responseString != null) {
+            Assert.assertTrue(responseString.equals("Uploaded data was not received correctly"));
+        } else {
+            Assert.fail();
+        }
+    }
+    private String upload(MultiPart multiPart) {
+        WebTarget webTarget = client.target(MAIN_ADDRESS).path("videoUpload").register(MultiPartFeature.class);
+        Future<Response> futureResponse = webTarget.request().async().post(Entity.entity(multiPart, multiPart.getMediaType()), Response.class);
+        try {
+            Response response = futureResponse.get();
+            return response.readEntity(String.class);
+        } catch (InterruptedException | ExecutionException e) {
+           return null;
+        }
     }
 
     @After

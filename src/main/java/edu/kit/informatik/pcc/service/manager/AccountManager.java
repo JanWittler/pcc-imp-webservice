@@ -67,8 +67,11 @@ public class AccountManager {
         newAccount.hashPassword(getSalt());
         String status = "NOTHING CHANGED";
         if (!newAccount.getMail().equals(account.getMail())) {
-            if (!databaseManager.setMail(newAccount.getMail()))
+            if (!databaseManager.setMail(newAccount.getMail())) {
                 return FAILURE;
+            } else {
+                status = SUCCESS;
+            }
         }
 
         String newPwHash = newAccount.getPasswordHash();
