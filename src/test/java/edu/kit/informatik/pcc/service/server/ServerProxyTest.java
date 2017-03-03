@@ -158,25 +158,21 @@ public class ServerProxyTest {
         String videoId = Integer.toString(databaseManager.getVideoIdByName("pod"));
         File podAccount = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + account.getId() + "_pod"+ VideoInfo.FILE_EXTENTION);
         File podStandard = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "pod" + VideoInfo.FILE_EXTENTION);
-        try {
-            Files.copy(podStandard.toPath(), podAccount.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Assert.assertTrue(podStandard.renameTo(podAccount));
+
 
         //client request
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
         Response response = post("videoDownload");
-        boolean status = podAccount.delete();
-        Assert.assertTrue(status);
+        Assert.assertTrue(podAccount.renameTo(podStandard));
         InputStream inputStream = null;
         if (response != null && response.getStatus() == 200) {
             inputStream = response.readEntity(InputStream.class);
             File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest" + VideoInfo.FILE_EXTENTION);
             try {
                 Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                status = downloadFile.delete();
+                boolean status = downloadFile.delete();
                 Assert.assertTrue(status);
             } catch (IOException e) {
                 Assert.fail();
@@ -332,6 +328,8 @@ public class ServerProxyTest {
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
         Response response = post("videoInfo");
+        boolean status = metaAccount.delete();
+        Assert.assertTrue(status);
         String entity = null;
         if (response != null) {
             entity = response.readEntity(String.class);
@@ -346,13 +344,11 @@ public class ServerProxyTest {
             Assert.fail();
         }
 
-        //cleanup
-        boolean status = metaAccount.delete();
-        Assert.assertTrue(status);
+
     }
 
     // Ignored for faster building, VideoProcessingChain gets tested individually
-    @Ignore
+    //@Ignore
     @Test
     public void uploadValidTest() {
         //set directories to standard

@@ -78,18 +78,14 @@ public class VideoManagerTest {
         int videoId = databaseManager.getVideoIdByName("pod");
         File podAccount = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + account.getId() + "_pod"+ VideoInfo.FILE_EXTENTION);
         File podStandard = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "pod" + VideoInfo.FILE_EXTENTION);
-        try {
-            Files.copy(podStandard.toPath(), podAccount.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Assert.assertTrue(podStandard.renameTo(podAccount));
         InputStream inputStream = videoManager.download(videoId);
         databaseManager.deleteVideoAndMeta(videoId);
         File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest" + VideoInfo.FILE_EXTENTION);
         try {
             Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             inputStream.close();
-            Files.delete(podAccount.toPath());
+            Assert.assertTrue(podAccount.renameTo(podStandard));
             Assert.assertTrue(downloadFile.delete());
         } catch (IOException e) {
             Assert.fail();
