@@ -22,8 +22,8 @@ import java.util.logging.Logger;
 public class AccountManager {
 
     // status message constants
-    private final String SUCCESS = "SUCCESS";
-    private final String FAILURE = "FAILURE";
+    private final static String SUCCESS = "SUCCESS";
+    private final static String FAILURE = "FAILURE";
 
     /* #############################################################################################
      *                                  attributes

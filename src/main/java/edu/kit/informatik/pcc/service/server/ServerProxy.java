@@ -32,22 +32,22 @@ public class ServerProxy {
     * ###########################################################################################*/
 
     //status strings
-    private final String WRONG_ACCOUNT    = "WRONG ACCOUNT";
-    private final String SUCCESS          = "SUCCESS";
-    private final String FAILURE          = "FAILURE";
-    private final String NOT_EXISTING     = "NOT EXISTING";
-    private final String NOT_VERIFIED     = "NOT VERIFIED";
-    private final String WRONG_PASSWORD   = "WRONG PASSWORD";
-    private final String ACCOUNT_EXISTS   = "ACCOUNT EXISTS";
+    private final static String WRONG_ACCOUNT    = "WRONG ACCOUNT";
+    private final static String SUCCESS          = "SUCCESS";
+    private final static String FAILURE          = "FAILURE";
+    private final static String NOT_EXISTING     = "NOT EXISTING";
+    private final static String NOT_VERIFIED     = "NOT VERIFIED";
+    private final static String WRONG_PASSWORD   = "WRONG PASSWORD";
+    private final static String ACCOUNT_EXISTS   = "ACCOUNT EXISTS";
 
     //param strings
-    private final String VIDEO_ID    = "videoId";
-    private final String ACCOUNT     = "account";
-    private final String NEW_ACCOUNT = "newAccount";
-    private final String VIDEO       = "video";
-    private final String METADATA    = "metadata";
-    private final String KEY         = "key";
-    private final String UUID        = "uuid";
+    private final static String VIDEO_ID    = "videoId";
+    private final static String ACCOUNT     = "account";
+    private final static String NEW_ACCOUNT = "newAccount";
+    private final static String VIDEO       = "video";
+    private final static String METADATA    = "metadata";
+    private final static String KEY         = "key";
+    private final static String UUID        = "uuid";
 
     //manager instances
     private AccountManager accountManager;

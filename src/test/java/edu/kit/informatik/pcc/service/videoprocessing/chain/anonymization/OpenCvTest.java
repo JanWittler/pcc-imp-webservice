@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNotNull;
 public class OpenCvTest {
 
     @Test
-    public void OpenCvTets() {
+    public void OpenCvTest() {
         opencv_core.Mat mat = new opencv_core.Mat();
         assertNotNull(mat);
     }
