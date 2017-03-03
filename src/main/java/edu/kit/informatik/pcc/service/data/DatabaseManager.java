@@ -221,6 +221,7 @@ public class DatabaseManager {
             } else {
                 Logger.getGlobal().warning("The mail address you want to update is already stored" +
                         "in another user account. Please choose another mail address");
+                this.c.close();
             }
         } catch (NullPointerException | SQLException e) {
             Logger.getGlobal().warning("Setting the mail in database was not successful");
@@ -482,6 +483,11 @@ public class DatabaseManager {
             this.c.close();
         } catch (NullPointerException | SQLException e) {
             Logger.getGlobal().severe("Retrieving metadata from database failed");
+        }
+        try {
+            this.c.close();
+        } catch (SQLException e) {
+            Logger.getGlobal().warning("connection to database not closed!");
         }
         return null;
     }
