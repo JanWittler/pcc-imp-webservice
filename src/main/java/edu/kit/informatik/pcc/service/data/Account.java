@@ -63,6 +63,9 @@ public class Account {
      * @return Returns whether hashing the password was successful or not.
      */
     public boolean hashPassword(byte[] salt) {
+        if (salt == null) {
+            return false;
+        }
         try {
             // Create MessageDigest instance for MD5
             MessageDigest md = MessageDigest.getInstance("MD5");

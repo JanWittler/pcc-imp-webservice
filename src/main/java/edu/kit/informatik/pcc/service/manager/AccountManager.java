@@ -64,7 +64,8 @@ public class AccountManager {
      */
     public String changeAccount(String newAccountData) {
         Account newAccount = new Account(newAccountData);
-        newAccount.hashPassword(getSalt());
+        if (!newAccount.hashPassword(getSalt()))
+            return FAILURE;
         String status = "NOTHING CHANGED";
         if (!newAccount.getMail().equals(account.getMail())) {
             if (!databaseManager.setMail(newAccount.getMail())) {

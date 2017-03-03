@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -95,7 +96,6 @@ public class ServerProxyTest {
         databaseManager = new DatabaseManager(account);
         AccountManager accountManager = new AccountManager(account);
 
-
         //register/verify account and put some test videos/metadata into database
         String uuid = "456-sgdfgd3t5g-345fs";
         accountManager.registerAccount(uuid);
@@ -118,6 +118,11 @@ public class ServerProxyTest {
         }
     }
 
+
+    /* #############################################################################################
+    *                                  valid tests
+    * ###########################################################################################*/
+
     @Test
     public void authenticateValidTest() {
         form.param(ACCOUNT, accountJson);
@@ -127,25 +132,6 @@ public class ServerProxyTest {
         } else {
             Assert.fail();
         }
-    }
-
-    @Test
-    public void authenticateFailTest() {
-        String responseString = authentication();
-        if (responseString != null) {
-            Assert.assertTrue(responseString.equals(FAILURE));
-        } else {
-            Assert.fail();
-        }
-    }
-
-    private String authentication () {
-        //form must be filled in calling function
-        Response response = post("authenticate");
-        if (response != null) {
-            return response.readEntity(String.class);
-        }
-        return null;
     }
 
     @Test
@@ -182,28 +168,22 @@ public class ServerProxyTest {
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
         Response response = post("videoDownload");
+        boolean status = podAccount.delete();
+        Assert.assertTrue(status);
         InputStream inputStream = null;
-        if (response != null) {
-            inputStream = response.readEntity(InputStream.class);
-        }
         if (response != null && response.getStatus() == 200) {
+            inputStream = response.readEntity(InputStream.class);
             File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest" + VideoInfo.FILE_EXTENTION);
             try {
                 Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                boolean status = downloadFile.delete();
+                status = downloadFile.delete();
                 Assert.assertTrue(status);
             } catch (IOException e) {
                 Assert.fail();
             }
+        } else {
+            Assert.fail();
         }
-        if (response != null) {
-            Assert.assertTrue(response.getStatus() == 200);
-        }
-
-        //cleanup
-        boolean status = podAccount.delete();
-        Assert.assertTrue(status);
-
     }
 
     @Test
@@ -214,18 +194,12 @@ public class ServerProxyTest {
         JSONArray jsonArray = null;
         if (response != null) {
             jsonArray = new JSONArray(response.readEntity(String.class));
+        } else {
+            Assert.fail();
         }
-        JSONObject jsonObject = null;
-        if (jsonArray != null) {
-            jsonObject = jsonArray.getJSONObject(0);
-        }
-        String jsonName = null;
-        if (jsonObject != null) {
-            jsonName = jsonObject.getString("name");
-        }
-        if (jsonName != null) {
-            Assert.assertTrue(jsonName.equals("pod"));
-        }
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        String jsonName = jsonObject.getString("name");
+        Assert.assertTrue(jsonName.equals("pod"));
     }
 
     @Test
@@ -235,12 +209,14 @@ public class ServerProxyTest {
         form.param(ACCOUNT, tempAccountJson);
         form.param("uuid", tempUUID);
         Response response = post("createAccount");
-        if (response != null) {
-            Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
-        }
         DatabaseManager tempDM = new DatabaseManager(account2);
         account2.setId(tempDM.getAccountId());
         tempDM.deleteAccount();
+        if (response != null) {
+            Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        } else {
+            Assert.fail();
+        }
     }
 
     @Test
@@ -251,6 +227,8 @@ public class ServerProxyTest {
         Response response = post("changeAccount");
         if (response != null) {
             Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        } else {
+            Assert.fail();
         }
     }
 
@@ -283,6 +261,9 @@ public class ServerProxyTest {
         form.param(ACCOUNT, tempAccountJson);
         Response response = post("deleteAccount");
 
+        //cleanup
+        tempDatabaseManager.deleteAccount();
+
         //various assertions
         Assert.assertTrue(response != null && response.readEntity(String.class).equals(SUCCESS));
         Assert.assertFalse(file1.exists());
@@ -290,28 +271,40 @@ public class ServerProxyTest {
         Assert.assertFalse(file3.exists());
         Assert.assertFalse(file4.exists());
 
-        //cleanup
-        tempDatabaseManager.deleteAccount();
     }
 
     @Test
     public void videoDeleteTest() {
         String videoId = "-1";
-        databaseManager.saveProcessedVideoAndMeta("input4", "blaa");
-        for (VideoInfo videoInfo : databaseManager.getVideoInfoList()) {
+        String videoName = "input4";
+        String metaName = "blaa";
+        File video = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + account.getId() + "_" + videoName + VideoInfo.FILE_EXTENTION);
+        File meta = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + account.getId() + "_" + metaName + Metadata.FILE_EXTENTION);
+        boolean statusVideo = false;
+        boolean statusMeta = false;
+        try {
+            statusVideo = video.createNewFile();
+            statusMeta = meta.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        databaseManager.saveProcessedVideoAndMeta(videoName, metaName);
+        ArrayList<VideoInfo> list = databaseManager.getVideoInfoList();
+        for (VideoInfo videoInfo : list) {
             if (videoInfo.getName().equals("input4")) {
                 videoId = Integer.toString(videoInfo.getVideoId());
             }
         }
-        Assert.assertFalse(videoId.equals("-1"));
 
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
         Response response = post("videoDelete");
-        if (response != null) {
-            Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
-        }
         databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("input4"));
+        if (response != null && statusMeta && statusVideo) {
+            Assert.assertTrue(response.readEntity(String.class).equals(SUCCESS));
+        } else {
+            Assert.fail();
+        }
     }
 
     @Test
@@ -324,8 +317,10 @@ public class ServerProxyTest {
             }
         }
         Assert.assertFalse(videoId.equals("-1"));
-        File metaAccount = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + account.getId() + "_" + "metaTest" + Metadata.FILE_EXTENTION);
-        File metaStandard = new File (LocationConfig.TEST_RESOURCES_DIR + File.separator + "metaTest" + Metadata.FILE_EXTENTION);
+        File metaAccount = new File(LocationConfig.TEST_RESOURCES_DIR +
+                File.separator + account.getId() + "_" + "metaTest" + Metadata.FILE_EXTENTION);
+        File metaStandard = new File (LocationConfig.TEST_RESOURCES_DIR +
+                File.separator + "metaTest" + Metadata.FILE_EXTENTION);
         try {
             Files.copy(metaStandard.toPath(), metaAccount.toPath());
         } catch (IOException e) {
@@ -340,15 +335,15 @@ public class ServerProxyTest {
         String entity = null;
         if (response != null) {
             entity = response.readEntity(String.class);
+        } else {
+            Assert.fail();
         }
-        if (entity != null) {
-            if (!entity.equals("FAILURE")) {
-                JSONObject jsonObject = new JSONObject(entity);
-                float gForceY = (float) jsonObject.getDouble("triggerForceY");
-                Assert.assertTrue(gForceY == 40.0f);
-            } else {
-                Assert.fail();
-            }
+        if (!entity.equals("FAILURE")) {
+            JSONObject jsonObject = new JSONObject(entity);
+            float gForceY = (float) jsonObject.getDouble("triggerForceY");
+            Assert.assertTrue(gForceY == 40.0f);
+        } else {
+            Assert.fail();
         }
 
         //cleanup
@@ -388,13 +383,27 @@ public class ServerProxyTest {
         }
 
         //cleanup
-        databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("encVid"));
+        databaseManager.deleteVideoAndMeta(databaseManager.getVideoIdByName("VIDEO_1487198226374"));
         File encVid = new File(LocationConfig.ANONYM_VID_DIR + File.separator + account.getId() + "_VIDEO_1487198226374" + VideoInfo.FILE_EXTENTION);
         File encMeta = new File(LocationConfig.META_DIR + File.separator + account.getId() + "_VIDEO_1487198226374_meta" + Metadata.FILE_EXTENTION);
         boolean status = encVid.delete();
         Assert.assertTrue(status);
         status = encMeta.delete();
         Assert.assertTrue(status);
+    }
+
+    /* #############################################################################################
+    *                                   fail tests
+    * ###########################################################################################*/
+
+    @Test
+    public void authenticateFailTest() {
+        String responseString = authentication();
+        if (responseString != null) {
+            Assert.assertTrue(responseString.equals(FAILURE));
+        } else {
+            Assert.fail();
+        }
     }
 
     @Test
@@ -419,6 +428,20 @@ public class ServerProxyTest {
             Assert.fail();
         }
     }
+
+    /* #############################################################################################
+    *                                   responses
+    * ###########################################################################################*/
+
+    private String authentication () {
+        //form must be filled in calling function
+        Response response = post("authenticate");
+        if (response != null) {
+            return response.readEntity(String.class);
+        }
+        return null;
+    }
+
     private String upload(MultiPart multiPart) {
         WebTarget webTarget = client.target(MAIN_ADDRESS).path("videoUpload").register(MultiPartFeature.class);
         Future<Response> futureResponse = webTarget.request().async().post(Entity.entity(multiPart, multiPart.getMediaType()), Response.class);
@@ -426,7 +449,18 @@ public class ServerProxyTest {
             Response response = futureResponse.get();
             return response.readEntity(String.class);
         } catch (InterruptedException | ExecutionException e) {
-           return null;
+            return null;
+        }
+    }
+
+
+    private Response post(String path) {
+        WebTarget webTarget = client.target(MAIN_ADDRESS).path(path);
+        try {
+            return webTarget.request().post(
+                    Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
+        } catch (ProcessingException e) {
+            return null;
         }
     }
 
@@ -448,16 +482,6 @@ public class ServerProxyTest {
 
         //stop server
         Main.stopServer();
-    }
-
-    private Response post(String path) {
-        WebTarget webTarget = client.target(MAIN_ADDRESS).path(path);
-        try {
-            return webTarget.request().post(
-                    Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), Response.class);
-        } catch (ProcessingException e) {
-            return null;
-        }
     }
 }
 
