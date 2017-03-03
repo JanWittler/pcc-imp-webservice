@@ -48,6 +48,7 @@ public class RSADecryptor implements IKeyDecryptor {
         try {
             ObjectInputStream inputStream = new ObjectInputStream(getClass().getResourceAsStream(PRIVATE_KEY_FILE));
             privateKey = (PrivateKey) inputStream.readObject();
+            inputStream.close();
         } catch (FileNotFoundException e) {
             Logger.getGlobal().severe("Private key file was missing");
             Main.stopServer();

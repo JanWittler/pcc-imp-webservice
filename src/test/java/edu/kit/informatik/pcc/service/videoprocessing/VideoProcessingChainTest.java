@@ -1,7 +1,10 @@
 package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.service.data.*;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -89,8 +92,6 @@ public class VideoProcessingChainTest {
         testChainType(VideoProcessingChain.Chain.SIMPLE, 5);
     }
 
-    // ignored for faster building, anonymization gets tested individually
-    @Ignore
     @Test
     public void normalChainTest() {
         testChainType(VideoProcessingChain.Chain.NORMAL, 120);

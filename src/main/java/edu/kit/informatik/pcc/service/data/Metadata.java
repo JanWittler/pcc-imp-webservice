@@ -115,18 +115,6 @@ public class Metadata {
      *                                  getter/setter
      * ###########################################################################################*/
 
-    public long getDate() {
-        return date;
-    }
-
-    public String getTriggerType() {
-        return triggerType;
-    }
-
-    public float[] getGForce() {
-        return gForce;
-    }
-
     public void setEditingDate(long editingDate) {
         this.editingDate = editingDate;
     }
