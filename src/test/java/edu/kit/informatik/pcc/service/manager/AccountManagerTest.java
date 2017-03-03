@@ -29,7 +29,6 @@ public class AccountManagerTest {
     private byte[] registerSalt = new byte[16];
 
     //TODO: test password hashing
-    //TODO: test e-mail validation
     @Before
     public void setUp() {
         JSONObject jsonObject = new JSONObject();
@@ -114,7 +113,43 @@ public class AccountManagerTest {
         Assert.assertTrue(verified);
     }
 
+    @Test
+    public void invalidMailTest() {
+        //json with invalid mail
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("mail", "NotValidMail");
+        jsonObject.put("password", "idontcare");
+        String tempAccountJson = jsonObject.toString();
 
+        //setup account
+        Account tempAccount = new Account(tempAccountJson);
+        AccountManager tempAccountManager = new AccountManager(tempAccount);
+        String uuid = "NotRelevantHere";
+
+        String status = tempAccountManager.registerAccount(uuid);
+        Assert.assertTrue(status.equals(FAILURE));
+    }
+
+    @Test
+    public void blankMailTest() {
+        //json with blank mail
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("mail", "");
+        jsonObject.put("password", "idontcare");
+        String tempAccountJson = jsonObject.toString();
+
+        //setup account
+        Account tempAccount = new Account(tempAccountJson);
+        AccountManager tempAccountManager = new AccountManager(tempAccount);
+        String uuid = "NotRelevantHere";
+
+        String status = tempAccountManager.registerAccount(uuid);
+        Assert.assertTrue(status.equals(FAILURE));
+    }
+
+    private void tempAccountSetup() {
+
+    }
     @After
     public void cleanUp() {
         databaseManager.deleteAccount();

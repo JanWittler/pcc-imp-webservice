@@ -75,7 +75,6 @@ public class Metadata {
             throw new IllegalArgumentException();
         }
     }
-
     /**
      * Creates new metadata from given values.
      *

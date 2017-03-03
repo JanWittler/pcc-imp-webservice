@@ -165,13 +165,14 @@ public class ServerProxyTest {
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
         Response response = post("videoDownload");
-        Assert.assertTrue(podAccount.renameTo(podStandard));
+
         InputStream inputStream = null;
         if (response != null && response.getStatus() == 200) {
             inputStream = response.readEntity(InputStream.class);
             File downloadFile = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "fileDownloadTest" + VideoInfo.FILE_EXTENTION);
             try {
                 Files.copy(inputStream, downloadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Assert.assertTrue(podAccount.renameTo(podStandard));
                 boolean status = downloadFile.delete();
                 Assert.assertTrue(status);
             } catch (IOException e) {
@@ -282,7 +283,7 @@ public class ServerProxyTest {
             statusVideo = video.createNewFile();
             statusMeta = meta.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            Assert.fail();
         }
         databaseManager.saveProcessedVideoAndMeta(videoName, metaName);
         ArrayList<VideoInfo> list = databaseManager.getVideoInfoList();
@@ -317,22 +318,16 @@ public class ServerProxyTest {
                 File.separator + account.getId() + "_" + "metaTest" + Metadata.FILE_EXTENTION);
         File metaStandard = new File (LocationConfig.TEST_RESOURCES_DIR +
                 File.separator + "metaTest" + Metadata.FILE_EXTENTION);
-        try {
-            Files.copy(metaStandard.toPath(), metaAccount.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Assert.assertTrue(metaStandard.renameTo(metaAccount));
 
         //client request
         form.param(ACCOUNT, accountJson);
         form.param("videoId", videoId);
         Response response = post("videoInfo");
-        boolean status = metaAccount.delete();
-        Assert.assertTrue(status);
         String entity = null;
         if (response != null) {
             entity = response.readEntity(String.class);
+            Assert.assertTrue(metaAccount.renameTo(metaStandard));
         } else {
             Assert.fail();
         }
@@ -348,7 +343,7 @@ public class ServerProxyTest {
     }
 
     // Ignored for faster building, VideoProcessingChain gets tested individually
-    //@Ignore
+    @Ignore
     @Test
     public void uploadValidTest() {
         //set directories to standard

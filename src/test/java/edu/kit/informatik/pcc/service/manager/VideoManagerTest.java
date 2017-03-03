@@ -1,9 +1,6 @@
 package edu.kit.informatik.pcc.service.manager;
 
-import edu.kit.informatik.pcc.service.data.Account;
-import edu.kit.informatik.pcc.service.data.DatabaseManager;
-import edu.kit.informatik.pcc.service.data.LocationConfig;
-import edu.kit.informatik.pcc.service.data.VideoInfo;
+import edu.kit.informatik.pcc.service.data.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
@@ -16,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Base64;
 
 import static edu.kit.informatik.pcc.service.server.ServerProxyTest.setFinalStatic;
@@ -94,11 +92,52 @@ public class VideoManagerTest {
 
     @Test
     public void deleteTest() {
-
+        int videoId = -1;
+        String videoName = "input4";
+        String metaName = "blaa";
+        File video = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + account.getId() + "_" + videoName + VideoInfo.FILE_EXTENTION);
+        File meta = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + account.getId() + "_" + metaName + Metadata.FILE_EXTENTION);
+        boolean statusVideo = false;
+        boolean statusMeta = false;
+        try {
+            statusVideo = video.createNewFile();
+            statusMeta = meta.createNewFile();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        databaseManager.saveProcessedVideoAndMeta(videoName, metaName);
+        ArrayList<VideoInfo> list = databaseManager.getVideoInfoList();
+        for (VideoInfo videoInfo : list) {
+            if (videoInfo.getName().equals("input4")) {
+                videoId = videoInfo.getVideoId();
+            }
+        }
+        String status = videoManager.videoDelete(videoId);
+        Assert.assertTrue(statusVideo);
+        Assert.assertTrue(statusMeta);
+        Assert.assertTrue(status.equals(SUCCESS));
     }
 
     @Test
     public void metadataTest() {
+        //setup
+        int videoId = -1;
+        for (VideoInfo videoInfo : databaseManager.getVideoInfoList()) {
+            if (videoInfo.getName().equals("input3")) {
+                videoId = videoInfo.getVideoId();
+            }
+        }
+        Assert.assertFalse(videoId == -1 );
+        File metaAccount = new File(LocationConfig.TEST_RESOURCES_DIR +
+                File.separator + account.getId() + "_" + "metaTest" + Metadata.FILE_EXTENTION);
+        File metaStandard = new File (LocationConfig.TEST_RESOURCES_DIR +
+                File.separator + "metaTest" + Metadata.FILE_EXTENTION);
+        Assert.assertTrue(metaStandard.renameTo(metaAccount));
+        String jsonString = videoManager.getMetaData(videoId);
+        Assert.assertTrue(metaAccount.renameTo(metaStandard));
+        JSONObject jsonObject = new JSONObject(jsonString);
+        float gForceY = (float) jsonObject.getDouble("triggerForceY");
+        Assert.assertTrue(gForceY == 40.0f);
 
     }
 
