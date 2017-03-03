@@ -20,8 +20,8 @@ import java.util.logging.Logger;
 public class VideoManager {
 
     // processing status constants
-    private final String SUCCESS = "SUCCESS";
-    private final String FAILURE = "FAILURE";
+    private final static String SUCCESS = "SUCCESS";
+    private final static String FAILURE = "FAILURE";
 
     /* #############################################################################################
      *                                  attributes
@@ -132,6 +132,8 @@ public class VideoManager {
      */
     public String videoDelete(int videoId) {
         VideoInfo videoInfo = databaseManager.getVideoInfo(videoId);
+        boolean checkDelete1 = false;
+        boolean checkDelete2 = false;
         if (videoInfo == null) {
             return FAILURE;
         }
@@ -140,17 +142,21 @@ public class VideoManager {
         File videoFile = new File(LocationConfig.ANONYM_VID_DIR + File.separator + account.getId() + "_" +
                 videoInfo.getName() + VideoInfo.FILE_EXTENTION);
         if (videoFile.exists())
-            videoFile.delete();
+            checkDelete1 = videoFile.delete();
 
         //delete metadata file.
         String metaName = databaseManager.getMetaName(videoId);
         File metaFile = new File(LocationConfig.META_DIR + File.separator + account.getId() + "_" +
                 metaName + Metadata.FILE_EXTENTION);
         if (metaFile.exists())
-            metaFile.delete();
+            checkDelete2 = metaFile.delete();
 
         //delete both in database
-        return databaseManager.deleteVideoAndMeta(videoId) ? SUCCESS : FAILURE;
+        if (checkDelete1 && checkDelete2) {
+            return databaseManager.deleteVideoAndMeta(videoId) ? SUCCESS : FAILURE;
+        } else {
+            return FAILURE;
+        }
     }
 
     /**
