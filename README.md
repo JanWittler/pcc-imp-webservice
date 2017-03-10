@@ -6,9 +6,15 @@
 
 ##Preparation/ Installation
 The following software is required for this project:
-* Java
-* Postgres
-* Maven
+* Java (1.8.x)
+* Postgres (9.6.x)
+* Maven 2
+
+If you want to run the advanced Python based anonymization you need additional Software:
+* Python (3.x)
+    * numphy (1.12.x)
+    * opencv_python (3.x)
+    * imutils
 
 ####Setup a Test-Database
 ```

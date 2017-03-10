@@ -89,12 +89,6 @@ public class VideoManager {
     public void upload(InputStream video, InputStream metadata, InputStream encryptedSymmetricKey,
                          String videoName, AsyncResponse response) {
         VideoProcessingManager videoProcessingManager = VideoProcessingManager.getInstance();
-
-        if (videoProcessingManager == null) {
-            response.resume("VideoProcessingManager failure");
-            return;
-        }
-
         videoProcessingManager.addTask(video, metadata, encryptedSymmetricKey, account, videoName, response);
     }
 
