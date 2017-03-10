@@ -2,6 +2,7 @@ package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.service.data.Account;
 import edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization.OpenCVAnonymizer;
+import edu.kit.informatik.pcc.service.videoprocessing.chain.anonymization.OpenCVPythonAnonymizer;
 import edu.kit.informatik.pcc.service.videoprocessing.chain.decryption.Decryptor;
 import edu.kit.informatik.pcc.service.videoprocessing.chain.persistation.FileForwarder;
 import edu.kit.informatik.pcc.service.videoprocessing.chain.persistation.Persistor;
@@ -128,6 +129,10 @@ public class VideoProcessingChain implements Runnable {
                 stages.add(new OpenCVAnonymizer());
                 stages.add(new Persistor());
                 break;
+            case PYTHON:
+                stages.add(new Decryptor());
+                stages.add(new OpenCVPythonAnonymizer());
+                stages.add(new Persistor());
         }
     }
 
@@ -211,6 +216,6 @@ public class VideoProcessingChain implements Runnable {
      * Enumeration used to make it simple to add new chain types as well as identify existing ones.
      */
     protected enum Chain {
-        EMPTY, SIMPLE, NORMAL
+        EMPTY, SIMPLE, NORMAL, PYTHON
     }
 }

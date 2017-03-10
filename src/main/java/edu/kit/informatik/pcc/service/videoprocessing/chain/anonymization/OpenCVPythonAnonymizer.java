@@ -13,20 +13,68 @@ import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
 /**
+ * Implements the AAnonymizer interface.
+ * Takes a video file and divides it into pictures.
+ * Than it takes a python-script to anonymize each picture.
+ * After anonymization the pictures get merged into a mp4-File again.
+ *
  * @author Josh Romanowski
  */
 public class OpenCVPythonAnonymizer extends AAnonymizer {
     private static final String PYTHON_DIR = LocationConfig.PROJECT_DIR + File.separator + "Python";
     private static final String ANONYM_SUFFIX = "_out_inverse_result_inverted";
 
+    /* #############################################################################################
+     *                                  attributes
+     * ###########################################################################################*/
+
+    /**
+     * Converter used to convert the video into pictures and vise-versa
+     */
     private VideoPictureConverter converter;
 
+    /* #############################################################################################
+     *                                  constructors
+     * ###########################################################################################*/
+
+    /**
+     * Creates a new anonymizer.
+     */
     public OpenCVPythonAnonymizer() {
         this.converter = new VideoPictureConverter();
     }
 
+    /* #############################################################################################
+     *                                  methods
+     * ###########################################################################################*/
+
     @Override
     public boolean anonymize(File input, File output) {
+        if (input == null || output == null)
+            return false;
+
+        // make temporary editing dir
+        File editingDir = new File(LocationConfig.TEMP_DIR + File.separator + System.currentTimeMillis());
+        if (!editingDir.mkdir())
+            return false;
+
+        // clean up in ANY case (!)
+        return anonymizeVideo(input, output, editingDir) & cleanUp(editingDir);
+    }
+
+    /* #############################################################################################
+     *                                  helper methods
+     * ###########################################################################################*/
+
+    /**
+     * Anonymizes a video using a python-script.
+     *
+     * @param input      Input video file.
+     * @param output     Output video file.
+     * @param editingDir Directory used to temporarily save data.
+     * @return Returns whether editing was successful or not.
+     */
+    private boolean anonymizeVideo(File input, File output, File editingDir) {
         IContainer container = IContainer.make();
         container.open(input.getAbsolutePath(), IContainer.Type.READ, null);
         IStream stream = container.getStream(0);
@@ -45,13 +93,7 @@ public class OpenCVPythonAnonymizer extends AAnonymizer {
         coder.close();
         container.close();
 
-
         Logger.getGlobal().info(String.format("Start splitting %s", input.getName()));
-
-        // make temporary editing dir
-        File editingDir = new File(LocationConfig.TEMP_DIR + File.separator + "editingDir");
-        if (!editingDir.mkdir())
-            return false;
 
         // make temporary dir for pictures
         File picDir = new File(editingDir + File.separator + "input");
@@ -70,12 +112,19 @@ public class OpenCVPythonAnonymizer extends AAnonymizer {
             Process p = Runtime.getRuntime().exec(
                     "python processing_chain.py -i " + picDir.getAbsolutePath() + " -f 10", null,
                     new File(PYTHON_DIR));
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            // clear console log so the script doesn't get stuck (necessary!!)
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((reader.readLine()) != null) {
             }
-            p.waitFor();
+
+            int status = p.waitFor();
             reader.close();
+
+            if (status != 0) {
+                Logger.getGlobal().warning("executing python script failed");
+                return false;
+            }
         } catch (IOException | InterruptedException e) {
             Logger.getGlobal().warning("executing python script failed");
             return false;
@@ -87,15 +136,22 @@ public class OpenCVPythonAnonymizer extends AAnonymizer {
         File anonymPicDir = new File(picDir + ANONYM_SUFFIX);
         converter.merge(anonymPicDir, fps, width, heigth, output);
 
-        // delete all files
-        try {
-            FileUtils.cleanDirectory(editingDir);
-            editingDir.delete();
-        } catch (IOException e) {
-            return false;
-        }
-
         return true;
     }
 
+    /**
+     * Deletes a files in a directory and the directory itself.
+     *
+     * @param editingDir Directory to be deleted.
+     * @return Returns if deleting was successful or not.
+     */
+    private boolean cleanUp(File editingDir) {
+        // delete all files
+        try {
+            FileUtils.cleanDirectory(editingDir);
+            return editingDir.delete();
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

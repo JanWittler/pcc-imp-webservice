@@ -1,10 +1,7 @@
 package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.service.data.*;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -95,6 +92,12 @@ public class VideoProcessingChainTest {
     @Test
     public void normalChainTest() {
         testChainType(VideoProcessingChain.Chain.NORMAL, 120);
+    }
+
+    @Ignore
+    @Test
+    public void pythonChainTest() {
+        testChainType(VideoProcessingChain.Chain.PYTHON, 120);
     }
 
     private void testChainType(VideoProcessingChain.Chain chainType, long timeout) {

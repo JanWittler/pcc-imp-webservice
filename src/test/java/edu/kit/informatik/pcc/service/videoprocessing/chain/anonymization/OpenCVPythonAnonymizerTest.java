@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.io.File;
 
 /**
+ * Test für den Python-Anonymizer
+ *
  * @author Josh Romanowski
  */
 @Ignore
@@ -23,6 +25,13 @@ public class OpenCVPythonAnonymizerTest {
         anonymizer = new OpenCVPythonAnonymizer();
         input = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "decVid.mp4");
         output = new File(LocationConfig.OUTPUT_DIR + File.separator + "output" + VideoInfo.FILE_EXTENTION);
+    }
+
+    @Test
+    public void nullTest() {
+        Assert.assertFalse(anonymizer.anonymize(null, null));
+        Assert.assertFalse(anonymizer.anonymize(input, null));
+        Assert.assertFalse(anonymizer.anonymize(null, output));
     }
 
     @Test
