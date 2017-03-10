@@ -38,4 +38,10 @@ public class OpenCVPythonAnonymizerTest {
     public void validTest() {
         Assert.assertTrue(anonymizer.anonymize(input, output));
     }
+
+    @Test
+    public void noVideoTest() {
+        input = new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "encMeta.json");
+        Assert.assertFalse(anonymizer.anonymize(input, output));
+    }
 }

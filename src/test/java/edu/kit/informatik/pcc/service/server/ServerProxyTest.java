@@ -2,14 +2,16 @@ package edu.kit.informatik.pcc.service.server;
 
 import edu.kit.informatik.pcc.service.data.*;
 import edu.kit.informatik.pcc.service.manager.AccountManager;
-import org.bytedeco.javacpp.presets.opencv_core;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
@@ -343,7 +345,6 @@ public class ServerProxyTest {
     }
 
     // Ignored for faster building, VideoProcessingChain gets tested individually
-    @Ignore
     @Test
     public void uploadValidTest() {
         //set directories to standard

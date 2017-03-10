@@ -123,16 +123,6 @@ public class Main {
     }
 
     /**
-     * Restarts the server.
-     */
-    private static void restartServer() {
-        Logger.getGlobal().info("Restarting server");
-        stopServer();
-
-        startServer();
-    }
-
-    /**
      * Sets up the logger so that there is one handling writing error logs and one
      * handler writing the full log.
      *
