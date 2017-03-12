@@ -1,11 +1,13 @@
 from __future__ import print_function
-from imutils.object_detection import non_max_suppression
-from imutils import paths
-import numpy as np
+
 import argparse
-import imutils
 import cv2
+import imutils
+import numpy as np
 import os
+from imutils import paths
+from imutils.object_detection import non_max_suppression
+
 
 def shiftRbyn(arr, n=0):
     return arr[n:len(arr):] + arr[0:n:]
@@ -74,10 +76,6 @@ for imagePath in paths.list_images(args["images"]):
                 roi = cv2.GaussianBlur(roi, (int(h2 / sf) + 1, int(h2 / sf) + 1), 0)
             image[yA:yA + roi.shape[0], xA:xA + roi.shape[1]] = roi
 
-    # show some information on the number of bounding boxes
-    filename = imagePath[imagePath.rfind("/") + 1:]
-    print("[INFO] {}: {} original boxes, {} after suppression".format(
-        filename, len(rects), len(pick)))
 
     # show the output images
     #cv2.imshow("Before NMS", orig)

@@ -1,11 +1,13 @@
 from __future__ import print_function
-from imutils.object_detection import non_max_suppression
-from imutils import paths
-import numpy as np
+
 import argparse
-import imutils
 import cv2
+import imutils
+import numpy as np
 import os
+from imutils import paths
+from imutils.object_detection import non_max_suppression
+
 
 def shiftRbyn(arr, n=0):
     return arr[n:len(arr):] + arr[0:n:]
@@ -21,17 +23,14 @@ args = vars(ap.parse_args())
 # assemnble inverse_dir_path
 #inverse_dir_path = args["images"] + "_inverse/"
 inverse_dir_path = args["inimagesinv"]
-print("[INFO] Inverse input sequence path {}".format(inverse_dir_path))
 
 # assemble out_dir_path
 #out_dir_path = args["images"] + "_out_inverse/"
 out_dir_path = args["outimagesinv"]
-print("[INFO] Inverse output sequence path {}".format(out_dir_path))
 
 # assemnble and inverse_result_dir_path
 #inverse_result_dir_path = args["images"] + "_inverse_result/"
 inverse_result_dir_path = args["outimagesinv"] + "_result"
-print("[INFO] Inverse result sequence path {}".format(inverse_result_dir_path))
 os.mkdir(inverse_result_dir_path)
 
 # initialize the HOG descriptor/person detector
@@ -97,10 +96,6 @@ for imagePath in paths.list_images(inverse_dir_path):
                 roi = cv2.GaussianBlur(roi, (int(h2 / sf) + 1, int(h2 / sf) + 1), 0)
             out_image[yA:yA + roi.shape[0], xA:xA + roi.shape[1]] = roi
 
-    # show some information on the number of bounding boxes
-    filename = imagePath[imagePath.rfind("/") + 1:]
-    print("[INFO] {}: {} original boxes, {} after suppression".format(
-        filename, len(rects), len(pick)))
 
     # show the output images
     #cv2.imshow("Before NMS", orig)

@@ -1,9 +1,9 @@
 from __future__ import print_function
+
 import argparse
+import glob
 import os
 import shutil
-import glob
-
 
 inverse_dir_postfix = "inverse"
 out_inverse_dir_postfix = "inverse"
@@ -30,10 +30,7 @@ for filenames in listing:
     if filenames.endswith('.png'):
         counter += 1
 
-print("[INFO] Images in input folder: {}".format(counter))
 counter2 = counter
-
-print("[INFO] Inverting input sequence")
 
 # rename the input images with inverted indices
 files = glob.iglob(os.path.join(args["inimages"], "*.png"))
@@ -43,8 +40,6 @@ for file in files:
         #print(new_filepath)
         shutil.copy2(file, new_filepath)
         counter -= 1
-
-print("[INFO] Inverting output sequence")
 
 # rename the output images with inverted indices
 #outfiles = glob.iglob(os.path.join(args["images"] + "_out/", "*.png"))

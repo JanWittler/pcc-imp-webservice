@@ -1,9 +1,9 @@
 from __future__ import print_function
+
 import argparse
+import glob
 import os
 import shutil
-import glob
-
 
 inverse_dir_name = "inverse"
 out_inverse_dir_name = "out_inverse"
@@ -18,7 +18,6 @@ input_dir_path = args["images"]
 
 result_dir_path = args["images"] + "_inverted"
 os.mkdir(result_dir_path)
-print("[INFO] Result sequence path {}".format(result_dir_path))
 
 # get the number of images in the input folder
 counter = 0
@@ -26,8 +25,6 @@ listing = os.listdir(args["images"])
 for filenames in listing:
     if filenames.endswith('.png'):
         counter += 1
-
-print("[INFO] Inverting sequence")
 
 # rename the input images with inverted indices
 files = glob.iglob(os.path.join(args["images"], "*.png"))
