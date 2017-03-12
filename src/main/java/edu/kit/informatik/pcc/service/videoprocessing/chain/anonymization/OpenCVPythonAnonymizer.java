@@ -6,10 +6,8 @@ import com.xuggle.xuggler.IStreamCoder;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
 /**
@@ -113,20 +111,15 @@ public class OpenCVPythonAnonymizer extends AAnonymizer {
                     "python processing_chain.py -i " + picDir.getAbsolutePath() + " -f 10", null,
                     new File(PYTHON_DIR));
 
-            // clear console log so the script doesn't get stuck (necessary!!)
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((reader.readLine()) != null) {
-            }
-
-            int status = p.waitFor();
-            reader.close();
+            p.waitFor();
+            int status = p.exitValue();
 
             if (status != 0) {
-                Logger.getGlobal().warning("executing python script failed");
+                Logger.getGlobal().warning("Executing python script failed");
                 return false;
             }
         } catch (IOException | InterruptedException e) {
-            Logger.getGlobal().warning("executing python script failed");
+            Logger.getGlobal().warning("Executing python script failed");
             return false;
         }
 

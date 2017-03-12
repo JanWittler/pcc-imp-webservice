@@ -100,7 +100,7 @@ public class VideoProcessingChain implements Runnable {
     /**
      * Cleans up all files and further context created for the video processing.
      */
-    public void cleanUp() {
+    void cleanUp() {
         // atm only calls deleteTempFiles but is separated from it in case further functionality
         // becomes necessary for cleaning up.
         deleteTempFiles(context);
