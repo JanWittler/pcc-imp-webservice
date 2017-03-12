@@ -54,8 +54,9 @@ public class Metadata {
      * Creates a metadata container from a JSON string.
      *
      * @param json JSON string to fetch data from.
+     * @throws IllegalArgumentException when json string is not valid
      */
-    public Metadata(String json) {
+    public Metadata(String json) throws IllegalArgumentException{
 
         // retrieve json data
         try {

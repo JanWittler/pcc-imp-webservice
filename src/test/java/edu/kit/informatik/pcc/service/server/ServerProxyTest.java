@@ -344,7 +344,6 @@ public class ServerProxyTest {
 
     }
 
-    // Ignored for faster building, VideoProcessingChain gets tested individually
     @Test
     public void uploadValidTest() {
         //set directories to standard
@@ -356,7 +355,6 @@ public class ServerProxyTest {
         }
 
         //client request (here using multipart feature for upload)
-
         MultiPart multiPart = new MultiPart();
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
         FileDataBodyPart video = new FileDataBodyPart("video", new File(LocationConfig.TEST_RESOURCES_DIR + File.separator + "VIDEO_1487198226374" + VideoInfo.FILE_EXTENTION), MediaType.APPLICATION_OCTET_STREAM_TYPE);

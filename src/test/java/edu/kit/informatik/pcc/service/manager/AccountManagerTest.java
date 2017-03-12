@@ -106,11 +106,18 @@ public class AccountManagerTest {
     }
 
     @Test
-    public void isVerifiedTest() {
+    public void isVerifiedValidTest() {
         registerTestAccount();
         databaseManager.verifyAccount(uuid);
         boolean verified = accountManager.isVerified();
         Assert.assertTrue(verified);
+    }
+
+    @Test
+    public void isVerifiedFalseTest() {
+        registerTestAccount();
+        boolean verified = accountManager.isVerified();
+        Assert.assertFalse(verified);
     }
 
     @Test
@@ -147,9 +154,6 @@ public class AccountManagerTest {
         Assert.assertTrue(status.equals(FAILURE));
     }
 
-    private void tempAccountSetup() {
-
-    }
     @After
     public void cleanUp() {
         databaseManager.deleteAccount();
