@@ -165,7 +165,7 @@ public class DatabaseManagerTest {
     }
 
     @Test
-    public void getMetaNameByVideoId() {
+    public void getMetaNameTest() {
         registered = dm.register(OWN_UUID, bytes);
         account.setId(dm.getAccountId());
         String videoName = "videoGetMetaNameByVideoId";
