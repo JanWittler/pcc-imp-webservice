@@ -4,6 +4,7 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStream;
 import com.xuggle.xuggler.IStreamCoder;
 import org.bytedeco.javacpp.avutil;
+import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.RectVector;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
@@ -74,8 +75,9 @@ public class OpenCVAnonymizer extends AAnonymizer {
         }
 
         IStreamCoder coder = stream.getStreamCoder();
-        int width = coder.getWidth();
-        int heigth = coder.getHeight();
+        // video codec is rotated by 90 degrees!!!
+        int width = coder.getHeight();
+        int heigth = coder.getWidth();
         double fps = coder.getFrameRate().getValue();
         int bitrate = coder.getBitRate();
         long length = container.getDuration() / 1000000;
@@ -88,6 +90,8 @@ public class OpenCVAnonymizer extends AAnonymizer {
 
         // initialize grabber and recorder
         FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(input.getAbsolutePath());
+        grabber.setImageHeight(heigth);
+        grabber.setImageWidth(width);
         grabber.setFrameRate(fps);
 
         FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(output.getAbsoluteFile(),
@@ -107,6 +111,9 @@ public class OpenCVAnonymizer extends AAnonymizer {
             while ((frame = grabber.grabImage()) != null) {
                 // detect faces
                 Mat mat = converter.convertToMat(frame);
+                // rotate mat by 90 degrees
+                opencv_core.transpose(mat, mat);
+                opencv_core.flip(mat, mat, 1);
                 RectVector detections = analyzer.analyze(mat);
                 mat = filter.applyFilter(mat, detections);
                 Frame end = converter.convert(mat);

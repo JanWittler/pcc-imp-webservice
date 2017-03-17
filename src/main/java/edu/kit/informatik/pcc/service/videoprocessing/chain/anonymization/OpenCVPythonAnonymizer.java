@@ -84,10 +84,13 @@ public class OpenCVPythonAnonymizer extends AAnonymizer {
 
         // read settings
         IStreamCoder coder = stream.getStreamCoder();
-        int width = coder.getWidth();
-        int heigth = coder.getHeight();
+        int width = coder.getHeight();
+        int height = coder.getWidth();
         double fps = coder.getFrameRate().getValue();
         long length = container.getDuration() / 1000000;
+
+        coder.setWidth(width);
+        coder.setHeight(height);
         coder.close();
         container.close();
 
@@ -103,7 +106,7 @@ public class OpenCVPythonAnonymizer extends AAnonymizer {
 
         Logger.getGlobal().info(String.format(
                 "Start anonymizing %s. Fps:%d, Size:%d x %d, Dur:%ds",
-                input.getName(), (int) fps, width, heigth, length));
+                input.getName(), (int) fps, width, height, length));
 
         //anonymize
         try {
@@ -127,7 +130,7 @@ public class OpenCVPythonAnonymizer extends AAnonymizer {
 
         // merge video again
         File anonymPicDir = new File(picDir + ANONYM_SUFFIX);
-        converter.merge(anonymPicDir, fps, width, heigth, output);
+        converter.merge(anonymPicDir, fps, width, height, output);
 
         return true;
     }

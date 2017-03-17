@@ -9,6 +9,7 @@ import com.xuggle.xuggler.Global;
 import com.xuggle.xuggler.ICodec;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,14 +18,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Josh Romanowski
  */
-public class VideoPictureConverter {
+class VideoPictureConverter {
 
-    public void splitUp(File video, File picDir, double fps) {
+    void splitUp(File video, File picDir, double fps) {
         Reader reader = new Reader(video.getAbsolutePath(), picDir.getAbsolutePath(), fps);
         reader.splitVideo();
     }
 
-    public void merge(File picDir, double fps, int width, int height, File output) {
+    void merge(File picDir, double fps, int width, int height, File output) {
         Writer writer = new Writer(picDir.getAbsolutePath(), fps, width, height, output.getAbsolutePath());
         writer.readImages();
     }
@@ -37,7 +38,7 @@ public class VideoPictureConverter {
         private String videoPath;
         private String outputDir;
 
-        public Reader(String videoPath, String outputDir, double fps) {
+        Reader(String videoPath, String outputDir, double fps) {
             this.outputDir = outputDir;
             this.videoPath = videoPath;
 
@@ -45,7 +46,7 @@ public class VideoPictureConverter {
             microSecondsBetweenFrames = (long) (Global.DEFAULT_PTS_PER_SECOND * secondsBetweenFrames);
         }
 
-        public void splitVideo() {
+        void splitVideo() {
             IMediaReader reader = ToolFactory.makeReader(videoPath);
             reader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
             reader.addListener(this);
@@ -74,8 +75,19 @@ public class VideoPictureConverter {
 
         private boolean saveImage(BufferedImage image) {
             try {
+                // Rotate image by 90 degrees as the mp4 header is messed up
+                double sin = Math.abs(Math.sin(Math.toRadians(90))), cos = Math.abs(Math.cos(Math.toRadians(90)));
+                int w = image.getWidth(null), h = image.getHeight(null);
+                int neww = (int) Math.floor(w * cos + h * sin), newh = (int) Math.floor(h * cos + w * sin);
+                BufferedImage bimg = new BufferedImage(neww, newh, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = bimg.createGraphics();
+                g.translate((neww - w) / 2, (newh - h) / 2);
+                g.rotate(Math.toRadians(90), w / 2, h / 2);
+                g.drawRenderedImage(image, null);
+                g.dispose();
+
                 String fileName = outputDir + File.separator + System.currentTimeMillis() + ".png";
-                ImageIO.write(image, "png", new File(fileName));
+                ImageIO.write(bimg, "png", new File(fileName));
             } catch (IOException e) {
                 return false;
             }
@@ -92,7 +104,7 @@ public class VideoPictureConverter {
         private int heigth;
         private String outLocation;
 
-        public Writer(String picLocation, double fps, int width, int height, String outLocation) {
+        Writer(String picLocation, double fps, int width, int height, String outLocation) {
             this.picLocation = picLocation;
             this.width = width;
             this.heigth = height;
@@ -100,7 +112,7 @@ public class VideoPictureConverter {
             frameLength = (int) Math.round(1 / fps * 1000000);
         }
 
-        public void readImages() {
+        void readImages() {
             writer = ToolFactory.makeWriter(outLocation);
             writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_MPEG4, width, heigth);
 
