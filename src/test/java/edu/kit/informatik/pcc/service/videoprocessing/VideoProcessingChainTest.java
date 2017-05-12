@@ -99,7 +99,7 @@ public class VideoProcessingChainTest {
 
     @Test
     public void pythonChainTest() {
-        testChainType(VideoProcessingChain.Chain.PYTHON, 300);
+        testChainType(VideoProcessingChain.Chain.PYTHON, 500);
     }
 
     private void testChainType(VideoProcessingChain.Chain chainType, long timeout) {
