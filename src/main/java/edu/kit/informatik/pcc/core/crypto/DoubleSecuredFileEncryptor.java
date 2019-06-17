@@ -26,7 +26,7 @@ public class DoubleSecuredFileEncryptor implements IFileEncryptor {
 	@Override
 	public void encryptFile(File inputFile, Key key, File outputFile) {
 		assertCompletelySetup();
-		encryptFile(inputFile, key, outputFile);
+		symmetricEncryptor.encryptFile(inputFile, key, outputFile);
 	}
 
 	@Override
