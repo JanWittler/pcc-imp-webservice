@@ -4,7 +4,6 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.KeyPair;
 import java.util.logging.Logger;
 
