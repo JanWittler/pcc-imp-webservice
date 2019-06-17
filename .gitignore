@@ -6,6 +6,14 @@
 .idea/tasks.xml
 .idea/.name
 
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+/bin/*
+
 # Mac User
 .DS_Store
 
