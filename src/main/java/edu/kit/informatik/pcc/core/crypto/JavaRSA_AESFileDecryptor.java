@@ -3,8 +3,11 @@ package edu.kit.informatik.pcc.core.crypto;
 import java.io.File;
 import java.security.Key;
 
+import edu.kit.informatik.pcc.service.data.IFileManager;
+
 public class JavaRSA_AESFileDecryptor implements IVideoDecryptor, IPublicKeyProvider {
 	private VideoDecryptor videoDecryptor;
+	private KeyStorage keyStorage;
 	
 	public JavaRSA_AESFileDecryptor() {
 		JavaCryptoRSA javaCryptoRSA = new JavaCryptoRSA();
@@ -20,6 +23,11 @@ public class JavaRSA_AESFileDecryptor implements IVideoDecryptor, IPublicKeyProv
 		videoDecryptor.setKeyStorage(keyStorage);
 		
 		this.videoDecryptor = videoDecryptor;
+		this.keyStorage = keyStorage;
+	}
+	
+	public void setFileManager(IFileManager fileManager) {
+		this.keyStorage.setFileManager(fileManager);
 	}
 	
 	@Override

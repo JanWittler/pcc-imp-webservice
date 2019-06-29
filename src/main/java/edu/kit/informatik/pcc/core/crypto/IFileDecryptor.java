@@ -4,6 +4,6 @@ import java.io.File;
 import java.security.Key;
 
 public interface IFileDecryptor {
-	Key decryptKey(byte[] keyData, Key privateKey);
-	void decryptFile(File inputFile, Key key, File outputFile);
+	public Key decryptKey(byte[] keyData, Key privateKey);
+	public void decryptFile(File inputFile, Key key, File outputFile);
 }
