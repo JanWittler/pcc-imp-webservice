@@ -11,6 +11,12 @@ CREATE UNIQUE INDEX "user_id_uindex" ON public.user (id);
 CREATE UNIQUE INDEX "user_mail_uindex" ON public.user (mail);
 CREATE UNIQUE INDEX "user_uuid_uindex" ON public.user (uuid);
 
+CREATE TABLE public.sessions
+(
+    id SERIAL PRIMARY KEY NOT NULL,
+    token TEXT NOT NULL
+)
+
 CREATE TABLE public.video
 (
     id SERIAL PRIMARY KEY NOT NULL,
