@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 import edu.kit.informatik.pcc.service.server.Main;
 
-public class UserSQLDB implements IUserDB {
+public class UserSQLDB implements IUserDB, IUserSessionDB {
 	// database constants
     private static final String PORT = "5432";
     private static final String HOST = "localhost";
@@ -45,22 +45,23 @@ public class UserSQLDB implements IUserDB {
 			connection.close();
 		}
 		catch (SQLException e) {
+			Logger.getGlobal().warning("Creating account in database failed");
 		}
 	}
 
 	@Override
 	public int getUserIdByMail(String email) {
-		int accountId = IUserIdProvider.invalidId;
+		int userId = IUserIdProvider.invalidId;
 		Connection connection = connectToDatabase();
 		if (connection == null) {
-			return accountId;
+			return userId;
 		}
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("select \"id\" from \"user\" where \"user\".\"mail\"='" +
                     email + "'");
             if (rs.next()) {
-                accountId = rs.getInt("id");
+            	userId = rs.getInt("id");
             }
             stmt.close();
             connection.close();
@@ -69,7 +70,7 @@ public class UserSQLDB implements IUserDB {
             Logger.getGlobal().warning("Retrieving account id from database failed");
             return IUserIdProvider.invalidId;
         }
-        return accountId;
+        return userId;
 	}
 
 	@Override
@@ -93,7 +94,7 @@ public class UserSQLDB implements IUserDB {
             connection.close();
         } 
         catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().severe("Retrieving metadata from database failed");
+            Logger.getGlobal().severe("Validating password with database failed");
             return false;
         }
         
@@ -119,6 +120,67 @@ public class UserSQLDB implements IUserDB {
         } 
         catch (NullPointerException | SQLException e) {
             Logger.getGlobal().warning("Error while deleting account in database");
+        }
+	}
+	
+	@Override
+	public int getUserId(String authenticationToken) {
+		int userId = IUserIdProvider.invalidId;
+		Connection connection = connectToDatabase();
+		if (connection == null) {
+			return userId;
+		}
+		try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("select \"id\" from \"sessions\" where \"sessions\".\"token\"='" +
+                    authenticationToken + "'");
+            if (rs.next()) {
+                userId = rs.getInt("id");
+            }
+            stmt.close();
+            connection.close();
+        } 
+        catch (SQLException | NullPointerException e) {
+            Logger.getGlobal().warning("Retrieving account id from database failed");
+            return IUserIdProvider.invalidId;
+        }
+        return userId;
+	}
+
+	@Override
+	public void storeAuthenticationToken(String authenticationToken, int userId) {
+		Connection connection = connectToDatabase();
+		if (connection == null) {
+			return;
+		}
+		try {
+			Statement stmt = connection.createStatement();
+			String sql = "insert into \"sessions\" (id,token) values ('" + 
+			userId + "','" + authenticationToken + "' );";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			connection.close();
+		}
+		catch (SQLException e) {
+			Logger.getGlobal().warning("Storing token to database failed");
+		}
+	}
+
+	@Override
+	public void deleteTokensForUserId(int userId) {
+		Connection connection = connectToDatabase();
+		if (connection == null) {
+			return;
+		}
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "delete from \"sessions\" where \"sessions\".\"id\"='" + userId + "'";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            connection.close();
+        } 
+        catch (NullPointerException | SQLException e) {
+            Logger.getGlobal().warning("Error while deleting tokens in database");
         }
 	}
 	
