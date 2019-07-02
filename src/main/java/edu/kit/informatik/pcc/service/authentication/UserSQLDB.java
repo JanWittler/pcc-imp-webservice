@@ -222,7 +222,7 @@ public class UserSQLDB implements IUserDB, IUserSessionDB {
     }
     
     private String hashPassword(String password, byte[] salt) {
-    	if (salt == null) {
+    	if (salt == null || password == null || password.length() == 0) {
             return null;
         }
         try {

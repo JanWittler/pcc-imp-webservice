@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * @author Fabian Wenzel
  */
 @Path("webservice")
-public class ServerProxy {
+public class ServerProxy_Old {
     //TODO: ASK IF YOU NEED TO CHECK IF VIDEO_ID AND ACCOUNT HAVE A CONNECTION TO EACH OTHER, else send a FAILURE MESSAGE BACK
     //TODO: CREATE TABLE TO SHOW EACH RETURN PER METHOD
     /* #############################################################################################

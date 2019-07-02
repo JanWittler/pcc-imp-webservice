@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
-public class UserService implements IUserManagement {
+public class UserService implements IUserManagement, IUserIdProvider {
 	private IUserDB userDB;
 	private IUserSessionDB userSessionDB;
 	
@@ -50,13 +50,21 @@ public class UserService implements IUserManagement {
 	}
 
 	@Override
-	public void deleteAccount(String authenticationToken) {
+	public Boolean deleteAccount(String authenticationToken) {
 		assertCompletelySetup();
 		int userId = userSessionDB.getUserId(authenticationToken);
 		if (userId != IUserIdProvider.invalidId) {
 			userDB.deleteAccount(userId);
 			userSessionDB.deleteTokensForUserId(userId);
+			return true;
 		}
+		return false;
+	}
+	
+	@Override
+	public int getUserId(String authenticationToken) {
+		assertCompletelySetup();
+		return userSessionDB.getUserId(authenticationToken);
 	}
 	
 	private boolean isMailValid(String email) {
@@ -65,12 +73,10 @@ public class UserService implements IUserManagement {
         }
         EmailValidator ev = EmailValidator.getInstance();
         return ev.isValid(email.trim());
-
     }
 	
 	private void assertCompletelySetup() {
 		assert userDB != null;
 		assert userSessionDB != null;
 	}
-
 }
