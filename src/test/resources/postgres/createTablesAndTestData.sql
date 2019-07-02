@@ -15,7 +15,7 @@ CREATE TABLE public.sessions
 (
     id SERIAL PRIMARY KEY NOT NULL,
     token TEXT NOT NULL
-)
+);
 
 CREATE TABLE public.video
 (

@@ -17,7 +17,7 @@ public class DatabaseManager {
     private static final String PORT = "5432";
     private static final String HOST = "localhost";
     private static final String DB_NAME = "privacycrashcam";
-    private static final String USER = "postgres";
+    private static final String USER = "pcc";
     private static final String PASSWORD = "pccdata";
 
     /* #############################################################################################
