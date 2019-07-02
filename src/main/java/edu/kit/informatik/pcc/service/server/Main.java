@@ -1,5 +1,7 @@
 package edu.kit.informatik.pcc.service.server;
 
+import edu.kit.informatik.pcc.service.authentication.UserSQLDB;
+import edu.kit.informatik.pcc.service.authentication.UserService;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.videoprocessing.VideoProcessingManager;
 import org.eclipse.jetty.server.Server;
@@ -45,6 +47,7 @@ public class Main {
      * @param args no args
      */
     public static void main(String[] args) {
+    	setupComponents();
         startServer();
     }
 
@@ -184,5 +187,20 @@ public class Main {
         }
 
         return ret;
+    }
+    
+    private static void setupComponents() {
+    	WebService webService = new WebService();
+    	
+    	UserService userService = new UserService();
+    	UserSQLDB userSQLDB = new UserSQLDB();
+    	
+    	webService.setUserManagement(userService);
+    	webService.setUserIdProvider(userService);
+    	
+    	userService.setUserDB(userSQLDB);
+    	userService.setUserSessionDB(userSQLDB);
+    	
+    	WebService.setGlobal(webService);
     }
 }

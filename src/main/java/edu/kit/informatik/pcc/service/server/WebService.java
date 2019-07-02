@@ -11,6 +11,8 @@ public class WebService implements IUserManagement, IWebVideoService {
 	private IUserIdProvider userIdProvider;
 	private IVideoService videoService;
 	
+	private static WebService globalInstance;
+	
 	public void setUserManagement(IUserManagement userManagement) {
 		assert this.userManagement == null;
 		this.userManagement = userManagement;
@@ -27,7 +29,13 @@ public class WebService implements IUserManagement, IWebVideoService {
 	}
 	
 	public static WebService getGlobal() {
-		return null; //TODO: return and setup web service
+		assert globalInstance != null;
+		return globalInstance;
+	}
+	
+	public static void setGlobal(WebService webService) {
+		assert globalInstance == null;
+		globalInstance = webService;
 	}
 
 	@Override
