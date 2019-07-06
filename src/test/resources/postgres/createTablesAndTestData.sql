@@ -13,8 +13,9 @@ CREATE UNIQUE INDEX "user_uuid_uindex" ON public.user (uuid);
 
 CREATE TABLE public.sessions
 (
-    id SERIAL PRIMARY KEY NOT NULL,
-    token TEXT NOT NULL
+    id SERIAL NOT NULL,
+    token TEXT NOT NULL,
+    PRIMARY KEY (id, token)
 );
 
 CREATE TABLE public.video
