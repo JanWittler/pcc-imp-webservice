@@ -39,7 +39,7 @@ public class UserSQLDB implements IUserDB, IUserSessionDB {
 		try {
 			Statement stmt = connection.createStatement();
 			String sql = "insert into \"user\" (mail,password,uuid,verified,password_salt) values ('" + 
-			email + "','" + hashedPassword + "','" + userId + "', false, '" + saltString + "' );";
+			email + "','" + hashedPassword + "','" + userId + "', true, '" + saltString + "' );";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			connection.close();
@@ -253,9 +253,9 @@ public class UserSQLDB implements IUserDB, IUserSessionDB {
 		}
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("select max(\"id\") from \"user\"'");
+            ResultSet rs = stmt.executeQuery("select max(\"id\") as maxId from \"user\"");
             if (rs.next()) {
-                userId = rs.getInt("id") + 1;
+                userId = rs.getInt("maxId") + 1;
             }
             else {
             	userId = 1;
@@ -265,7 +265,7 @@ public class UserSQLDB implements IUserDB, IUserSessionDB {
             connection.close();
         } 
         catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().warning("Error while deleting account in database");
+            Logger.getGlobal().warning("Error while getting max user id from database: " + e.toString());
             return IUserIdProvider.invalidId;
         }
         return userId;
