@@ -3,6 +3,8 @@ package edu.kit.informatik.pcc.service.videoprocessing.opencv;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStream;
 import com.xuggle.xuggler.IStreamCoder;
+
+import edu.kit.informatik.pcc.service.data.IFileManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.videoprocessing.IVideoProcessor;
 
@@ -23,6 +25,13 @@ import java.util.logging.Logger;
 public class OpenCVPythonAnonymizer implements IVideoProcessor {
     private static final String PYTHON_DIR = LocationConfig.PROJECT_DIR + File.separator + "Python";
     private static final String ANONYM_SUFFIX = "_out_inverse_result_inverted";
+    
+    private IFileManager temporaryFileManager;
+    
+    public void setTemporaryFileManager(IFileManager temporaryFileManager) {
+    	assert this.temporaryFileManager == null;
+    	this.temporaryFileManager = temporaryFileManager;
+    }
 
     /* #############################################################################################
      *                                  attributes
@@ -54,7 +63,8 @@ public class OpenCVPythonAnonymizer implements IVideoProcessor {
             return;
 
         // make temporary editing dir
-        File editingDir = new File(LocationConfig.TEMP_DIR + File.separator + System.currentTimeMillis());
+        File editingDir = temporaryFileManager.file(Long.toString(System.currentTimeMillis()));
+        editingDir.delete();
         if (!editingDir.mkdir())
             return;
 
