@@ -7,6 +7,7 @@ import edu.kit.informatik.pcc.service.data.FileSystemManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.videoprocessing.IVideoProcessor;
 import edu.kit.informatik.pcc.service.videoprocessing.VideoChainProcessor;
+import edu.kit.informatik.pcc.service.videoprocessing.VideoProcessingManager;
 import edu.kit.informatik.pcc.service.videoprocessing.VideoService;
 import edu.kit.informatik.pcc.service.videoprocessing.opencv.OpenCVAnonymizer;
 
@@ -200,6 +201,7 @@ public class Main {
     	userService.setUserSessionDB(userSQLDB);
     	
     	VideoService videoService = new VideoService();
+    	VideoProcessingManager videoProcessingManager = new VideoProcessingManager();
     	JavaRSA_AESFileDecryptor videoDecryptor = new JavaRSA_AESFileDecryptor();
     	VideoChainProcessor videoChainProcessor = new VideoChainProcessor();
     	OpenCVAnonymizer openCVAnonymizer = new OpenCVAnonymizer();
@@ -208,8 +210,11 @@ public class Main {
     	
     	videoService.setFileHierachyManager(videoFilesManager);
     	videoService.setTemporaryFileManager(temporaryFilesManager);
-    	videoService.setVideoDecryptor(videoDecryptor);
-    	videoService.setVideoProcessor(videoChainProcessor);
+    	videoService.setAsyncVideoProcessor(videoProcessingManager);
+    	
+    	videoProcessingManager.setTemporaryFileManager(temporaryFilesManager);
+    	videoProcessingManager.setVideoDecryptor(videoDecryptor);
+    	videoProcessingManager.setVideoProcessor(videoChainProcessor);
     	
     	videoDecryptor.setFileManager(keyManager);
     	

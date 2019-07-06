@@ -27,6 +27,9 @@ public class VideoChainProcessor implements IVideoProcessor {
 		for (int i = 0; i < videoProcessors.length - 1; i++) {
 			File temporaryFile = temporaryFileManager.file(UUID.randomUUID().toString());
 			videoProcessors[i].processVideo(intermediateVideo, metadata, temporaryFile);
+			if (intermediateVideo != inputVideo) {
+				temporaryFileManager.deleteFile(intermediateVideo);
+			}
 			intermediateVideo = temporaryFile;
 		}
 		videoProcessors[videoProcessors.length - 1].processVideo(intermediateVideo, metadata, outputVideo);
