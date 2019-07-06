@@ -1,8 +1,15 @@
 package edu.kit.informatik.pcc.service.server;
 
+import edu.kit.informatik.pcc.core.crypto.JavaRSA_AESFileDecryptor;
 import edu.kit.informatik.pcc.service.authentication.UserSQLDB;
 import edu.kit.informatik.pcc.service.authentication.UserService;
+import edu.kit.informatik.pcc.service.data.FileSystemManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
+import edu.kit.informatik.pcc.service.videoprocessing.IVideoProcessor;
+import edu.kit.informatik.pcc.service.videoprocessing.VideoChainProcessor;
+import edu.kit.informatik.pcc.service.videoprocessing.VideoService;
+import edu.kit.informatik.pcc.service.videoprocessing.opencv.OpenCVAnonymizer;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -161,8 +168,6 @@ public class Main {
 
         File[] dirs = new File[]{
                 new File(LocationConfig.ANONYM_VID_DIR),
-                new File(LocationConfig.META_DIR),
-                new File(LocationConfig.TEMP_DIR),
                 new File(LocationConfig.LOG_DIR)
         };
 
@@ -172,20 +177,17 @@ public class Main {
             }
         }
 
-        //delete all temp files
-        File[] tempFiles = new File(LocationConfig.TEMP_DIR).listFiles();
-        if (tempFiles == null) {
-            return false;
-        }
-
-        for (File file : tempFiles) {
-            ret &= file.delete();
-        }
-
         return ret;
     }
     
     private static void setupComponents() {
+    	String tempDirectory = System.getProperty("user.dir") + File.separator + "tmp";
+    	new File(tempDirectory).delete();
+    	
+    	FileSystemManager keyManager = new FileSystemManager(System.getProperty("user.dir") + File.separator + "keys");
+    	FileSystemManager temporaryFilesManager = new FileSystemManager(tempDirectory);
+    	FileSystemManager videoFilesManager = new FileSystemManager(System.getProperty("user.dir") + File.separator + "data");
+    	
     	WebService webService = new WebService();
     	
     	UserService userService = new UserService();
@@ -196,6 +198,23 @@ public class Main {
     	
     	userService.setUserDB(userSQLDB);
     	userService.setUserSessionDB(userSQLDB);
+    	
+    	VideoService videoService = new VideoService();
+    	JavaRSA_AESFileDecryptor videoDecryptor = new JavaRSA_AESFileDecryptor();
+    	VideoChainProcessor videoChainProcessor = new VideoChainProcessor();
+    	OpenCVAnonymizer openCVAnonymizer = new OpenCVAnonymizer();
+    	
+    	webService.setVideoService(videoService);
+    	
+    	videoService.setFileHierachyManager(videoFilesManager);
+    	videoService.setTemporaryFileManager(temporaryFilesManager);
+    	videoService.setVideoDecryptor(videoDecryptor);
+    	videoService.setVideoProcessor(videoChainProcessor);
+    	
+    	videoDecryptor.setFileManager(keyManager);
+    	
+    	videoChainProcessor.setTemporaryFileManager(temporaryFilesManager);
+    	videoChainProcessor.setVideoProcessors(new IVideoProcessor[] {openCVAnonymizer});
     	
     	WebService.setGlobal(webService);
     }

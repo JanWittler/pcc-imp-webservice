@@ -23,14 +23,6 @@ public class LocationConfig {
      */
     public static final String ANONYM_VID_DIR = PROJECT_DIR + File.separator + "vid";
     /**
-     * Directory for the metadata.
-     */
-    public static final String META_DIR = PROJECT_DIR + File.separator + "meta";
-    /**
-     * Directory for all temporary data.
-     */
-    public static final String TEMP_DIR = PROJECT_DIR + File.separator + "tmp";
-    /**
      * Directory for log files.
      */
     public static final String LOG_DIR = PROJECT_DIR + File.separator + "log";

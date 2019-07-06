@@ -8,6 +8,10 @@ public class FileSystemManager extends AFileManager {
 	
 	public FileSystemManager(String containerName) {
 		this.containerName = containerName;
+		File container = new File(containerName);
+		if (!container.exists()) {
+			createDirectory(null);
+		}
 	}
 	
 	@Override
@@ -46,6 +50,9 @@ public class FileSystemManager extends AFileManager {
 	private String combinedPath(String fileName, String directoryPath) {
 		if (directoryPath == null) {
 			return fileName;
+		}
+		if (fileName == null) {
+			return directoryPath;
 		}
 		if (directoryPath.endsWith(File.separator) || fileName.startsWith(File.separator)) {
 			return directoryPath + fileName;
