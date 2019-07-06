@@ -22,8 +22,8 @@ public class KeyStorage implements IKeyStorage {
 	@Override
 	public void storeKey(String id, Key key) {
 		assertCompletelySetup();
-		File file = fileManager.fileWithName(id);
-		File specsFile = fileManager.fileWithName(id + specsSuffix);
+		File file = fileManager.file(id);
+		File specsFile = fileManager.file(id + specsSuffix);
 		try {
 			Files.write(file.toPath(), key.getEncoded());
 			Files.write(specsFile.toPath(), key.getAlgorithm().getBytes());
@@ -35,14 +35,20 @@ public class KeyStorage implements IKeyStorage {
 	@Override
 	public Key loadKey(String id) {
 		assertCompletelySetup();
-		File specsFile = fileManager.fileWithName(id + specsSuffix);
+		File specsFile = fileManager.existingFile(id + specsSuffix);
+		if (specsFile == null) {
+			return null;
+		}
 		try {
 			List<String> keySpecs = Files.readAllLines(specsFile.toPath());
 			if (keySpecs.isEmpty()) {
 				return null;
 			}
 			String keyAlgorithm = keySpecs.get(0);
-			File file = fileManager.fileWithName(id);
+			File file = fileManager.existingFile(id);
+			if (file == null) {
+				return null;
+			}
 			byte[] data = Files.readAllBytes(file.toPath());
 			return new SecretKeySpec(data, keyAlgorithm);
 		} catch (IOException e1) {
