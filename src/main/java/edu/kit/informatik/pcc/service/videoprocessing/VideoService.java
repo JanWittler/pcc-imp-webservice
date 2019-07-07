@@ -66,8 +66,6 @@ public class VideoService implements IVideoService {
 		File outputVideo = fileHierachyManager.file(videoFileName(newVideoId), videoDirectory(userId));
 		File outputMetadata = fileHierachyManager.file(metadataFileName(newVideoId), metadataDirectory(userId));
 		asyncVideoProcessor.processVideo(encryptedVideo, encryptedMetadata, encryptedKeyData, outputVideo, outputMetadata);
-		fileHierachyManager.deleteFile(encryptedVideo);
-		fileHierachyManager.deleteFile(encryptedMetadata);
 	}
 
 	@Override

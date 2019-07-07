@@ -3,7 +3,11 @@ package edu.kit.informatik.pcc.service.server;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
@@ -14,20 +18,27 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONArray;
 
+import edu.kit.informatik.pcc.service.data.IFileManager;
+
 @Path("webservice/videos")
 public class VideoServerProxy {
+	private static IFileManager temporaryFileManager;
+	
+	public static void setTemporaryFileManager(IFileManager pTemporaryFileManager) {
+		assert temporaryFileManager == null;
+		temporaryFileManager = pTemporaryFileManager;
+	}
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getVideoIds(@HeaderParam(ServerConstants.TOKEN) String authenticationToken) {
+		assertCompletelySetup();
 		Logger.getGlobal().info("Get Video Ids Request");
 		int[] videoIds = WebService.getGlobal().getVideoIds(authenticationToken);
 		JSONArray jsonArray = new JSONArray();
@@ -40,6 +51,7 @@ public class VideoServerProxy {
 	@GET
 	@Path("{id}")
 	public Response getVideo(@PathParam("id") int videoId, @HeaderParam(ServerConstants.TOKEN) String authenticationToken) {
+		assertCompletelySetup();
 		Logger.getGlobal().info("Get Video by Id Request");
 		File video = WebService.getGlobal().getVideo(videoId, authenticationToken);
 		if (video == null) {
@@ -59,6 +71,7 @@ public class VideoServerProxy {
 	@GET
 	@Path("metadata/{id}")
 	public Response getMetadata(@PathParam("id") int videoId, @HeaderParam(ServerConstants.TOKEN) String authenticationToken) {
+		assertCompletelySetup();
 		Logger.getGlobal().info("Get Metadata by Id Request");
 		File metadata = WebService.getGlobal().getMetadata(videoId, authenticationToken);
 		if (metadata == null) {
@@ -78,15 +91,56 @@ public class VideoServerProxy {
 	@DELETE
 	@Path("{id}")
 	public String deleteVideo(@PathParam("id") int videoId, @HeaderParam(ServerConstants.TOKEN) String authenticationToken) {
+		assertCompletelySetup();
 		Logger.getGlobal().info("Delete video by Id Request");
 		WebService.getGlobal().deleteVideo(videoId, authenticationToken);
 		return ServerConstants.SUCCESS;
 	}
 	
-	/*@POST
+	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public String uploadVideo(@FormDataParam("video") InputStream encryptedVideo, @FormDataParam("metadata") InputStream encryptedMetadata, @FormDataParam("key") InputStream encryptedKey, @FormDataParam("video") FormDataContentDisposition fileDetail, @HeaderParam(ServerConstants.TOKEN) String authenticationToken) {
-    	Logger.getGlobal().info("Upload video");
-    	WebService.getGlobal().postVideo(encryptedVideo, encryptedMetadata, encryptedKey, authenticationToken);
-    }*/
+	public String uploadVideo(@FormDataParam("video") InputStream encryptedVideoStream, @FormDataParam("metadata") InputStream encryptedMetadataStream, @FormDataParam("key") InputStream encryptedKeyStream, @HeaderParam(ServerConstants.TOKEN) String authenticationToken) {
+    	assertCompletelySetup();
+		Logger.getGlobal().info("Video upload");
+		
+		String uuid = UUID.randomUUID().toString();
+		File encryptedVideo = temporaryFileManager.file(uuid + ".video");
+		File encryptedMetadata = temporaryFileManager.file(uuid + ".metadata");
+		File encryptedKeyFile = temporaryFileManager.file(uuid + ".key");
+		saveStreamToFile(encryptedVideoStream, encryptedVideo);
+		saveStreamToFile(encryptedMetadataStream, encryptedMetadata);
+		saveStreamToFile(encryptedKeyStream, encryptedKeyFile);
+		byte[] encryptedKey;
+		String result = ServerConstants.SUCCESS;
+		try {
+			encryptedKey = Files.readAllBytes(encryptedKeyFile.toPath());
+			WebService.getGlobal().postVideo(encryptedVideo, encryptedMetadata, encryptedKey, authenticationToken);
+		} catch (IOException e) {
+			Logger.getGlobal().warning("Failed to load encrypted key file: " + e.getLocalizedMessage());
+			e.printStackTrace();
+			result = ServerConstants.FAILURE;
+		}
+		temporaryFileManager.deleteFile(encryptedKeyFile);
+    	temporaryFileManager.deleteFile(encryptedVideo);
+    	temporaryFileManager.deleteFile(encryptedMetadata);
+		return result;
+    }
+	
+	private void assertCompletelySetup() {
+		assert temporaryFileManager != null;
+	}
+	
+	private void saveStreamToFile(InputStream inputStream, File file) {
+		int read;
+        byte[] bytes = new byte[1024];
+		try (FileOutputStream fos = new FileOutputStream(file)) {
+			while ((read = inputStream.read(bytes)) != -1) {
+                fos.write(bytes, 0, read);
+            }
+			fos.flush();
+		} catch (IOException e) {
+			Logger.getGlobal().warning("Failed to store file during upload");
+			e.printStackTrace();
+		}
+	}
 }
