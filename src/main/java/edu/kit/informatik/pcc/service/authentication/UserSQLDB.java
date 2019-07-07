@@ -24,8 +24,8 @@ public class UserSQLDB implements IUserDB, IUserSessionDB {
 
 	@Override
 	public void createUser(String email, String password) {
-		int userId = unusedUserId();
-		if (userId == IUserIdProvider.invalidId) {
+		//mail already in use
+		if (getUserIdByMail(email) != IUserIdProvider.invalidId) {
 			return;
 		}
 		byte[] salt = createSalt();
@@ -38,14 +38,14 @@ public class UserSQLDB implements IUserDB, IUserSessionDB {
 		}
 		try {
 			Statement stmt = connection.createStatement();
-			String sql = "insert into \"user\" (id,mail,password,verified,password_salt) values ('" + 
-			userId + "','" + email + "','" + hashedPassword + "', true, '" + saltString + "' );";
+			String sql = "insert into \"user\" (mail,password,password_salt) values ('" + 
+					email + "','" + hashedPassword + "','" + saltString + "' );";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			connection.close();
 		}
 		catch (SQLException e) {
-			Logger.getGlobal().warning("Creating account in database failed");
+			Logger.getGlobal().warning("Creating account in database failed: " + e.getLocalizedMessage());
 		}
 	}
 
@@ -243,31 +243,5 @@ public class UserSQLDB implements IUserDB, IUserSessionDB {
         catch (NoSuchAlgorithmException e) {
             return null;
         }
-    }
-    
-    private int unusedUserId() {
-    	int userId = IUserIdProvider.invalidId;
-    	Connection connection = connectToDatabase();
-		if (connection == null) {
-			return userId;
-		}
-        try {
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("select max(\"id\") as maxId from \"user\"");
-            if (rs.next()) {
-                userId = rs.getInt("maxId") + 1;
-            }
-            else {
-            	userId = 1;
-            }
-            rs.close();
-            stmt.close();
-            connection.close();
-        } 
-        catch (NullPointerException | SQLException e) {
-            Logger.getGlobal().warning("Error while getting max user id from database: " + e.toString());
-            return IUserIdProvider.invalidId;
-        }
-        return userId;
     }
 }
