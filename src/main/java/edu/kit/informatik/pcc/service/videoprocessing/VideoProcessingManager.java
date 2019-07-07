@@ -90,8 +90,13 @@ public class VideoProcessingManager implements IAsyncVideoProcessor {
 	public void processVideo(File encryptedVideo, File encryptedMetadata, byte[] encryptedKeyData, File outputVideo,
 			File outputMetadata) {
     	assertCompletelySetup();
+    	//copy input files to temp directory so that processing is independent of outside file handling
+		File newEncryptedVideo = temporaryFileManager.file(UUID.randomUUID().toString());
+		File newEncryptedMetadata = temporaryFileManager.file(UUID.randomUUID().toString());
     	try {
-    		VideoTask videoTask = new VideoTask(temporaryFileManager, videoDecryptor, videoProcessor, encryptedVideo, encryptedMetadata, encryptedKeyData, outputVideo, outputMetadata);
+    		Files.copy(encryptedVideo.toPath(), newEncryptedVideo.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    		Files.copy(encryptedMetadata.toPath(), newEncryptedMetadata.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    		VideoTask videoTask = new VideoTask(temporaryFileManager, videoDecryptor, videoProcessor, newEncryptedVideo, newEncryptedMetadata, encryptedKeyData, outputVideo, outputMetadata);
     		executor.execute(videoTask);
     	}
     	catch (IOException e) {
@@ -135,13 +140,8 @@ public class VideoProcessingManager implements IAsyncVideoProcessor {
 			this.temporaryFileManager = temporaryFileManager;
 			this.videoDecryptor = videoDecryptor;
 			this.videoProcessor = videoProcessor;
-			//copy input files to temp directory so that processing is independent of outside file handling
-			File newEncryptedVideo = temporaryFileManager.file(UUID.randomUUID().toString());
-			File newEncryptedMetadata = temporaryFileManager.file(UUID.randomUUID().toString());
-			Files.copy(encryptedVideo.toPath(), newEncryptedVideo.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			Files.copy(encryptedMetadata.toPath(), newEncryptedMetadata.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			this.encryptedVideo = newEncryptedVideo;
-			this.encryptedMetadata = newEncryptedMetadata;
+			this.encryptedVideo = encryptedVideo;
+			this.encryptedMetadata = encryptedMetadata;
 			this.encryptedKeyData = encryptedKeyData;
 			this.outputVideo = outputVideo;
 			this.outputMetadata = outputMetadata;
