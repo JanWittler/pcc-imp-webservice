@@ -38,8 +38,8 @@ public class UserSQLDB implements IUserDB, IUserSessionDB {
 		}
 		try {
 			Statement stmt = connection.createStatement();
-			String sql = "insert into \"user\" (mail,password,uuid,verified,password_salt) values ('" + 
-			email + "','" + hashedPassword + "','" + userId + "', true, '" + saltString + "' );";
+			String sql = "insert into \"user\" (id,mail,password,verified,password_salt) values ('" + 
+			userId + "','" + email + "','" + hashedPassword + "', true, '" + saltString + "' );";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			connection.close();
