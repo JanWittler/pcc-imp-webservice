@@ -14,6 +14,10 @@ public class FileSystemManager extends AFileManager {
 		}
 	}
 	
+	public String getContainerName() {
+		return containerName;
+	}
+	
 	@Override
 	public File file(String name, String directoryPath) {
 		File file = new File(fullPath(name, directoryPath));
