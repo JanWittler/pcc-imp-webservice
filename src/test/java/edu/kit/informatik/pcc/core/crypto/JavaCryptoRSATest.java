@@ -1,7 +1,6 @@
 package edu.kit.informatik.pcc.core.crypto;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 import java.security.Key;
 import java.security.KeyPair;
@@ -28,5 +27,15 @@ public class JavaCryptoRSATest {
 		
 		assertNotEquals(key.getEncoded(), encryptedKey);
 		assertEquals(key, decryptedKey);
+	}
+	
+	@Test
+	public void keygenTest() {
+		KeyPair keyPair1 = crypto.generateAsymmetricKeyPair();
+		KeyPair keyPair2 = crypto.generateAsymmetricKeyPair();
+		assertNotNull(keyPair1);
+		assertNotNull(keyPair2);
+		assertNotEquals(keyPair1.getPublic(), keyPair2.getPublic());
+		assertNotEquals(keyPair1.getPrivate(), keyPair2.getPrivate());
 	}
 }
