@@ -22,7 +22,6 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 @Path("webservice/videos")
 public class VideoServerProxy {
@@ -33,8 +32,7 @@ public class VideoServerProxy {
 		int[] videoIds = WebService.getGlobal().getVideoIds(authenticationToken);
 		JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < videoIds.length; i++) {
-            String id = Integer.toString(videoIds[i]);
-            jsonArray.put(i, new JSONObject(id));
+            jsonArray.put(videoIds[i]);
         }
         return jsonArray.toString();
 	}
