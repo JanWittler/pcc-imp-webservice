@@ -42,7 +42,7 @@ public class JavaCryptoRSA implements IAsymmetricDecryptor, IAsymmetricEncryptor
 			return cipher.doFinal(key.getEncoded());
 		}
 		catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-			Logger.getGlobal().warning("Encrypting key failed");
+			Logger.getGlobal().warning("Encrypting key failed: " + e.getLocalizedMessage());
 			return null;
 		}
 	}
