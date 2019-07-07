@@ -44,7 +44,11 @@ public class FileSystemManager extends AFileManager {
 
 	@Override
 	public File[] filesInDirectory(String directoryPath) {
-		return new File(combinedPath(directoryPath, containerName)).listFiles();
+		File[] result = new File(combinedPath(directoryPath, containerName)).listFiles();
+		if (result == null) {
+			return new File[0];
+		}
+		return result;
 	}
 	
 	private String combinedPath(String fileName, String directoryPath) {
