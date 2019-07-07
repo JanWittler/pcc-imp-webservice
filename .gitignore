@@ -53,8 +53,5 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-/log
-/vid
-/tmp
-/meta
 /target
+/server

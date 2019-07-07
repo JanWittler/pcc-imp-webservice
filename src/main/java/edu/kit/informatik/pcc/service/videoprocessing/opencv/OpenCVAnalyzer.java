@@ -21,7 +21,8 @@ import java.util.logging.Logger;
  */
 public class OpenCVAnalyzer implements IAnalyzer {
 
-    private static final String CASCADE_LOCATION = LocationConfig.PROJECT_DIR + File.separator + "cascade.xml";
+	private static final String OPENCV_DIR = LocationConfig.PROJECT_DIR + File.separator + "opencv";
+    private static final String CASCADE_LOCATION = OPENCV_DIR + File.separator + "cascade.xml";
 
     /* #############################################################################################
      *                                  attributes
@@ -65,6 +66,10 @@ public class OpenCVAnalyzer implements IAnalyzer {
     }
 
     private void copyCascade() {
+    	File dir = new File(OPENCV_DIR);
+    	if (!dir.exists()) {
+    		dir.mkdirs();
+    	}
         InputStream is = getClass().getResourceAsStream("/haarcascade_frontalface_alt.xml");
         try {
             Files.copy(is, new File(CASCADE_LOCATION).toPath(), StandardCopyOption.REPLACE_EXISTING);

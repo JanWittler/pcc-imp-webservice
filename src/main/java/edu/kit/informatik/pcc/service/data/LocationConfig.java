@@ -17,11 +17,7 @@ public class LocationConfig {
     /**
      * Project directory
      */
-    public static final String PROJECT_DIR = System.getProperty("user.dir");
-    /**
-     * Directory for the anonymized videos.
-     */
-    public static final String ANONYM_VID_DIR = PROJECT_DIR + File.separator + "vid";
+    public static final String PROJECT_DIR = System.getProperty("user.dir") + File.separator + "server";
     /**
      * Directory for log files.
      */
@@ -30,8 +26,8 @@ public class LocationConfig {
      * Directory for test resources.
      */
     public static final String TEST_RESOURCES_DIR = PROJECT_DIR + File.separator + "src" + File.separator + "test" + File.separator + "resources";
-    /**
-     * Directory for output data.
-     */
-    public static final String OUTPUT_DIR = PROJECT_DIR + File.separator + "target";
+    
+    public static final String KEY_DIR = PROJECT_DIR + File.separator + "keys";
+    public static final String DATA_DIR = PROJECT_DIR + File.separator + "data";
+    public static final String TEMP_DIR = PROJECT_DIR + File.separator + "tmp";
 }

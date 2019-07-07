@@ -160,7 +160,6 @@ public class Main {
 
     /**
      * Creates all necessary directions as long as they were not existing before.
-     * Also empties the tmp folder.
      *
      * @return Returns whether setting was successful or not.
      */
@@ -168,7 +167,6 @@ public class Main {
         boolean ret = true;
 
         File[] dirs = new File[]{
-                new File(LocationConfig.ANONYM_VID_DIR),
                 new File(LocationConfig.LOG_DIR)
         };
 
@@ -182,12 +180,11 @@ public class Main {
     }
     
     private static void setupComponents() {
-    	String tempDirectory = System.getProperty("user.dir") + File.separator + "tmp";
-    	new File(tempDirectory).delete();
+    	new File(LocationConfig.TEMP_DIR).delete();
     	
-    	FileSystemManager keyManager = new FileSystemManager(System.getProperty("user.dir") + File.separator + "keys");
-    	FileSystemManager temporaryFilesManager = new FileSystemManager(tempDirectory);
-    	FileSystemManager videoFilesManager = new FileSystemManager(System.getProperty("user.dir") + File.separator + "data");
+    	FileSystemManager keyManager = new FileSystemManager(LocationConfig.KEY_DIR);
+    	FileSystemManager temporaryFilesManager = new FileSystemManager(LocationConfig.TEMP_DIR);
+    	FileSystemManager videoFilesManager = new FileSystemManager(LocationConfig.DATA_DIR);
     	
     	WebService webService = new WebService();
     	
