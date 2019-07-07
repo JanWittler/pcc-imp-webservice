@@ -13,6 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.kit.informatik.pcc.core.testing.TestingHelper;
 import edu.kit.informatik.pcc.service.data.FileSystemManager;
 
 public class JavaCryptoAESTest {
@@ -22,13 +23,13 @@ public class JavaCryptoAESTest {
 	@Before
 	public void setupBefore() {
 		crypto = new JavaCryptoAES();
-		temporaryFileManager = new FileSystemManager(System.getProperty("user.dir") + File.separator + "test_java_aes");
+		temporaryFileManager = new FileSystemManager(TestingHelper.testsDirectory + File.separator + "test_java_aes");
 	}
 	
 	@After
 	public void cleanUpAfter() {
 		File dir = new File(temporaryFileManager.getContainerName());
-		dir.delete();
+		TestingHelper.deleteDirectoryAndItsContent(dir);
 	}
 	
 	@Test
@@ -68,5 +69,14 @@ public class JavaCryptoAESTest {
 		temporaryFileManager.deleteFile(input);
 		temporaryFileManager.deleteFile(output);
 		temporaryFileManager.deleteFile(result);
+	}
+	
+	@Test
+	public void keygenTest() {
+		Key key1 = crypto.generateSymmetricKey();
+		Key key2 = crypto.generateSymmetricKey();
+		assertNotNull(key1);
+		assertNotNull(key2);
+		assertNotEquals(key1, key2);
 	}
 }
