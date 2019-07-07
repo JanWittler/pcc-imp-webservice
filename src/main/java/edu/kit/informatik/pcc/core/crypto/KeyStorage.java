@@ -1,18 +1,18 @@
 package edu.kit.informatik.pcc.core.crypto;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.Key;
-import java.util.List;
-
-import javax.crypto.spec.SecretKeySpec;
+import java.util.logging.Logger;
 
 import edu.kit.informatik.pcc.service.data.IFileManager;
 
 public class KeyStorage implements IKeyStorage {
 	private IFileManager fileManager;
-	private static final String specsSuffix = "_spec";
 	
 	public void setFileManager(IFileManager fileManager) {
 		assert this.fileManager == null;
@@ -23,38 +23,34 @@ public class KeyStorage implements IKeyStorage {
 	public void storeKey(String id, Key key) {
 		assertCompletelySetup();
 		File file = fileManager.file(id);
-		File specsFile = fileManager.file(id + specsSuffix);
-		try {
-			Files.write(file.toPath(), key.getEncoded());
-			Files.write(specsFile.toPath(), key.getAlgorithm().getBytes());
-		} catch (IOException e) {
+		try (
+			FileOutputStream fos = new FileOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			oos.writeObject(key);
+		}
+		catch (IOException e) {
 			e.printStackTrace();
+			Logger.getGlobal().warning("failed to serialize key to file: " + file.getAbsolutePath() + "\n" + e.getLocalizedMessage());
 		}
 	}
 
 	@Override
 	public Key loadKey(String id) {
 		assertCompletelySetup();
-		File specsFile = fileManager.existingFile(id + specsSuffix);
-		if (specsFile == null) {
+		File file = fileManager.existingFile(id);
+		if (file == null) {
 			return null;
 		}
-		try {
-			List<String> keySpecs = Files.readAllLines(specsFile.toPath());
-			if (keySpecs.isEmpty()) {
-				return null;
-			}
-			String keyAlgorithm = keySpecs.get(0);
-			File file = fileManager.existingFile(id);
-			if (file == null) {
-				return null;
-			}
-			byte[] data = Files.readAllBytes(file.toPath());
-			return new SecretKeySpec(data, keyAlgorithm);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return null;
+		try (
+			FileInputStream fis = new FileInputStream(file);
+			ObjectInputStream ois = new ObjectInputStream(fis)) {
+			return (Key)ois.readObject();
 		}
+		catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+			Logger.getGlobal().warning("failed to deserialize key from file: " + file.getAbsolutePath() + "\n" + e.getLocalizedMessage());
+		}
+		return null;
 	}
 	
 	private void assertCompletelySetup() {
