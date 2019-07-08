@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.data;
+package edu.kit.informatik.pcc.core.data;
 
 import org.json.JSONException;
 import org.json.JSONObject;

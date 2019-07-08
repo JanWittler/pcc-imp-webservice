@@ -4,7 +4,7 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStream;
 import com.xuggle.xuggler.IStreamCoder;
 
-import edu.kit.informatik.pcc.service.data.IFileManager;
+import edu.kit.informatik.pcc.core.data.IFileManager;
 import edu.kit.informatik.pcc.service.data.LocationConfig;
 import edu.kit.informatik.pcc.service.videoprocessing.IVideoProcessor;
 

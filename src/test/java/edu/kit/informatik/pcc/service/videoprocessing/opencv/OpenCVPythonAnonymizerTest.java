@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import edu.kit.informatik.pcc.core.data.FileSystemManager;
 import edu.kit.informatik.pcc.core.testing.TestingHelper;
-import edu.kit.informatik.pcc.service.data.FileSystemManager;
 
 public class OpenCVPythonAnonymizerTest {
 	private OpenCVPythonAnonymizer openCVPythonAnonymizer;

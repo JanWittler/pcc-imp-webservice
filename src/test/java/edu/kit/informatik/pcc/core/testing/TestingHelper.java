@@ -3,7 +3,7 @@ package edu.kit.informatik.pcc.core.testing;
 import java.io.File;
 
 public class TestingHelper {
-	public static final String testsDirectory = System.getProperty("user.dir") + "target" + File.separator + "test_files";
+	public static final String testsDirectory = System.getProperty("user.dir") + File.separator + "target" + File.separator + "test_files";
 	
 	/**
      * Directory for test resources.

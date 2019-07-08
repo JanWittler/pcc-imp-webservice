@@ -1,7 +1,7 @@
 package edu.kit.informatik.pcc.service.videoprocessing;
 
 import edu.kit.informatik.pcc.core.crypto.IVideoDecryptor;
-import edu.kit.informatik.pcc.service.data.IFileManager;
+import edu.kit.informatik.pcc.core.data.IFileManager;
 
 import java.io.File;
 import java.io.IOException;

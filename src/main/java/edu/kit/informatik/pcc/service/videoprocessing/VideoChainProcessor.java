@@ -3,7 +3,7 @@ package edu.kit.informatik.pcc.service.videoprocessing;
 import java.io.File;
 import java.util.UUID;
 
-import edu.kit.informatik.pcc.service.data.IFileManager;
+import edu.kit.informatik.pcc.core.data.IFileManager;
 
 /**
  * A VideoChainProcessor processes files by applying a chain of IVideoProcessor instances onto them.

@@ -3,7 +3,7 @@ package edu.kit.informatik.pcc.core.crypto;
 import java.io.File;
 import java.security.Key;
 
-import edu.kit.informatik.pcc.service.data.IFileManager;
+import edu.kit.informatik.pcc.core.data.IFileManager;
 
 public class JavaRSA_AESFileDecryptor implements IVideoDecryptor, IPublicKeyProvider {
 	private VideoDecryptor videoDecryptor;

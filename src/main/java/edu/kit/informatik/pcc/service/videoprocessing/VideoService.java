@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 
-import edu.kit.informatik.pcc.service.data.IFileHierachyManager;
-import edu.kit.informatik.pcc.service.data.IFileManager;
+import edu.kit.informatik.pcc.core.data.IFileHierachyManager;
+import edu.kit.informatik.pcc.core.data.IFileManager;
 
 public class VideoService implements IVideoService {
 	private static final String videosDirectory = "videos";

@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONArray;
 
-import edu.kit.informatik.pcc.service.data.IFileManager;
+import edu.kit.informatik.pcc.core.data.IFileManager;
 
 @Path("webservice/videos")
 public class VideoServerProxy {

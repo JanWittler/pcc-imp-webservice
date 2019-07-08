@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.security.Key;
 import java.util.logging.Logger;
 
-import edu.kit.informatik.pcc.service.data.IFileManager;
+import edu.kit.informatik.pcc.core.data.IFileManager;
 
 public class KeyStorage implements IKeyStorage {
 	private IFileManager fileManager;

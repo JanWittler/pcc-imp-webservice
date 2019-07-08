@@ -1,4 +1,4 @@
-package edu.kit.informatik.pcc.service.data;
+package edu.kit.informatik.pcc.core.data;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.kit.informatik.pcc.core.data.FileSystemManager;
 import edu.kit.informatik.pcc.core.testing.TestingHelper;
 
 public class FileSystemManagerTest {
