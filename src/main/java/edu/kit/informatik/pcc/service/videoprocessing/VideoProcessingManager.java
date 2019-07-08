@@ -156,8 +156,12 @@ public class VideoProcessingManager implements IAsyncVideoProcessor {
 	        File tempVideoFile = temporaryFileManager.file(UUID.randomUUID().toString());
 			videoDecryptor.decrypt(encryptedVideo, encryptedMetadata, encryptedKeyData, tempVideoFile, outputMetadata);
 			
-			videoProcessor.processVideo(tempVideoFile, outputMetadata, outputVideo);
+			Boolean success = videoProcessor.processVideo(tempVideoFile, outputMetadata, outputVideo);
 			temporaryFileManager.deleteFile(tempVideoFile);
+			if (!success) {
+				temporaryFileManager.deleteFile(outputMetadata);
+				temporaryFileManager.deleteFile(outputVideo);
+			}
 
 			long duration = System.currentTimeMillis() - startTime;
 	        Logger.getGlobal().info("Finished editing video "

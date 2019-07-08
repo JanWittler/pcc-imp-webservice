@@ -58,19 +58,20 @@ public class OpenCVPythonAnonymizer implements IVideoProcessor {
      * ###########################################################################################*/
 
     @Override
-    public void processVideo(File inputVideo, File metadata, File outputVideo) {
+    public Boolean processVideo(File inputVideo, File metadata, File outputVideo) {
         if (inputVideo == null || outputVideo == null)
-            return;
+            return false;
 
         // make temporary editing dir
         File editingDir = temporaryFileManager.file(Long.toString(System.currentTimeMillis()));
         editingDir.delete();
         if (!editingDir.mkdir())
-            return;
+            return false;
 
         // clean up in ANY case (!)
-        anonymizeVideo(inputVideo, outputVideo, editingDir);
+        Boolean result = anonymizeVideo(inputVideo, outputVideo, editingDir);
         cleanUp(editingDir);
+        return result;
     }
 
     /* #############################################################################################
@@ -135,7 +136,7 @@ public class OpenCVPythonAnonymizer implements IVideoProcessor {
                 return false;
             }
         } catch (IOException | InterruptedException e) {
-            Logger.getGlobal().warning("Executing python script failed");
+            Logger.getGlobal().warning("Executing python script failed: " + e.getLocalizedMessage());
             return false;
         }
 

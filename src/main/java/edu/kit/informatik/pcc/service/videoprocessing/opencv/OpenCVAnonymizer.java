@@ -59,10 +59,10 @@ public class OpenCVAnonymizer implements IVideoProcessor {
      * ###########################################################################################*/
 
     @Override
-    public void processVideo(File inputVideo, File metadata, File outputVideo) {
+    public Boolean processVideo(File inputVideo, File metadata, File outputVideo) {
         if (inputVideo == null || outputVideo == null) {
             Logger.getGlobal().warning("Invalid input/output");
-            return;
+            return false;
         }
         // shut ffmpeg logger
         avutil.av_log_set_level(avutil.AV_LOG_QUIET);
@@ -74,7 +74,7 @@ public class OpenCVAnonymizer implements IVideoProcessor {
 
         if (stream == null) {
             Logger.getGlobal().warning("Uploaded file contained no video stream");
-            return;
+            return false;
         }
 
         IStreamCoder coder = stream.getStreamCoder();
@@ -131,6 +131,6 @@ public class OpenCVAnonymizer implements IVideoProcessor {
         }
 
         Logger.getGlobal().info("Finished anonymization video " + inputVideo.getName());
-        return;
+        return true;
     }
 }
