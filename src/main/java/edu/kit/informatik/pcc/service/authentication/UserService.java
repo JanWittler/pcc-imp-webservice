@@ -29,6 +29,9 @@ public class UserService implements IUserManagement, IUserIdProvider {
 		if (!isMailValid(email)) {
 			return false;
 		}
+		if (password == null || password.length() == 0) {
+			return false;
+		}
 		userDB.createUser(email, password);
 		return true;
 
@@ -68,7 +71,7 @@ public class UserService implements IUserManagement, IUserIdProvider {
 	}
 	
 	private boolean isMailValid(String email) {
-        if (email == null || "".equals(email)) {
+        if (email == null || email.length() == 0) {
         	return false;
         }
         EmailValidator ev = EmailValidator.getInstance();
