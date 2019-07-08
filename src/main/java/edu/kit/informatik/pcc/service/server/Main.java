@@ -204,6 +204,7 @@ public class Main {
     	OpenCVAnonymizer openCVAnonymizer = new OpenCVAnonymizer();
     	
     	webService.setVideoService(videoService);
+    	webService.setPublicKeyProvider(videoDecryptor);
     	
     	videoService.setFileHierachyManager(videoFilesManager);
     	videoService.setTemporaryFileManager(temporaryFilesManager);
