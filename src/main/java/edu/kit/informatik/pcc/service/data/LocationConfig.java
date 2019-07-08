@@ -22,10 +22,6 @@ public class LocationConfig {
      * Directory for log files.
      */
     public static final String LOG_DIR = PROJECT_DIR + File.separator + "log";
-    /**
-     * Directory for test resources.
-     */
-    public static final String TEST_RESOURCES_DIR = PROJECT_DIR + File.separator + "src" + File.separator + "test" + File.separator + "resources";
     
     public static final String KEY_DIR = PROJECT_DIR + File.separator + "keys";
     public static final String DATA_DIR = PROJECT_DIR + File.separator + "data";
