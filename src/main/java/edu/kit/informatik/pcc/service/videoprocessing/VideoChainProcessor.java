@@ -21,13 +21,13 @@ public class VideoChainProcessor implements IVideoProcessor {
 	}
 
 	@Override
-	public Boolean processVideo(File inputVideo, File metadata, File outputVideo) {
+	public Boolean processVideo(File inputVideo, File outputVideo) {
 		assertCompletelySetup();
 		File intermediateVideo = inputVideo;
 		Boolean success = true;
 		for (int i = 0; i < videoProcessors.length - 1; i++) {
 			File temporaryFile = temporaryFileManager.file(UUID.randomUUID().toString());
-			success = videoProcessors[i].processVideo(intermediateVideo, metadata, temporaryFile);
+			success = videoProcessors[i].processVideo(intermediateVideo, temporaryFile);
 			if (intermediateVideo != inputVideo) {
 				temporaryFileManager.deleteFile(intermediateVideo);
 			}
@@ -37,7 +37,7 @@ public class VideoChainProcessor implements IVideoProcessor {
 			}
 		}
 		if (success) {
-			success = videoProcessors[videoProcessors.length - 1].processVideo(intermediateVideo, metadata, outputVideo);
+			success = videoProcessors[videoProcessors.length - 1].processVideo(intermediateVideo, outputVideo);
 		}
 		if (intermediateVideo != inputVideo) {
 			temporaryFileManager.deleteFile(intermediateVideo);

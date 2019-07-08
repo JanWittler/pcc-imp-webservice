@@ -39,6 +39,6 @@ public class OpenCVPythonAnonymizerTest {
 	public void validRunTest() {
 		assertNotNull(input);
 		assertNotNull(output);
-		assertTrue(openCVPythonAnonymizer.processVideo(input, null, output));
+		assertTrue(openCVPythonAnonymizer.processVideo(input, output));
 	}
 }

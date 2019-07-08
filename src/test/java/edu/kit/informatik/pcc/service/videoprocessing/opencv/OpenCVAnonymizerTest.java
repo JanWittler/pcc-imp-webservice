@@ -37,6 +37,6 @@ public class OpenCVAnonymizerTest {
 	public void validRunTest() {
 		assertNotNull(input);
 		assertNotNull(output);
-		assertTrue(openCVAnonymizer.processVideo(input, null, output));
+		assertTrue(openCVAnonymizer.processVideo(input, output));
 	}
 }

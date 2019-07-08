@@ -59,7 +59,7 @@ public class OpenCVAnonymizer implements IVideoProcessor {
      * ###########################################################################################*/
 
     @Override
-    public Boolean processVideo(File inputVideo, File metadata, File outputVideo) {
+    public Boolean processVideo(File inputVideo, File outputVideo) {
         if (inputVideo == null || outputVideo == null) {
             Logger.getGlobal().warning("Invalid input/output");
             return false;
