@@ -6,6 +6,11 @@ import java.util.logging.Logger;
 public class FileSystemManager extends AFileManager {
 	private String containerName;
 	
+	/**
+	 * Creates a new file system manager managing files in the provided container.
+	 * All files and directory paths are resolved against the provided container as root directory.
+	 * @param containerName The name of the container which this manager should manage. Must be some valid file path.
+	 */
 	public FileSystemManager(String containerName) {
 		this.containerName = containerName;
 		File container = new File(containerName);

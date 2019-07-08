@@ -27,6 +27,11 @@ public class VideoDecryptor implements IVideoDecryptor, IPublicKeyProvider {
 		this.asymmetricDecryptor = asymmetricDecryptor;
 	}
 
+	
+	/**
+	 * Returns the instance's public key.
+	 * If there is none yet, a new public / private key pair is generated and its public key is returned.
+	 */
 	@Override
 	public Key getPublicKey() {
 		assertCompletelySetup();

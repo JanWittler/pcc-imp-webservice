@@ -53,7 +53,7 @@ public class UserSQLDB implements IUserDB, IUserSessionDB {
 	public int getUserIdByMail(String email) {
 		int userId = IUserIdProvider.invalidId;
 		Connection connection = connectToDatabase();
-		if (connection == null) {
+		if (connection == null || email == null) {
 			return userId;
 		}
         try {

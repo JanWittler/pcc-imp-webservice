@@ -5,6 +5,10 @@ import java.util.UUID;
 
 import edu.kit.informatik.pcc.service.data.IFileManager;
 
+/**
+ * A VideoChainProcessor processes files by applying a chain of IVideoProcessor instances onto them.
+ * @author Jan Wittler
+ */
 public class VideoChainProcessor implements IVideoProcessor {
 	private IFileManager temporaryFileManager;
 	private IVideoProcessor[] videoProcessors;
