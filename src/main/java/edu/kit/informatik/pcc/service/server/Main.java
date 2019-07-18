@@ -206,7 +206,7 @@ public class Main {
     	webService.setVideoService(videoService);
     	webService.setPublicKeyProvider(videoDecryptor);
     	
-    	videoService.setFileHierachyManager(videoFilesManager);
+    	videoService.setFileHierarchyManager(videoFilesManager);
     	videoService.setTemporaryFileManager(temporaryFilesManager);
     	videoService.setAsyncVideoProcessor(videoProcessingManager);
     	

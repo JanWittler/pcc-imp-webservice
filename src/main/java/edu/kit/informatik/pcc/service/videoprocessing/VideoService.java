@@ -8,20 +8,20 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 
-import edu.kit.informatik.pcc.core.data.IFileHierachyManager;
+import edu.kit.informatik.pcc.core.data.IFileHierarchyManager;
 import edu.kit.informatik.pcc.core.data.IFileManager;
 
 public class VideoService implements IVideoService {
 	private static final String videosDirectory = "videos";
 	private static final String metadataDirectory = "metadata";
 	
-	private IFileHierachyManager fileHierachyManager;
+	private IFileHierarchyManager fileHierarchyManager;
 	private IFileManager temporaryFileManager;
 	private IAsyncVideoProcessor asyncVideoProcessor;
 	
-	public void setFileHierachyManager(IFileHierachyManager fileHierachyManager) {
-		assert this.fileHierachyManager == null;
-		this.fileHierachyManager = fileHierachyManager;
+	public void setFileHierarchyManager(IFileHierarchyManager fileHierarchyManager) {
+		assert this.fileHierarchyManager == null;
+		this.fileHierarchyManager = fileHierarchyManager;
 	}
 	
 	public void setTemporaryFileManager(IFileManager temporaryFileManager) {
@@ -37,7 +37,7 @@ public class VideoService implements IVideoService {
 	@Override
 	public int[] getVideoIds(int userId) {
 		assertCompletelySetup();
-		File[] videos = fileHierachyManager.filesInDirectory(videoDirectory(userId));
+		File[] videos = fileHierarchyManager.filesInDirectory(videoDirectory(userId));
 		List<Integer> videoIdList = new ArrayList<Integer>();
 		for (File video: videos) {
 			try {
@@ -63,28 +63,28 @@ public class VideoService implements IVideoService {
 			return;
 		}
 		int newVideoId = unusedVideoId(userId);
-		File outputVideo = fileHierachyManager.file(videoFileName(newVideoId), videoDirectory(userId));
-		File outputMetadata = fileHierachyManager.file(metadataFileName(newVideoId), metadataDirectory(userId));
+		File outputVideo = fileHierarchyManager.file(videoFileName(newVideoId), videoDirectory(userId));
+		File outputMetadata = fileHierarchyManager.file(metadataFileName(newVideoId), metadataDirectory(userId));
 		asyncVideoProcessor.processVideo(encryptedVideo, encryptedMetadata, encryptedKeyData, outputVideo, outputMetadata);
 	}
 
 	@Override
 	public File getVideo(int videoId, int userId) {
 		assertCompletelySetup();
-		return fileHierachyManager.existingFile(videoFileName(videoId), videoDirectory(userId));
+		return fileHierarchyManager.existingFile(videoFileName(videoId), videoDirectory(userId));
 	}
 
 	@Override
 	public File getMetadata(int videoId, int userId) {
 		assertCompletelySetup();
-		return fileHierachyManager.existingFile(metadataFileName(videoId), metadataDirectory(userId));
+		return fileHierarchyManager.existingFile(metadataFileName(videoId), metadataDirectory(userId));
 	}
 
 	@Override
 	public void deleteVideo(int videoId, int userId) {
 		assertCompletelySetup();
-		fileHierachyManager.deleteFile(getVideo(videoId, userId));
-		fileHierachyManager.deleteFile(getMetadata(videoId, userId));
+		fileHierarchyManager.deleteFile(getVideo(videoId, userId));
+		fileHierarchyManager.deleteFile(getMetadata(videoId, userId));
 	}
 	
 	private String videoFileName(int videoId) {
@@ -112,7 +112,7 @@ public class VideoService implements IVideoService {
 	}
 
 	private void assertCompletelySetup() {
-		assert fileHierachyManager != null;
+		assert fileHierarchyManager != null;
 		assert temporaryFileManager != null;
 		assert asyncVideoProcessor != null;
 	}

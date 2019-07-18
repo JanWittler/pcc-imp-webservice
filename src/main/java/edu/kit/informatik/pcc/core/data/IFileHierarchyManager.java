@@ -3,10 +3,10 @@ package edu.kit.informatik.pcc.core.data;
 import java.io.File;
 
 /**
- * An IFileHierachyManager instance manages files and directories.
+ * An IFileHierarchyManager instance manages files and directories.
  * @author Jan Wittler
  */
-public interface IFileHierachyManager {
+public interface IFileHierarchyManager {
 	/**
 	 * Returns a file instance for the given parameters.
 	 * If the file at the provided location does not yet exist, it is created.

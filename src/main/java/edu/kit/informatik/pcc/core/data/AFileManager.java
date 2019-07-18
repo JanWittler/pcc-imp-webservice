@@ -3,7 +3,7 @@ package edu.kit.informatik.pcc.core.data;
 import java.io.File;
 import java.util.logging.Logger;
 
-public abstract class AFileManager implements IFileHierachyManager, IFileManager {
+public abstract class AFileManager implements IFileHierarchyManager, IFileManager {
 
 	@Override
 	public File file(String name) {
