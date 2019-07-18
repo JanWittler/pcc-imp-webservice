@@ -1,14 +1,13 @@
 package edu.kit.informatik.pcc.service.server;
 
 import java.io.File;
-import java.security.Key;
 
 import edu.kit.informatik.pcc.core.crypto.IPublicKeyProvider;
 import edu.kit.informatik.pcc.service.authentication.IUserIdProvider;
 import edu.kit.informatik.pcc.service.authentication.IUserManagement;
 import edu.kit.informatik.pcc.service.videoprocessing.IVideoService;
 
-public class WebService implements IUserManagement, IWebVideoService, IPublicKeyProvider {
+public class WebService implements IUserManagement, IWebVideoService {
 	private IUserManagement userManagement;
 	private IUserIdProvider userIdProvider;
 	private IVideoService videoService;
@@ -34,6 +33,11 @@ public class WebService implements IUserManagement, IWebVideoService, IPublicKey
 	public void setPublicKeyProvider(IPublicKeyProvider publicKeyProvider) {
 		assert this.publicKeyProvider == null;
 		this.publicKeyProvider = publicKeyProvider;
+	}
+	
+	public IPublicKeyProvider getPublicKeyProvider() {
+		assertCompletelySetup();
+		return publicKeyProvider;
 	}
 	
 	public static WebService getGlobal() {
@@ -122,12 +126,6 @@ public class WebService implements IUserManagement, IWebVideoService, IPublicKey
 			return;
 		}
 		videoService.deleteVideo(videoId, userId);
-	}
-	
-	@Override
-	public Key getPublicKey() {
-		assertCompletelySetup();
-		return publicKeyProvider.getPublicKey();
 	}
 	
 	private void assertCompletelySetup() {

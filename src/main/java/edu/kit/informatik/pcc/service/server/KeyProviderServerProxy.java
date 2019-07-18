@@ -7,6 +7,6 @@ import javax.ws.rs.Path;
 public class KeyProviderServerProxy {
 	@GET
 	public String getPublicKey() {
-		return WebService.getGlobal().getPublicKey().toString();
+		return WebService.getGlobal().getPublicKeyProvider().getPublicKey().toString();
 	}
 }
