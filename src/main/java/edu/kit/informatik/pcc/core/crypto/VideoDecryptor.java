@@ -5,8 +5,8 @@ import java.security.Key;
 import java.security.KeyPair;
 
 public class VideoDecryptor implements IVideoDecryptor, IPublicKeyProvider {
-	private static final String publicKeyId = "VideoDecryptor.PublicKey";
-	private static final String privateKeyId ="VideoDecryptor.PrivateKey";
+	public static final String publicKeyId = "PublicKey.key";
+	public static final String privateKeyId ="PrivateKey.key";
 	
 	private IKeyStorage keyStorage;
 	private IFileDecryptor fileDecryptor;

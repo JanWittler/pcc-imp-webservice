@@ -1,6 +1,8 @@
 package edu.kit.informatik.pcc.service.server;
 
 import edu.kit.informatik.pcc.core.crypto.JavaRSA_AESFileDecryptor;
+import edu.kit.informatik.pcc.core.crypto.KeyStorage;
+import edu.kit.informatik.pcc.core.crypto.VideoDecryptor;
 import edu.kit.informatik.pcc.core.data.FileSystemManager;
 import edu.kit.informatik.pcc.service.authentication.UserSQLDB;
 import edu.kit.informatik.pcc.service.authentication.UserService;
@@ -20,6 +22,9 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.logging.*;
 
 /**
@@ -185,6 +190,7 @@ public class Main {
     	FileSystemManager keyManager = new FileSystemManager(LocationConfig.KEY_DIR);
     	FileSystemManager temporaryFilesManager = new FileSystemManager(LocationConfig.TEMP_DIR);
     	FileSystemManager videoFilesManager = new FileSystemManager(LocationConfig.DATA_DIR);
+    	copyKeysIfNeeded(keyManager);
     	
     	WebService webService = new WebService();
     	
@@ -236,4 +242,25 @@ public class Main {
 		}
 		dir.delete();
 	}
+    
+    private static void copyKeysIfNeeded(FileSystemManager keyFileManager) {
+    	if (keyFileManager.filesInDirectory(null).length >= 2) {
+    		return;
+    	}
+    	try (ObjectInputStream publicInputStream = new ObjectInputStream(Main.class.getClassLoader().getResourceAsStream("public.key"));
+    		ObjectInputStream privateInputStream = new ObjectInputStream(Main.class.getClassLoader().getResourceAsStream("private.key")))
+    	{
+    		PublicKey publicKey = (PublicKey)publicInputStream.readObject();
+    		PrivateKey privateKey = (PrivateKey)privateInputStream.readObject();
+    		
+    		KeyStorage keyStorage = new KeyStorage();
+    		keyStorage.setFileManager(keyFileManager);
+    		keyStorage.storeKey(VideoDecryptor.publicKeyId, publicKey);
+    		keyStorage.storeKey(VideoDecryptor.privateKeyId, privateKey);
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+			Logger.getGlobal().warning("Failed to copy keys to correct directory");
+		}
+    	
+    }
 }
