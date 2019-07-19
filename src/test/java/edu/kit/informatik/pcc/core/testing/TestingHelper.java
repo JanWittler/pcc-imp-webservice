@@ -11,6 +11,9 @@ public class TestingHelper {
     public static final String TEST_RESOURCES_DIR = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources";
     
 	public static void deleteDirectoryAndItsContent(File dir) {
+		if (dir == null || !dir.exists()) {
+            return;
+        }
 		for (File file : dir.listFiles()) {
 			if (file.isDirectory()) {
 				deleteDirectoryAndItsContent(file);

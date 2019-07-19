@@ -180,7 +180,7 @@ public class Main {
     }
     
     private static void setupComponents() {
-    	new File(LocationConfig.TEMP_DIR).delete();
+    	deleteDirectoryAndItsContent(new File(LocationConfig.TEMP_DIR));
     	
     	FileSystemManager keyManager = new FileSystemManager(LocationConfig.KEY_DIR);
     	FileSystemManager temporaryFilesManager = new FileSystemManager(LocationConfig.TEMP_DIR);
@@ -221,4 +221,19 @@ public class Main {
     	
     	WebService.setGlobal(webService);
     }
+    
+    private static void deleteDirectoryAndItsContent(File dir) {
+    	if (dir == null || !dir.exists()) {
+            return;
+        }
+		for (File file : dir.listFiles()) {
+			if (file.isDirectory()) {
+				deleteDirectoryAndItsContent(file);
+			}
+			else {
+				file.delete();
+			}
+		}
+		dir.delete();
+	}
 }
