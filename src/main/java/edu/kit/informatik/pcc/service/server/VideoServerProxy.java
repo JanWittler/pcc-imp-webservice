@@ -41,6 +41,9 @@ public class VideoServerProxy {
 		assertCompletelySetup();
 		Logger.getGlobal().info("Get Video Ids Request");
 		int[] videoIds = WebService.getGlobal().getVideoIds(authenticationToken);
+		if (videoIds == null) {
+			return ServerConstants.NOT_AUTHENTICATED;
+		}
 		JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < videoIds.length; i++) {
             jsonArray.put(videoIds[i]);
