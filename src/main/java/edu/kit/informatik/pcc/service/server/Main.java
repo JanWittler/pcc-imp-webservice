@@ -226,6 +226,7 @@ public class Main {
     	videoChainProcessor.setVideoProcessors(new IVideoProcessor[] {openCVAnonymizer});
     	
     	WebService.setGlobal(webService);
+    	VideoServerProxy.setTemporaryFileManager(temporaryFilesManager);
     }
     
     private static void deleteDirectoryAndItsContent(File dir) {
