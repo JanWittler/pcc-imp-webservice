@@ -28,6 +28,9 @@ public class FileSystemManager extends AFileManager {
 		File file = new File(fullPath(name, directoryPath));
 		if (!file.exists()) {
 			try {
+				if (!file.getParentFile().exists()) {
+					file.getParentFile().mkdirs();
+				}
 				file.createNewFile();
 			}
 			catch (Exception e) {
