@@ -1,0 +1,140 @@
+\documentclass{report}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.75em}
+\input{restful}
+
+\begin{document}
+
+\title{Privacy Crash Cam - API Documentation}
+\author{Jan Wittler}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{API Globals}
+
+\section{Session information}
+
+Almost all API requests require a session token. This token must be sent as a HTTP header for key \texttt{token}. The token is received when performing the login request (c.f. section \ref{Login}). Example:\\
+\texttt{token : 155e05dc-f924-4d2e-8ce5-c0a085301fdf}\\
+
+\section{Status messages}
+
+The original implementation returned for most requests HTTP status code 200 with some status messages in the HTTP body to communicate the request's result, instead of using different HTTP status codes. To reduce overhead when adjusting Android client and web interface, the refactored API keeps this behaviour wherever needed. The used status codes are listed below:
+
+\restful{
+    \mimetype{SUCCESS} {Request succeeded}
+    \mimetype{WRONG\_PASSWORD} {Provided password was invalid}
+    \mimetype{NOT\_AUTHENTICATED} {Provided authentication token was invalid}
+    \mimetype{FAILURE} {Request failed due to some other error}
+}
+
+\chapter{User Management}
+
+\section{Login} \label{Login}
+
+%% method specification
+%%  - method id
+%%  - path template
+%%  - description
+%%  - preconditions, parameters, etc (use \sep to build list)
+%%  - postcondition (use \sep to build list)
+%%  - expected status codes
+\request{POST} {/webservice/account/login}
+   {Logs in the user with the given credentials}
+   {Accept: application/x-www-form-urlencoded}
+   {\textbf{mail} User's mail \sep
+   \textbf{password} User's password}
+   {Content-Type: text/plain \sep
+   Cookie: \emph{token} : :session-token}
+   {\status{200} \sep \status{401}}
+   
+\section{Create User}
+\request{POST} {/webservice/account/create}
+   {Creates a new user from the specified credentials}
+   {Accept: application/x-www-form-urlencoded}
+   {\textbf{mail} User's mail. Must not be used for some user account already. \sep
+   \textbf{password} User's password}
+   {Content-Type: text/plain}
+   {SUCCESS \sep FAILURE}
+   
+\section{Delete User}
+\request{POST} {/webservice/account/delete}
+   {Deletes the user's account and all associated data}
+   {Token: :session-token}
+   {-}
+   {Content-Type: text/plain}
+   {SUCCESS \sep NOT\_AUTHENTICATED}
+   
+   
+\chapter{Video Management}
+
+\section{Get Video Ids}
+
+\request{GET} {/webservice/videos}
+   {Returns all video ids for the current user}
+   {Token: :session-token}
+   {-}
+   {Content-Type: application/json \sep
+   HTTP Body: JSON-Array of video ids}
+   {\status{200} \sep NOT\_AUTHENTICATED}
+   
+\section{Get Video File}
+
+\request{GET} {/webservice/videos/:id}
+   {Returns the video file for the specified id}
+   {Token: :session-token}
+   {-}
+   {Content-Type: application/octet-stream}
+   {\status{200} \sep \status{404}}
+   
+\section{Get Metadata File}
+
+\request{GET} {/webservice/videos/metadata/:id}
+   {Returns the metadata file for the video with the specified id}
+   {Token: :session-token}
+   {-}
+   {Content-Type: application/octet-stream}
+   {\status{200} \sep \status{404}}
+   
+\section{Delete Video}
+
+\request{DELETE} {/webservice/videos/:id}
+   {Deletes all content associated with the specified video id}
+   {Token: :session-token}
+   {-}
+   {Content-Type: text/plain}
+   {SUCCESS}
+   
+\section{Upload Video and Metadata} \label{UploadVideo}
+
+\request{POST} {/webservice/videos}
+   {Takes an encrypted video file, an encrypted metadata file, and an encrypted key file, decrypts all and stores them on the server. The video and metadata files must be encrypted with the uploaded key. The key itself must be encrypted with the server's public key (c.f. section \ref{PublicKey}).}
+   {Content-Type: multipart/form-data \sep
+   Token: :session-token}
+   {\textbf{video} Encrypted video file \sep
+   \textbf{metadata} Encrypted metadata file \sep
+   \textbf{key} Encrypted key file}
+   {Content-Type: text/plain}
+   {SUCCESS \sep FAILURE}
+   
+\chapter{Public Key Provider}
+
+\section{Get Public Key} \label{PublicKey}
+
+\request{GET} {/webservice/publicKey}
+   {Returns the server's public key. This key must be used to encrypt keys uploaded to the server (c.f. section \ref{UploadVideo}).}
+   {-}
+   {-}
+   {Content-Type: text/plain \sep
+   HTTP Body: server's public key}
+   {\status{200}}
+   
+\end{document}
